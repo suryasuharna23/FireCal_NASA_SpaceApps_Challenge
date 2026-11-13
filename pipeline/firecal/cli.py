@@ -194,6 +194,37 @@ def grid() -> None:
 
 
 @app.command()
+def overlap(
+    tolerance: float = typer.Option(0.15, help="Max relative deviation from the median ratio."),
+    drift_year: int = typer.Option(2021, help="Last year before Terra/Aqua orbit drift."),
+) -> None:
+    """Analyse the MODIS-VIIRS overlap and suggest a calibration period (T-10)."""
+    from firecal.io import write_json
+    from firecal.overlap import monthly_pairs, suggest_period, yearly_ratios
+
+    settings = get_settings()
+    ratios = yearly_ratios(monthly_pairs(settings.paths, settings.grid))
+    ratios.to_csv(settings.paths.reports / "overlap_ratios.csv", index=False)
+    choice = suggest_period(ratios, tolerance, drift_year)
+    write_json(
+        settings.paths.reports / "overlap.json",
+        {
+            "suggested_period": choice.period,
+            "configured_period": settings.calibration_period,
+            "median_ratio": choice.median_ratio,
+            "tolerance": tolerance,
+            "drift_year": drift_year,
+            "years": choice.table.to_dict(orient="records"),
+        },
+    )
+    typer.echo(choice.table.to_string(index=False))
+    typer.echo(
+        f"\nSuggested CALIBRATION_PERIOD={choice.period} "
+        f"(configured: {settings.calibration_period})"
+    )
+
+
+@app.command()
 def harmonize() -> None:
     """Calibrate VIIRS -> MODIS-equivalent and build the merged series."""
     _pending("T-11/T-12")
