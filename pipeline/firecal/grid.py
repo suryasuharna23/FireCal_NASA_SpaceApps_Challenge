@@ -163,3 +163,75 @@ def read_ecoregions(path: Path, biome_field: str = "BIOME_NAME") -> pd.DataFrame
         raise ValueError(f"Ecoregion file has no {biome_field!r} column")
     gdf = gdf[[biome_field, "geometry"]].rename(columns={biome_field: "biome"})
     return gdf[gdf.geometry.notna() & gdf["biome"].notna()].reset_index(drop=True)
+
+
+def aggregate_monthly(paths, spec: GridSpec) -> dict[str, object]:
+    """Aggregate published points to ``grid_monthly.parquet`` (T-09, FR-D-08).
+
+    One row per (cell, year, month) with at least one detection::
+
+        cell_id, year, month, n_modis, n_viirs, n_viirs_sats, frp_modis, frp_viirs, has_nrt
+
+    ``n_viirs`` is the total over all VIIRS satellites; ``n_viirs_sats`` is how many
+    VIIRS satellites delivered data that month (globally), which harmonization uses
+    to keep the VIIRS scale stable when NOAA-20 and NOAA-21 join S-NPP.
+    """
+    import duckdb
+
+    from firecal.io import write_json
+    from firecal.schema import read_sql
+
+    con = duckdb.connect()
+    con.execute(f"CREATE TEMP VIEW p AS SELECT * FROM {read_sql(paths.points)}")
+    con.execute(
+        f"""COPY (
+            WITH sats AS (
+                SELECT year, month, count(DISTINCT satellite) AS n_viirs_sats
+                FROM p WHERE sensor = 'VIIRS' GROUP BY year, month
+            ), g AS (
+                SELECT
+                    {spec.cell_sql()} AS cell_id,
+                    CAST(year AS INTEGER) AS year,
+                    CAST(month AS INTEGER) AS month,
+                    count(*) FILTER (WHERE sensor = 'MODIS') AS n_modis,
+                    count(*) FILTER (WHERE sensor = 'VIIRS') AS n_viirs,
+                    coalesce(sum(frp) FILTER (WHERE sensor = 'MODIS'), 0) AS frp_modis,
+                    coalesce(sum(frp) FILTER (WHERE sensor = 'VIIRS'), 0) AS frp_viirs,
+                    bool_or(source = 'NRT') AS has_nrt
+                FROM p GROUP BY ALL
+            )
+            SELECT g.cell_id, g.year, g.month,
+                   CAST(g.n_modis AS INTEGER) AS n_modis,
+                   CAST(g.n_viirs AS INTEGER) AS n_viirs,
+                   CAST(coalesce(s.n_viirs_sats, 0) AS TINYINT) AS n_viirs_sats,
+                   g.frp_modis, g.frp_viirs, g.has_nrt
+            FROM g LEFT JOIN sats s USING (year, month)
+            ORDER BY g.cell_id, g.year, g.month
+        ) TO '{paths.grid_monthly.as_posix()}' (FORMAT parquet, COMPRESSION zstd,
+                                                ROW_GROUP_SIZE 122880)"""
+    )
+    check = con.execute(
+        f"""SELECT count(*) AS months,
+                   count(*) FILTER (WHERE pts IS DISTINCT FROM cells) AS mismatched
+            FROM (SELECT year, month, count(*) AS pts FROM p GROUP BY ALL) a
+            FULL JOIN (SELECT year, month, sum(n_modis + n_viirs) AS cells
+                       FROM read_parquet('{paths.grid_monthly.as_posix()}') GROUP BY ALL) b
+            USING (year, month)"""
+    ).fetchone()
+    rows, cells = con.execute(
+        f"SELECT count(*), count(DISTINCT cell_id) "
+        f"FROM read_parquet('{paths.grid_monthly.as_posix()}')"
+    ).fetchone()
+    report = {
+        "grid_res_deg": spec.res,
+        "rows": rows,
+        "cells": cells,
+        "months": check[0],
+        "months_with_total_mismatch": check[1],
+        "totals_match": check[1] == 0,
+    }
+    write_json(paths.reports / "grid.json", report)
+    log.info("Grid: %d rows over %d cells and %d months", rows, cells, check[0])
+    if check[1]:
+        raise RuntimeError(f"{check[1]} months where grid totals differ from point totals")
+    return report
