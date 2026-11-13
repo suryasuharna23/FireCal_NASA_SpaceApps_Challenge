@@ -1,12 +1,23 @@
 """``firecal`` command line interface (Typer)."""
 
+import logging
+from pathlib import Path
+
 import typer
 
 from firecal import __version__
 from firecal.config import get_settings
 from firecal.firms import FirmsClient, FirmsError, mask_key
+from firecal.io import resolve_source
 
 app = typer.Typer(help="FireCal data pipeline.", no_args_is_help=True)
+
+
+@app.callback()
+def main(verbose: bool = typer.Option(False, "--verbose", "-v", help="Debug logging.")) -> None:
+    level = "DEBUG" if verbose else get_settings().log_level.upper()
+    logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+
 
 _PENDING = "Not implemented yet - see FRD ticket {ticket}."
 
@@ -37,6 +48,29 @@ def check_key() -> None:
         f"{status.remaining}/{status.transaction_limit} transactions left "
         f"per {status.transaction_interval}.",
         fg=typer.colors.GREEN,
+    )
+
+
+@app.command()
+def cells(
+    land: str | None = typer.Option(
+        None, help="Land polygons (path or URL). Default: Natural Earth 50m."
+    ),
+    ecoregions: Path | None = typer.Option(None, help="Ecoregion map with a BIOME_NAME column."),
+) -> None:
+    """Build the land-cell table with biome classes (T-03)."""
+    from firecal.grid import build_cells, read_ecoregions, read_land
+
+    settings = get_settings()
+    paths = settings.paths.ensure()
+    land_path = resolve_source(land or settings.land_url, paths.reference)
+    eco_path = ecoregions or settings.ecoregions_path
+    eco = read_ecoregions(eco_path) if eco_path else None
+    table = build_cells(settings.grid, read_land(land_path), eco)
+    table.to_parquet(paths.cells, index=False)
+    typer.echo(
+        f"{len(table):,} land cells at {settings.grid.res}° "
+        f"({settings.grid.ncols} x {settings.grid.nrows} grid) -> {paths.cells}"
     )
 
 

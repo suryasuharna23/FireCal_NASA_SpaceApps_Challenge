@@ -5,6 +5,11 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from firecal.grid import GridSpec
+from firecal.paths import DataPaths
+
+NATURAL_EARTH = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson"
+
 
 class PipelineSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
@@ -18,6 +23,8 @@ class PipelineSettings(BaseSettings):
     viirs_confidence: str = "nominal,high"
     calibration_period: str = "2013-01:2021-12"
     reference_years: str = "2003:2022"
+    land_url: str = f"{NATURAL_EARTH}/ne_50m_land.geojson"
+    ecoregions_path: Path | None = None
     log_level: str = "info"
 
     @property
@@ -28,6 +35,14 @@ class PipelineSettings(BaseSettings):
     @property
     def viirs_confidence_levels(self) -> list[str]:
         return [v.strip() for v in self.viirs_confidence.split(",") if v.strip()]
+
+    @property
+    def grid(self) -> GridSpec:
+        return GridSpec(self.grid_res_deg)
+
+    @property
+    def paths(self) -> DataPaths:
+        return DataPaths(self.data_root)
 
 
 @lru_cache
