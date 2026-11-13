@@ -1,0 +1,68 @@
+name: NRT daily
+
+# Daily FIRMS near-real-time update (T-08, FR-D-14). The processed data lives in an
+# S3-compatible bucket (Cloudflare R2 or S3); the job syncs it down, appends NRT
+# detections, recomputes derived tables with the existing coefficients and syncs back.
+on:
+  schedule:
+    - cron: "0 2 * * *" # 02:00 UTC
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "Days of NRT data to fetch (1-5)"
+        default: "5"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nrt-daily
+  cancel-in-progress: false
+
+jobs:
+  nrt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      FIRMS_MAP_KEY: ${{ secrets.FIRMS_MAP_KEY }}
+      COVERAGE_BBOX: ${{ vars.COVERAGE_BBOX || '-180,-90,180,90' }}
+      DATA_BUCKET: ${{ vars.DATA_BUCKET }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      S3_ENDPOINT: ${{ vars.S3_ENDPOINT }}
+    steps:
+      - name: Check configuration
+        id: config
+        run: |
+          if [ -z "$FIRMS_MAP_KEY" ] || [ -z "$DATA_BUCKET" ]; then
+            echo "::notice::FIRMS_MAP_KEY secret or DATA_BUCKET variable not set; skipping."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.ready == 'true'
+      - uses: astral-sh/setup-uv@v6
+        if: steps.config.outputs.ready == 'true'
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install
+        if: steps.config.outputs.ready == 'true'
+        run: uv sync --all-packages --locked --no-dev
+      - name: Download data from bucket
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          endpoint=${S3_ENDPOINT:+--endpoint-url $S3_ENDPOINT}
+          aws s3 sync "s3://$DATA_BUCKET/interim" data/interim $endpoint --only-show-errors
+          aws s3 sync "s3://$DATA_BUCKET/processed" data/processed $endpoint --only-show-errors
+      - name: Fetch NRT and refresh
+        if: steps.config.outputs.ready == 'true'
+        run: uv run firecal nrt --days "${{ github.event.inputs.days || '5' }}"
+      - name: Upload data to bucket
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          endpoint=${S3_ENDPOINT:+--endpoint-url $S3_ENDPOINT}
+          aws s3 sync data/interim/nrt "s3://$DATA_BUCKET/interim/nrt" $endpoint --only-show-errors
+          aws s3 sync data/processed "s3://$DATA_BUCKET/processed" $endpoint --delete --only-show-errors
