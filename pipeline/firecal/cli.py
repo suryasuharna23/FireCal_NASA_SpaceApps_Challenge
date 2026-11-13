@@ -120,9 +120,37 @@ def synth(
 
 
 @app.command()
-def nrt(days: int = typer.Option(5, min=1, max=5, help="Days of NRT data to fetch.")) -> None:
-    """Fetch near-real-time detections from the FIRMS API."""
-    _pending("T-08")
+def nrt(
+    days: int = typer.Option(5, min=1, max=5, help="Days of NRT data to fetch."),
+    fetch_only: bool = typer.Option(False, help="Only merge NRT rows; skip reprocessing."),
+) -> None:
+    """Daily job: fetch FIRMS NRT data, merge it and refresh derived tables (T-08)."""
+    from firecal.nrt import update
+
+    settings = get_settings()
+    try:
+        client = FirmsClient(settings.firms_map_key, settings.firms_api_base)
+    except FirmsError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+    with client:
+        report = update(client, settings.paths, settings.bbox, days)
+    typer.echo(
+        f"NRT rows {report.rows_before:,} -> {report.rows_after:,} "
+        f"({report.replaced_by_sp:,} replaced by SP); fetched {report.fetched}"
+    )
+    if report.errors and not report.fetched:
+        typer.secho(f"All NRT sources failed: {report.errors}", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+    if report.errors:
+        typer.secho(f"Some NRT sources failed: {list(report.errors)}", fg=typer.colors.YELLOW)
+    if not fetch_only:
+        refresh()
+
+
+def refresh() -> None:
+    """Recompute everything downstream of the clean point table."""
+    clean()
 
 
 @app.command()
