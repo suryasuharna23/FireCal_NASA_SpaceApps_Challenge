@@ -19,14 +19,6 @@ def main(verbose: bool = typer.Option(False, "--verbose", "-v", help="Debug logg
     logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 
-_PENDING = "Not implemented yet - see FRD ticket {ticket}."
-
-
-def _pending(ticket: str) -> None:
-    typer.secho(_PENDING.format(ticket=ticket), fg=typer.colors.YELLOW)
-    raise typer.Exit(code=1)
-
-
 @app.command()
 def version() -> None:
     """Print the pipeline version."""
@@ -251,8 +243,31 @@ def harmonize(
 
 @app.command()
 def validate() -> None:
-    """Compute validation metrics on hold-out years."""
-    _pending("T-13")
+    """Validate the harmonization on hold-out test years (T-13)."""
+    from firecal.validate import validate as run_validate
+
+    settings = get_settings()
+    report = run_validate(settings.paths, settings.grid, settings.harmonize_config)
+    for name, m in [("global", report["global"]), *report["regions"].items()]:
+        a, b = m["after"], m["before"]
+        if a["r"] is None:
+            typer.echo(f"{name:<28} not enough data")
+            continue
+        typer.echo(
+            f"{name:<28} r={a['r']:.3f} bias={a['bias']:+.1%} mae={a['mae']:.1f} "
+            f"(raw: bias={b['bias']:+.1%}) {'OK' if m['meets_target'] else 'LIMITATION'}"
+        )
+    typer.echo(f"Report -> {settings.paths.reports / 'validation.json'}")
+
+
+@app.command()
+def run() -> None:
+    """Run the whole pipeline: ingest -> clean -> grid -> harmonize -> validate."""
+    ingest()
+    clean()
+    grid()
+    harmonize(reuse_coefficients=False)
+    validate()
 
 
 if __name__ == "__main__":
