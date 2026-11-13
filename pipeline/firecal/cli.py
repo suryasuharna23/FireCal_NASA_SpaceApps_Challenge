@@ -76,8 +76,47 @@ def cells(
 
 @app.command()
 def ingest() -> None:
-    """Load FIRMS MODIS/VIIRS archive CSVs from data/raw into Parquet."""
-    _pending("T-04/T-05")
+    """Load FIRMS archive CSVs from data/raw into partitioned Parquet (T-04, T-05)."""
+    from firecal.ingest import ingest as run_ingest
+
+    reports = run_ingest(get_settings().paths)
+    if not reports:
+        typer.secho("No FIRMS CSV files found in data/raw.", fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1)
+    for r in reports:
+        status = "OK" if r.years_match else "MISMATCH"
+        typer.echo(
+            f"{r.sensor}: {len(r.files)} files, {sum(r.written_rows.values()):,} rows, "
+            f"{len(r.written_rows)} years, {r.duplicates:,} duplicates removed [{status}]"
+        )
+
+
+@app.command()
+def synth(
+    out: Path = typer.Option(None, help="Output folder (default: data/raw/synthetic)."),
+    bbox: str = typer.Option("95,-11,141,6", help="west,south,east,north"),
+    clusters: int = typer.Option(120, min=1, help="Number of fire clusters."),
+    start: str = typer.Option("2000-11", help="First month (YYYY-MM)."),
+    end: str | None = typer.Option(None, help="Last month (YYYY-MM), default: current."),
+    seed: int = typer.Option(42),
+) -> None:
+    """Generate synthetic FIRMS-format CSVs for local development."""
+    from firecal.synth import SynthConfig, generate
+
+    def ym(value: str) -> tuple[int, int]:
+        y, m = value.split("-")
+        return int(y), int(m)
+
+    cfg = SynthConfig(
+        bbox=tuple(float(v) for v in bbox.split(",")),  # type: ignore[arg-type]
+        start=ym(start),
+        end=ym(end) if end else None,
+        clusters=clusters,
+        seed=seed,
+    )
+    target = out or get_settings().paths.raw / "synthetic"
+    written = generate(target, cfg)
+    typer.echo(f"Wrote {len(written)} files, {sum(written.values()):,} rows -> {target}")
 
 
 @app.command()
