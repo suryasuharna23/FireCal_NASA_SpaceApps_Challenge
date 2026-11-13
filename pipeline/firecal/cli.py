@@ -3,6 +3,8 @@
 import typer
 
 from firecal import __version__
+from firecal.config import get_settings
+from firecal.firms import FirmsClient, FirmsError, mask_key
 
 app = typer.Typer(help="FireCal data pipeline.", no_args_is_help=True)
 
@@ -20,6 +22,24 @@ def version() -> None:
     typer.echo(__version__)
 
 
+@app.command("check-key")
+def check_key() -> None:
+    """Verify FIRMS_MAP_KEY against the FIRMS API (T-02)."""
+    settings = get_settings()
+    try:
+        with FirmsClient(settings.firms_map_key, settings.firms_api_base) as client:
+            status = client.key_status()
+    except FirmsError as exc:
+        typer.secho(str(exc), fg=typer.colors.RED, err=True)
+        raise typer.Exit(code=1) from exc
+    typer.secho(
+        f"MAP_KEY {mask_key(settings.firms_map_key)} OK: "
+        f"{status.remaining}/{status.transaction_limit} transactions left "
+        f"per {status.transaction_interval}.",
+        fg=typer.colors.GREEN,
+    )
+
+
 @app.command()
 def ingest() -> None:
     """Load FIRMS MODIS/VIIRS archive CSVs from data/raw into Parquet."""
@@ -27,7 +47,7 @@ def ingest() -> None:
 
 
 @app.command()
-def nrt(days: int = typer.Option(7, min=1, max=10, help="Days of NRT data to fetch.")) -> None:
+def nrt(days: int = typer.Option(5, min=1, max=5, help="Days of NRT data to fetch.")) -> None:
     """Fetch near-real-time detections from the FIRMS API."""
     _pending("T-08")
 
