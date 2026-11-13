@@ -152,6 +152,7 @@ def refresh() -> None:
     """Recompute everything downstream of the clean point table."""
     clean()
     grid()
+    harmonize(reuse_coefficients=True)
 
 
 @app.command()
@@ -225,14 +226,27 @@ def overlap(
 
 
 @app.command()
-def harmonize() -> None:
-    """Calibrate VIIRS -> MODIS-equivalent coefficients per cell (T-11)."""
-    from firecal.harmonize import calibrate
+def harmonize(
+    reuse_coefficients: bool = typer.Option(
+        False, help="Keep existing coefficients (daily NRT runs, FR-D-14)."
+    ),
+) -> None:
+    """Calibrate coefficients (T-11) and build the merged harmonized series (T-12)."""
+    from firecal.harmonize import calibrate, merge_series
 
     settings = get_settings()
-    coef = calibrate(settings.paths, settings.grid, settings.harmonize_config)
-    methods = coef["method"].value_counts().to_dict()
-    typer.echo(f"{len(coef):,} cell coefficients {methods} -> {settings.paths.coefficients}")
+    cfg = settings.harmonize_config
+    if reuse_coefficients and settings.paths.coefficients.exists():
+        typer.echo("Reusing existing coefficients (no recalibration).")
+    else:
+        coef = calibrate(settings.paths, settings.grid, cfg)
+        methods = coef["method"].value_counts().to_dict()
+        typer.echo(f"{len(coef):,} cell coefficients {methods} -> {settings.paths.coefficients}")
+    meta = merge_series(settings.paths, settings.grid, cfg)
+    typer.echo(
+        f"Harmonized {meta['start_month']}..{meta['end_month']} "
+        f"(MODIS until {meta['transition_month']}), data version {meta['data_version']}"
+    )
 
 
 @app.command()

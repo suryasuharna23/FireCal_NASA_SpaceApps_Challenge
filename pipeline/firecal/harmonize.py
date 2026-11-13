@@ -186,3 +186,115 @@ def calibrate(paths: DataPaths, grid: GridSpec, cfg: HarmonizeConfig) -> pd.Data
     write_json(paths.reports / "calibration.json", report)
     log.info("Calibrated %d cells: %s", len(coef), report["methods"])
     return coef
+
+
+def _months_between(start: tuple[int, int], end: tuple[int, int]) -> list[tuple[int, int]]:
+    out, (y, m) = [], start
+    while (y, m) <= end:
+        out.append((y, m))
+        y, m = (y + 1, 1) if m == 12 else (y, m + 1)
+    return out
+
+
+def merge_series(paths: DataPaths, grid: GridSpec, cfg: HarmonizeConfig) -> dict[str, object]:
+    """Build the harmonized cube and the month index (T-12, FR-D-10/11/13).
+
+    ``harmonized.parquet`` (sparse, sorted by cell)::
+
+        cell_id, year, month, n_modis, n_viirs, n_viirs_sats,
+        n_harmonized, ci_low, ci_high, source, has_nrt
+
+    Months up to the transition (and every month before VIIRS existed) take the
+    observed MODIS count; later months take ``k * v_norm`` with a 90 % interval.
+    ``months.parquet`` lists every month between the first and last data month
+    (no gaps) with its source and NRT flag, so consumers can zero-fill.
+    """
+    import hashlib
+    from datetime import UTC, datetime
+
+    from firecal.io import read_json
+
+    if not paths.coefficients.exists():
+        raise FileNotFoundError("coefficients.parquet missing; run calibration first")
+    k_global = read_json(paths.reports / "calibration.json").get("k_global")
+    con = duckdb.connect()
+    con.execute(
+        f"CREATE TEMP VIEW coef AS SELECT * FROM read_parquet('{paths.coefficients.as_posix()}')"
+    )
+    if k_global is None:
+        k_global = con.execute("SELECT median(k) FROM coef").fetchone()[0]
+    sigma_global = con.execute("SELECT median(sigma_log) FROM coef").fetchone()[0]
+    ty, tm = cfg.transition_month
+    transition = ty * 100 + tm
+    con.execute(
+        f"""COPY (
+            WITH g AS (
+                SELECT g.*, coalesce(c.k, {k_global}) AS k,
+                       coalesce(c.sigma_log, {sigma_global}) AS sigma_log,
+                       (g.year * 100 + g.month <= {transition} OR g.n_viirs_sats = 0)
+                           AS use_modis
+                FROM read_parquet('{paths.grid_monthly.as_posix()}') g
+                LEFT JOIN coef c USING (cell_id)
+            ), h AS (
+                SELECT *, CASE WHEN use_modis THEN n_modis::DOUBLE
+                               ELSE k * n_viirs / n_viirs_sats END AS n_h
+                FROM g
+            )
+            SELECT cell_id, year, month, n_modis, n_viirs, n_viirs_sats,
+                   n_h AS n_harmonized,
+                   CASE WHEN use_modis THEN n_h ELSE n_h * exp(-{Z90} * sigma_log) END AS ci_low,
+                   CASE WHEN use_modis THEN n_h ELSE n_h * exp({Z90} * sigma_log) END AS ci_high,
+                   CASE WHEN use_modis THEN 'MODIS' ELSE 'VIIRS' END AS source,
+                   has_nrt
+            FROM h
+            ORDER BY cell_id, year, month
+        ) TO '{paths.harmonized.as_posix()}' (FORMAT parquet, COMPRESSION zstd,
+                                              ROW_GROUP_SIZE 122880)"""
+    )
+
+    monthly = con.execute(
+        f"""SELECT year, month, max(n_viirs_sats) AS n_viirs_sats, bool_or(has_nrt) AS has_nrt,
+                   sum(n_harmonized) AS total
+            FROM read_parquet('{paths.harmonized.as_posix()}') GROUP BY year, month"""
+    ).df()
+    first = (int(monthly.year.min()), int(monthly.month[monthly.year == monthly.year.min()].min()))
+    last_year = int(monthly.year.max())
+    last = (last_year, int(monthly.month[monthly.year == last_year].max()))
+    index = pd.DataFrame(_months_between(first, last), columns=["year", "month"])
+    index = index.merge(monthly, on=["year", "month"], how="left")
+    index["n_viirs_sats"] = index["n_viirs_sats"].fillna(0).astype("int8")
+    index["has_nrt"] = index["has_nrt"].astype("boolean").fillna(False).astype(bool)
+    index["total"] = index["total"].fillna(0.0)
+    ym = index.year * 100 + index.month
+    index["source"] = np.where((ym <= transition) | (index.n_viirs_sats == 0), "MODIS", "VIIRS")
+    index.to_parquet(paths.processed / "months.parquet", index=False)
+
+    pts = paths.points / "**" / "*.parquet"
+    last_acq, nrt_since = con.execute(
+        f"""SELECT max(acq_date), min(acq_date) FILTER (WHERE source = 'NRT')
+            FROM read_parquet('{pts.as_posix()}', hive_partitioning = true)"""
+    ).fetchone()
+    digest = hashlib.sha256()
+    for path in (paths.coefficients, paths.grid_monthly):
+        digest.update(path.read_bytes())
+    meta = {
+        "data_version": digest.hexdigest()[:12],
+        "processed_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "grid_res_deg": grid.res,
+        "calibration_period": read_json(paths.reports / "calibration.json").get(
+            "calibration_period"
+        ),
+        "test_years": list(cfg.test_years),
+        "transition_month": f"{ty}-{tm:02d}",
+        "start_month": f"{first[0]}-{first[1]:02d}",
+        "end_month": f"{last[0]}-{last[1]:02d}",
+        "months": len(index),
+        "last_acq_date": str(last_acq) if last_acq else None,
+        "nrt_since": str(nrt_since) if nrt_since else None,
+        "k_global": float(k_global),
+        "sources": "NASA FIRMS MODIS C6.1 (Terra, Aqua) and VIIRS 375 m (S-NPP, NOAA-20, NOAA-21)",
+    }
+    write_json(paths.meta, meta)
+    log.info("Harmonized %s .. %s (%d months), version %s",
+             meta["start_month"], meta["end_month"], len(index), meta["data_version"])  # fmt: skip
+    return meta

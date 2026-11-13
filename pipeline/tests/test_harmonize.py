@@ -61,3 +61,44 @@ def test_coefficients_recover_synthetic_ratio(gridded) -> None:
 def test_calibration_period_without_overlap_fails(gridded) -> None:
     with pytest.raises(ValueError):
         calibrate(gridded, SPEC, HarmonizeConfig((2003, 1), (2008, 12), ()))
+
+
+def test_merged_series_switches_source_at_transition(gridded) -> None:
+    from firecal.harmonize import merge_series
+
+    calibrate(gridded, SPEC, CFG)
+    meta = merge_series(gridded, SPEC, CFG)
+    h = pd.read_parquet(gridded.harmonized)
+    coef = pd.read_parquet(gridded.coefficients).set_index("cell_id")
+
+    assert {"n_harmonized", "ci_low", "ci_high", "source"} <= set(h.columns)
+    ym = h.year * 100 + h.month
+    before, after = h[ym <= 201812], h[ym > 201812]
+    assert set(before.source) == {"MODIS"} and set(after.source) == {"VIIRS"}
+    assert (before.n_harmonized == before.n_modis).all()
+    assert (before.ci_low == before.ci_high).all()
+
+    row = after[after.n_viirs > 0].iloc[0]
+    k = coef.at[row.cell_id, "k"]
+    assert row.n_harmonized == pytest.approx(k * row.n_viirs / row.n_viirs_sats)
+    assert row.ci_low < row.n_harmonized < row.ci_high
+
+    months = pd.read_parquet(gridded.processed / "months.parquet")
+    assert len(months) == meta["months"] == 120  # no gap months
+    assert meta["start_month"] == "2011-01" and meta["end_month"] == "2020-12"
+    assert meta["transition_month"] == "2018-12"
+    assert json.loads(gridded.meta.read_text())["data_version"] == meta["data_version"]
+
+
+def test_harmonized_total_is_continuous_across_transition(gridded) -> None:
+    """The synthetic truth has no jump at the switch; the merged series must not either."""
+    from firecal.harmonize import merge_series
+
+    calibrate(gridded, SPEC, CFG)
+    merge_series(gridded, SPEC, CFG)
+    h = pd.read_parquet(gridded.harmonized)
+    yearly = h.groupby("year")[["n_harmonized", "n_viirs", "n_modis"]].sum()
+    before = yearly.loc[2017:2018, "n_harmonized"].mean()
+    after = yearly.loc[2019:2020, "n_harmonized"].mean()
+    raw_after = yearly.loc[2019:2020, "n_viirs"].mean()
+    assert abs(after / before - 1) < abs(raw_after / before - 1)
