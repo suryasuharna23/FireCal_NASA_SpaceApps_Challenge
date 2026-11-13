@@ -102,3 +102,26 @@ def test_harmonized_total_is_continuous_across_transition(gridded) -> None:
     after = yearly.loc[2019:2020, "n_harmonized"].mean()
     raw_after = yearly.loc[2019:2020, "n_viirs"].mean()
     assert abs(after / before - 1) < abs(raw_after / before - 1)
+
+
+def test_viirs_point_weights_sum_to_harmonized(gridded) -> None:
+    from firecal.harmonize import merge_series
+    from firecal.schema import read_sql
+
+    calibrate(gridded, SPEC, CFG)
+    merge_series(gridded, SPEC, CFG)
+    con = duckdb.connect()
+    pts = con.sql(f"SELECT * FROM {read_sql(gridded.points)}").df()
+    assert pts.weight.notna().all()
+    assert (pts.loc[pts.sensor == "MODIS", "weight"] == 1).all()
+
+    viirs = pts[pts.sensor == "VIIRS"]
+    sums = viirs[viirs.in_series].groupby(["cell_id", "year", "month"]).weight.sum()
+    h = pd.read_parquet(gridded.harmonized).set_index(["cell_id", "year", "month"])
+    joined = h.loc[sums.index, "n_harmonized"]
+    assert len(sums) > 100
+    assert (sums - joined).abs().max() < 1e-9
+
+    # every point: in-series weights reproduce the merged series per cell-month
+    total = pts[pts.in_series].groupby(["cell_id", "year", "month"]).weight.sum()
+    assert (total - h.loc[total.index, "n_harmonized"]).abs().max() < 1e-9
