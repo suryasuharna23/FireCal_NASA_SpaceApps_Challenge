@@ -52,3 +52,28 @@ def test_ingest_is_reproducible(paths) -> None:
     first = _read(paths, "MODIS")
     ingest(paths, ["MODIS"])
     pd.testing.assert_frame_equal(first, _read(paths, "MODIS"))
+
+
+def test_viirs_ingest_keeps_satellite_and_normalizes_confidence(paths) -> None:
+    reports = {r.sensor: r for r in ingest(paths)}
+    viirs = reports["VIIRS"]
+    assert viirs.years_match
+    assert viirs.warnings == []
+    df = _read(paths, "VIIRS")
+    assert set(df.satellite) == {"S-NPP", "NOAA-20"}  # NOAA-21 starts 2024
+    assert set(df.confidence) <= {"low", "nominal", "high"}
+    first = pd.to_datetime(df.groupby("satellite").acq_date.min())
+    assert first["NOAA-20"] >= pd.Timestamp("2018-04-01")
+    assert df.instrument.eq("VIIRS").all()
+
+
+def test_unknown_satellite_is_reported(tmp_path) -> None:
+    from firecal.paths import DataPaths
+
+    paths = DataPaths(tmp_path / "data").ensure()
+    (paths.raw / "viirs.csv").write_text(
+        "latitude,longitude,bright_ti4,acq_date,acq_time,satellite,confidence,version,frp,"
+        "daynight\n1.0,100.0,330,2019-05-01,0130,X9,n,2,3.1,N\n"
+    )
+    (report,) = ingest(paths, ["VIIRS"])
+    assert report.warnings and "X9" in report.warnings[0]
