@@ -5,6 +5,7 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from firecal.clean import CleanConfig
 from firecal.grid import GridSpec
 from firecal.paths import DataPaths
 
@@ -21,6 +22,7 @@ class PipelineSettings(BaseSettings):
     grid_res_deg: float = 0.25
     modis_min_confidence: int = 30
     viirs_confidence: str = "nominal,high"
+    static_mask_deg: float = 0.02
     calibration_period: str = "2013-01:2021-12"
     reference_years: str = "2003:2022"
     land_url: str = f"{NATURAL_EARTH}/ne_50m_land.geojson"
@@ -43,6 +45,14 @@ class PipelineSettings(BaseSettings):
     @property
     def paths(self) -> DataPaths:
         return DataPaths(self.data_root)
+
+    @property
+    def clean_config(self) -> CleanConfig:
+        return CleanConfig(
+            modis_min_confidence=self.modis_min_confidence,
+            viirs_confidence=tuple(self.viirs_confidence_levels),
+            static_mask_deg=self.static_mask_deg,
+        )
 
 
 @lru_cache
