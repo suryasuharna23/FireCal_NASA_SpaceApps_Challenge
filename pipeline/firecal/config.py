@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from firecal.clean import CleanConfig
 from firecal.grid import GridSpec
+from firecal.harmonize import HarmonizeConfig, parse_month, parse_period
 from firecal.paths import DataPaths
 
 NATURAL_EARTH = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson"
@@ -24,6 +25,10 @@ class PipelineSettings(BaseSettings):
     viirs_confidence: str = "nominal,high"
     static_mask_deg: float = 0.02
     calibration_period: str = "2013-01:2021-12"
+    test_years: str = "2016,2019"
+    transition_month: str = ""
+    min_cell_detections: float = 50
+    calibration_shrinkage: float = 100
     reference_years: str = "2003:2022"
     land_url: str = f"{NATURAL_EARTH}/ne_50m_land.geojson"
     ecoregions_path: Path | None = None
@@ -52,6 +57,18 @@ class PipelineSettings(BaseSettings):
             modis_min_confidence=self.modis_min_confidence,
             viirs_confidence=tuple(self.viirs_confidence_levels),
             static_mask_deg=self.static_mask_deg,
+        )
+
+    @property
+    def harmonize_config(self) -> HarmonizeConfig:
+        start, end = parse_period(self.calibration_period)
+        return HarmonizeConfig(
+            calibration_start=start,
+            calibration_end=end,
+            test_years=tuple(int(y) for y in self.test_years.split(",") if y.strip()),
+            min_cell_viirs=self.min_cell_detections,
+            shrinkage=self.calibration_shrinkage,
+            transition=parse_month(self.transition_month) if self.transition_month else None,
         )
 
 
