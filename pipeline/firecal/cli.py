@@ -127,8 +127,16 @@ def nrt(days: int = typer.Option(5, min=1, max=5, help="Days of NRT data to fetc
 
 @app.command()
 def clean() -> None:
-    """Apply confidence filters and drop static heat sources."""
-    _pending("T-06")
+    """Apply confidence filters and drop static heat sources (T-06)."""
+    from firecal.clean import clean as run_clean
+
+    settings = get_settings()
+    report = run_clean(settings.paths, settings.clean_config)
+    for sensor, before in report.before.items():
+        typer.echo(
+            f"{sensor}: {before:,} -> {report.after_confidence.get(sensor, 0):,} (confidence)"
+            f" -> {report.after_static.get(sensor, 0):,} (static sources)"
+        )
 
 
 @app.command()
