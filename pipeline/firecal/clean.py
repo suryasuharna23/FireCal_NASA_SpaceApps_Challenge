@@ -21,6 +21,7 @@ import duckdb
 from firecal.grid import GridSpec
 from firecal.io import reset_dir, write_json
 from firecal.paths import DataPaths
+from firecal.schema import cast_sql
 
 log = logging.getLogger(__name__)
 
@@ -112,7 +113,7 @@ def clean(paths: DataPaths, cfg: CleanConfig = CleanConfig()) -> CleanReport:
     out = reset_dir(paths.clean)
     con.execute(
         f"""COPY (
-                SELECT * FROM ({clean_sql})
+                {cast_sql(clean_sql)}
                 ORDER BY acq_datetime, latitude, longitude, satellite
             ) TO '{out.as_posix()}'
             (FORMAT parquet, PARTITION_BY (year), COMPRESSION zstd, OVERWRITE_OR_IGNORE)"""

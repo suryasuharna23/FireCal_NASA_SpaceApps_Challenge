@@ -19,6 +19,7 @@ import duckdb
 
 from firecal.io import reset_dir, write_json
 from firecal.paths import DataPaths
+from firecal.schema import cast_sql
 
 log = logging.getLogger(__name__)
 
@@ -202,7 +203,7 @@ def ingest_sensor(
     rel = dedupe_sql(normalize_sql(sensor, source, columns))
     con.execute(
         f"""COPY (
-                SELECT * EXCLUDE (sensor) FROM ({rel})
+                SELECT * EXCLUDE (sensor) FROM ({cast_sql(rel)})
                 ORDER BY acq_datetime, latitude, longitude, satellite
             ) TO '{out_dir.as_posix()}'
             (FORMAT parquet, PARTITION_BY (year), COMPRESSION zstd, OVERWRITE_OR_IGNORE)"""
