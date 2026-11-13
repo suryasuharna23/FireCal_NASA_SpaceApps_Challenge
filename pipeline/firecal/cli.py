@@ -226,8 +226,13 @@ def overlap(
 
 @app.command()
 def harmonize() -> None:
-    """Calibrate VIIRS -> MODIS-equivalent and build the merged series."""
-    _pending("T-11/T-12")
+    """Calibrate VIIRS -> MODIS-equivalent coefficients per cell (T-11)."""
+    from firecal.harmonize import calibrate
+
+    settings = get_settings()
+    coef = calibrate(settings.paths, settings.grid, settings.harmonize_config)
+    methods = coef["method"].value_counts().to_dict()
+    typer.echo(f"{len(coef):,} cell coefficients {methods} -> {settings.paths.coefficients}")
 
 
 @app.command()
