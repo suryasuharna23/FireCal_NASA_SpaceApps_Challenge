@@ -85,6 +85,9 @@ Backend dan pipeline membaca `.env` di root; frontend membaca `web/.env`. Hanya 
 berawalan `VITE_` yang sampai ke browser, sehingga `FIRMS_MAP_KEY` tetap di server (NFR-08).
 Lihat [`.env.example`](.env.example) dan [`web/.env.example`](web/.env.example).
 
+Setelah mengisi `FIRMS_MAP_KEY`, uji dengan `uv run firecal check-key`. Untuk CI, simpan key yang sama
+sebagai GitHub secret `FIRMS_MAP_KEY` lalu jalankan workflow **Check FIRMS MAP_KEY**.
+
 ## Kontribusi
 
 - Branch dari `main` dengan nama `<tipe>/<tiket>-<ringkas>`, mis. `feat/T-15-calendar-endpoint`.
