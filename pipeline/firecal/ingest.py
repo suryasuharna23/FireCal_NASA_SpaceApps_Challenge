@@ -22,15 +22,40 @@ from firecal.paths import DataPaths
 
 log = logging.getLogger(__name__)
 
-SENSORS = ("MODIS",)
+SENSORS = ("MODIS", "VIIRS")
 
 #: Raw FIRMS satellite codes -> canonical platform names.
 SATELLITES: dict[str, dict[str, str]] = {
     "MODIS": {"T": "Terra", "TERRA": "Terra", "A": "Aqua", "AQUA": "Aqua"},
+    "VIIRS": {
+        "N": "S-NPP",
+        "NPP": "S-NPP",
+        "SNPP": "S-NPP",
+        "S-NPP": "S-NPP",
+        "1": "NOAA-20",
+        "N20": "NOAA-20",
+        "J1": "NOAA-20",
+        "NOAA-20": "NOAA-20",
+        "NOAA20": "NOAA-20",
+        "2": "NOAA-21",
+        "N21": "NOAA-21",
+        "J2": "NOAA-21",
+        "NOAA-21": "NOAA-21",
+        "NOAA21": "NOAA-21",
+    },
+}
+
+#: First month with FIRMS data per platform (FR-D-01, FR-D-02).
+AVAILABILITY: dict[str, str] = {
+    "Terra": "2000-11-01",
+    "Aqua": "2002-07-01",
+    "S-NPP": "2012-01-01",
+    "NOAA-20": "2018-04-01",
+    "NOAA-21": "2024-01-01",
 }
 
 #: Columns that identify a sensor in a FIRMS CSV header.
-SIGNATURES: dict[str, str] = {"brightness": "MODIS"}
+SIGNATURES: dict[str, str] = {"bright_ti4": "VIIRS", "brightness": "MODIS"}
 
 OPTIONAL_COLUMNS = ("daynight", "frp", "instrument", "version", "type", "confidence")
 
@@ -68,6 +93,12 @@ def _case_map(expr: str, mapping: dict[str, str], default: str) -> str:
 
 
 def _confidence_sql(sensor: str) -> str:
+    if sensor == "VIIRS":
+        # VIIRS archive uses l/n/h; some products spell the class out.
+        return (
+            "CASE lower(trim(confidence)) WHEN 'l' THEN 'low' WHEN 'n' THEN 'nominal' "
+            "WHEN 'h' THEN 'high' ELSE lower(trim(confidence)) END"
+        )
     return "trim(confidence)"
 
 
@@ -130,6 +161,7 @@ class IngestReport:
     source_rows: dict[int, int] = field(default_factory=dict)
     written_rows: dict[int, int] = field(default_factory=dict)
     satellites: dict[str, dict[str, str]] = field(default_factory=dict)
+    warnings: list[str] = field(default_factory=list)
 
     @property
     def duplicates(self) -> int:
@@ -148,6 +180,7 @@ class IngestReport:
             "duplicates_removed": self.duplicates,
             "years_match": self.years_match,
             "satellites": self.satellites,
+            "warnings": self.warnings,
         }
 
 
@@ -186,6 +219,13 @@ def ingest_sensor(
         "GROUP BY satellite ORDER BY satellite"
     ).fetchall():
         report.satellites[sat] = {"first": str(first), "last": str(last)}
+        available = AVAILABILITY.get(sat)
+        if available is None:
+            report.warnings.append(f"Unknown {sensor} satellite code {sat!r}")
+        elif str(first) < available:
+            report.warnings.append(f"{sat} has detections before {available} (first {first})")
+    for warning in report.warnings:
+        log.warning(warning)
     return report
 
 
