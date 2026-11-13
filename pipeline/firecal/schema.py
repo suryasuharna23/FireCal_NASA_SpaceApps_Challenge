@@ -44,6 +44,8 @@ COLUMNS: list[tuple[str, str, pa.DataType, str]] = [
 ]
 PUBLISHED_EXTRA: list[tuple[str, str, pa.DataType, str]] = [
     ("cell_id", "BIGINT", pa.int64(), "Grid cell id (see firecal.grid)"),
+    ("weight", "DOUBLE", pa.float64(), "MODIS-equivalent weight (MODIS 1, VIIRS k / n_sats)"),
+    ("in_series", "BOOLEAN", pa.bool_(), "Sensor is the merged-series source that month"),
 ]
 
 POINT_SCHEMA = pa.schema([(name, arrow) for name, _, arrow, _ in COLUMNS])
@@ -52,7 +54,7 @@ PUBLISHED_SCHEMA = pa.schema([(name, arrow) for name, _, arrow, _ in COLUMNS + P
 #: Columns exported in the raw-points CSV (FR-W-17).
 EXPORT_COLUMNS = [
     "latitude", "longitude", "acq_datetime", "daynight", "confidence", "frp",
-    "sensor", "satellite", "source",
+    "sensor", "satellite", "source", "weight",
 ]  # fmt: skip
 
 
@@ -94,7 +96,10 @@ def publish_points(paths: DataPaths, grid: GridSpec) -> int:
     """Write clean points with their grid cell id to ``processed/points/year=YYYY``."""
     con = duckdb.connect()
     out = reset_dir(paths.points)
-    relation = f"SELECT *, {grid.cell_sql()} AS cell_id FROM {read_sql(paths.clean)}"
+    relation = (
+        f"SELECT *, {grid.cell_sql()} AS cell_id, NULL AS weight, NULL AS in_series "
+        f"FROM {read_sql(paths.clean)}"
+    )
     con.execute(
         f"""COPY ({cast_sql(relation, PUBLISHED_EXTRA)} ORDER BY cell_id, acq_datetime)
             TO '{out.as_posix()}'

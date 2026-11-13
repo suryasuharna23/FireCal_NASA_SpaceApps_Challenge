@@ -295,6 +295,48 @@ def merge_series(paths: DataPaths, grid: GridSpec, cfg: HarmonizeConfig) -> dict
         "sources": "NASA FIRMS MODIS C6.1 (Terra, Aqua) and VIIRS 375 m (S-NPP, NOAA-20, NOAA-21)",
     }
     write_json(paths.meta, meta)
+    apply_weights(paths)
     log.info("Harmonized %s .. %s (%d months), version %s",
              meta["start_month"], meta["end_month"], len(index), meta["data_version"])  # fmt: skip
     return meta
+
+
+def apply_weights(paths: DataPaths) -> int:
+    """Add per-point harmonization weights to ``processed/points`` (T-14, FR-D-15).
+
+    * ``weight`` — a point's MODIS-equivalent contribution: 1 for MODIS, and
+      ``k_cell / n_viirs_sats`` (the cell's coefficient for that month) for VIIRS.
+    * ``in_series`` — whether the point's sensor is the merged-series source that
+      month. Summing ``weight`` over ``in_series`` points of a cell-month gives
+      ``n_harmonized``; for VIIRS-source months that is the sum over VIIRS points.
+
+    Raw-point CSV exports can therefore be summed to the MODIS-equivalent scale.
+    """
+    import shutil
+
+    from firecal.io import read_json, reset_dir
+    from firecal.schema import PUBLISHED_EXTRA, cast_sql, read_sql
+
+    months = paths.processed / "months.parquet"
+    k_global = read_json(paths.meta).get("k_global") or 1.0
+    tmp = reset_dir(paths.points.with_name("points.tmp"))
+    con = duckdb.connect()
+    relation = f"""
+        SELECT p.* EXCLUDE (weight, in_series),
+               CASE WHEN p.sensor = 'MODIS' THEN 1.0
+                    ELSE coalesce(c.k, {k_global}) / nullif(m.n_viirs_sats, 0) END AS weight,
+               coalesce(p.sensor = m.source, false) AS in_series
+        FROM {read_sql(paths.points)} p
+        LEFT JOIN read_parquet('{paths.coefficients.as_posix()}') c USING (cell_id)
+        LEFT JOIN read_parquet('{months.as_posix()}') m
+               ON m.year = p.year AND m.month = p.month
+    """
+    con.execute(
+        f"""COPY ({cast_sql(relation, PUBLISHED_EXTRA)} ORDER BY cell_id, acq_datetime)
+            TO '{tmp.as_posix()}'
+            (FORMAT parquet, PARTITION_BY (year), COMPRESSION zstd, OVERWRITE_OR_IGNORE,
+             ROW_GROUP_SIZE 100000)"""
+    )
+    shutil.rmtree(paths.points)
+    tmp.rename(paths.points)
+    return con.execute(f"SELECT count(*) FROM {read_sql(paths.points)}").fetchone()[0]
