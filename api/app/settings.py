@@ -17,11 +17,18 @@ class ApiSettings(BaseSettings):
     s3_endpoint: str = ""
     s3_access_key_id: str = ""
     s3_secret_access_key: SecretStr = SecretStr("")
+    cache_ttl_seconds: int = 900
+    max_points: int = 50_000
     log_level: str = "info"
 
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+
+    @property
+    def default_reference_years(self) -> tuple[int, int]:
+        start, end = self.reference_years.split(":")
+        return int(start), int(end)
 
 
 @lru_cache

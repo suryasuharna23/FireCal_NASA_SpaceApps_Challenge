@@ -709,8 +709,12 @@ dependencies = [
     { name = "cachetools" },
     { name = "duckdb" },
     { name = "fastapi" },
+    { name = "numpy" },
+    { name = "pandas" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "pyproj" },
+    { name = "shapely" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -724,8 +728,12 @@ requires-dist = [
     { name = "cachetools", specifier = ">=5.5" },
     { name = "duckdb", specifier = ">=1.1" },
     { name = "fastapi", specifier = ">=0.115" },
+    { name = "numpy", specifier = ">=2.0" },
+    { name = "pandas", specifier = ">=2.2" },
     { name = "pydantic", specifier = ">=2.7" },
     { name = "pydantic-settings", specifier = ">=2.7" },
+    { name = "pyproj", specifier = ">=3.6" },
+    { name = "shapely", specifier = ">=2.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30" },
 ]
 
