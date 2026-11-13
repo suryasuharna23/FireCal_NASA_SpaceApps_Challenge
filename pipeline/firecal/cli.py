@@ -137,6 +137,18 @@ def clean() -> None:
             f"{sensor}: {before:,} -> {report.after_confidence.get(sensor, 0):,} (confidence)"
             f" -> {report.after_static.get(sensor, 0):,} (static sources)"
         )
+    from firecal.schema import publish_points
+
+    published = publish_points(settings.paths, settings.grid)
+    typer.echo(f"Published {published:,} points -> {settings.paths.points}")
+
+
+@app.command()
+def sql(query: str = typer.Argument(..., help="SQL over the pipeline views.")) -> None:
+    """Query pipeline tables with DuckDB (views: detections, points, cells, harmonized ...)."""
+    from firecal.schema import connect
+
+    typer.echo(connect(get_settings().paths).sql(query).df().to_string(index=False))
 
 
 @app.command()
