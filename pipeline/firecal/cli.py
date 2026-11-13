@@ -151,6 +151,7 @@ def nrt(
 def refresh() -> None:
     """Recompute everything downstream of the clean point table."""
     clean()
+    grid()
 
 
 @app.command()
@@ -181,8 +182,15 @@ def sql(query: str = typer.Argument(..., help="SQL over the pipeline views.")) -
 
 @app.command()
 def grid() -> None:
-    """Aggregate detections to the monthly grid per sensor."""
-    _pending("T-09")
+    """Aggregate published points to the monthly grid per sensor (T-09)."""
+    from firecal.grid import aggregate_monthly
+
+    settings = get_settings()
+    report = aggregate_monthly(settings.paths, settings.grid)
+    typer.echo(
+        f"{report['rows']:,} cell-months over {report['cells']:,} cells and "
+        f"{report['months']} months -> {settings.paths.grid_monthly}"
+    )
 
 
 @app.command()
