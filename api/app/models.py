@@ -53,3 +53,50 @@ class CalendarResponse(BaseModel):
     data_version: str
     max_value: float
     months: list[MonthValue]
+
+
+class ClimatologyMonth(BaseModel):
+    month: int
+    median: float | None
+    p25: float | None
+    p75: float | None
+    current: float | None = Field(..., description="Value in the last year of the range")
+    critical: bool
+
+
+class AnnualTotal(BaseModel):
+    year: int
+    total: float
+    rank: int = Field(..., description="1 = highest total in the range")
+    complete: bool
+
+
+class CurrentMonth(BaseModel):
+    month: str
+    value: float | None
+    median: float | None
+    anomaly_pct: float | None
+    percentile: float | None
+    provisional: bool
+
+
+class Summary(BaseModel):
+    total: float | None
+    monthly_mean: float | None
+    peak_month: int | None = Field(..., description="Calendar month with the highest median")
+    max_year: int | None
+    max_year_total: float | None
+    current: CurrentMonth | None
+
+
+class StatsResponse(BaseModel):
+    aoi: AoiInfo
+    start: str
+    end: str
+    reference_years: tuple[int, int]
+    data_version: str
+    climatology: list[ClimatologyMonth]
+    critical_threshold: float | None
+    critical_months: list[int]
+    annual: list[AnnualTotal]
+    summary: Summary
