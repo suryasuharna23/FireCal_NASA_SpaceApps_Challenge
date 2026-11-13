@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help setup data dev api web lint format test e2e clean
+.PHONY: help setup data synth dev api web lint format test e2e clean
 
 help: ## Show available commands
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-8s\033[0m %s\n", $$1, $$2}'
@@ -9,12 +9,12 @@ setup: ## Install Python + JS dependencies and pre-commit hooks
 	pnpm install --dir web
 	uv run pre-commit install
 
-data: ## Run the full pipeline: data/raw -> data/processed
-	uv run firecal ingest
-	uv run firecal clean
-	uv run firecal grid
-	uv run firecal harmonize
-	uv run firecal validate
+data: ## Run the full pipeline: data/raw -> data/processed (+ land cells once)
+	@test -f data/processed/cells.parquet || uv run firecal cells
+	uv run firecal run
+
+synth: ## Generate a synthetic FIRMS archive in data/raw/synthetic (no MAP_KEY needed)
+	uv run firecal synth
 
 dev: ## Run API and web together via Docker Compose
 	docker compose up --build
