@@ -1,0 +1,16 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    env_file: .env
+    environment:
+      DATA_URI: /app/data/processed
+    ports: ["8000:8000"]
+    volumes: ["./data:/app/data:ro"]
+
+  web:
+    build: ./web
+    env_file: web/.env
+    ports: ["5173:5173"]
+    depends_on: [api]
