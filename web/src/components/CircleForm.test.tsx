@@ -42,7 +42,7 @@ describe('CircleForm', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Pakai lingkaran' }));
     const aoi = useAppStore.getState().aoi;
     expect(aoi?.kind).toBe('circle');
-    expect(aoi?.circle).toEqual({ lat: -1.5, lon: 113.9, radiusKm: 75 });
+    expect(aoi?.circle).toEqual({ lat: -4.75, lon: 102.75, radiusKm: 75 });
   });
 
   it('shows field errors and keeps the AOI unchanged for invalid input', () => {
