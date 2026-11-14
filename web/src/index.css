@@ -15,6 +15,7 @@
   --error-fg: #7f1d1d;
   --ocean: #dfe7ee;
   --land: #f4f1ea;
+  --zero-cell: #ebe9e2;
   --radius: 10px;
   font-family:
     system-ui,
@@ -43,6 +44,7 @@
     --error-fg: #fecaca;
     --ocean: #18222c;
     --land: #2a2a26;
+    --zero-cell: #2b2b27;
   }
 }
 
@@ -426,4 +428,152 @@ select {
   font-size: 0.85rem;
   font-weight: 600;
   margin-bottom: 4px;
+}
+
+/* ---------- calendar ---------- */
+.segmented {
+  display: inline-flex;
+  gap: 0;
+}
+
+.segmented .btn {
+  border-radius: 0;
+}
+
+.segmented .btn:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.segmented .btn:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.calendar-wrap {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  transition: opacity 0.2s;
+}
+
+.calendar-wrap.is-stale {
+  opacity: 0.55;
+}
+
+.calendar {
+  display: grid;
+  gap: 2px;
+  min-width: 420px;
+}
+
+.calendar__row {
+  display: grid;
+  grid-template-columns: 44px repeat(12, minmax(22px, 1fr));
+  gap: 2px;
+}
+
+.calendar__month,
+.calendar__year {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: center;
+  align-self: center;
+}
+
+.calendar__year {
+  text-align: right;
+  padding-right: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__cell {
+  height: 18px;
+  border: 0;
+  border-radius: 3px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.calendar__cell--empty {
+  background: transparent;
+  cursor: default;
+}
+
+.calendar__cell--nrt {
+  outline: 1.5px dashed var(--fg);
+  outline-offset: -2px;
+}
+
+.calendar__cell--selected {
+  outline: 2.5px solid var(--fg);
+  outline-offset: 1px;
+}
+
+.calendar__cell:hover:not(.calendar__cell--empty) {
+  filter: brightness(0.9);
+}
+
+.legend {
+  margin-top: 10px;
+  max-width: 360px;
+}
+
+.legend__bar {
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend__ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.table-alt {
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.table-alt summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.table-scroll table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table-scroll th,
+.table-scroll td {
+  padding: 2px 6px;
+  text-align: right;
+  border-bottom: 1px solid var(--border);
+}
+
+.skeleton {
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--panel-2), var(--border), var(--panel-2));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton--calendar {
+  height: 240px;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
 }

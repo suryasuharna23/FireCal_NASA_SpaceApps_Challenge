@@ -65,6 +65,17 @@ export const id = {
   'time.err.order': 'Bulan akhir harus setelah bulan awal.',
   'time.err.refOrder': 'Tahun awal referensi harus sebelum tahun akhir.',
   'time.err.refOutside': 'Tahun referensi di luar ketersediaan data.',
+  'calendar.scale': 'Skala warna',
+  'calendar.linear': 'Linear',
+  'calendar.log': 'Log',
+  'calendar.cellLabel': '{month}: {value} titik panas',
+  'calendar.aria': 'Kalender titik panas {start} sampai {end}; pilih sel untuk melihat bulan itu',
+  'calendar.legend': 'Legenda',
+  'calendar.unit': 'Jumlah titik panas per bulan (skala setara-MODIS).',
+  'calendar.unitRaw': 'Jumlah titik panas mentah sensor sumber (belum diharmonisasi).',
+  'calendar.nrtNote': 'Garis putus-putus = data NRT belum final',
+  'calendar.asTable': 'Lihat sebagai tabel',
+  'calendar.year': 'Tahun',
 };
 
 export type Messages = Record<keyof typeof id, string>;

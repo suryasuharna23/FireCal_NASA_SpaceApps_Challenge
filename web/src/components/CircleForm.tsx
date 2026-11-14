@@ -10,7 +10,7 @@ export function CircleForm() {
   const { t } = useT();
   const setAoi = useAppStore((s) => s.setAoi);
   const maxKm2 = useMeta().data?.max_aoi_km2 ?? DEFAULT_MAX_AOI_KM2;
-  const [values, setValues] = useState({ lat: '-1.5', lon: '113.9', radius: '100' });
+  const [values, setValues] = useState({ lat: '-4.75', lon: '102.75', radius: '300' });
   const [errors, setErrors] = useState<CircleErrors>({});
 
   const submit = (event: FormEvent) => {
