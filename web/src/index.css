@@ -1007,3 +1007,67 @@ h3 {
 .cal-tooltip small {
   color: var(--muted);
 }
+
+/* ---------- summary cards ---------- */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  transition: opacity 0.2s;
+}
+
+.kpis.is-stale {
+  opacity: 0.55;
+}
+
+.kpi {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(4, 6, 13, 0.45);
+}
+
+.kpi h3 {
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.kpi__value {
+  margin: 4px 0 2px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi__sub {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.kpi--current {
+  grid-column: 1 / -1;
+}
+
+.kpi--hot {
+  border-color: rgba(255, 122, 61, 0.55);
+  background: linear-gradient(135deg, rgba(255, 122, 61, 0.18), rgba(4, 6, 13, 0.45) 60%);
+}
+
+.kpi--hot .kpi__value {
+  color: #ffb08a;
+}
+
+.kpi--cool {
+  border-color: rgba(94, 231, 255, 0.45);
+  background: linear-gradient(135deg, rgba(94, 160, 255, 0.18), rgba(4, 6, 13, 0.45) 60%);
+}
+
+.kpi--cool .kpi__value {
+  color: #a5d8ff;
+}
