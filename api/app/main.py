@@ -38,6 +38,22 @@ def create_app() -> FastAPI:
     async def unavailable(_: Request, exc: DataUnavailableError) -> JSONResponse:
         return JSONResponse(status_code=503, content={"detail": str(exc)})
 
+    @application.middleware("http")
+    async def cache_headers(request: Request, call_next):
+        """Let browsers and CDNs cache read-only GET responses (T-37).
+
+        Globe months and region boundaries only change with a new data version, so they
+        can be cached for an hour; /meta is short-lived so NRT status stays fresh.
+        """
+        response = await call_next(request)
+        if request.method == "GET" and response.status_code == 200:
+            path = request.url.path
+            if path.startswith(("/globe", "/regions")):
+                response.headers.setdefault("Cache-Control", "public, max-age=3600")
+            elif path == "/meta":
+                response.headers.setdefault("Cache-Control", "public, max-age=60")
+        return response
+
     @application.get("/health", tags=["meta"])
     def health() -> dict[str, str]:
         return {"status": "ok"}

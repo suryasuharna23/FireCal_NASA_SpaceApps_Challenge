@@ -1,4 +1,5 @@
-import { area as turfArea, bbox as turfBbox } from '@turf/turf';
+import { area as turfArea } from '@turf/area';
+import { bbox as turfBbox } from '@turf/bbox';
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 
 export type AoiGeometry = Polygon | MultiPolygon;

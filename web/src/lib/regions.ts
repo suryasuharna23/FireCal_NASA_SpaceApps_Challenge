@@ -1,4 +1,4 @@
-import { distance } from '@turf/turf';
+import { distance } from '@turf/distance';
 import type { Aoi } from './aoi';
 import { circleAoi } from './circle';
 
