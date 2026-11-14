@@ -77,6 +77,18 @@ export const messages = {
   'calendar.nrtNote': 'Dashed outline = NRT data not final',
   'calendar.asTable': 'View as table',
   'calendar.year': 'Year',
+  'calendar.view': 'Calendar view',
+  'calendar.count': 'Count',
+  'calendar.anomaly': 'Anomaly',
+  'calendar.anomalyUnit':
+    'Change vs the {start}–{end} median of the same month: red = above, blue = below.',
+  'tip.harmonized': 'Harmonized',
+  'tip.ci': '90% interval',
+  'tip.anomaly': 'Anomaly',
+  'tip.vsMedian': 'median {median}',
+  'tip.vsMedianShort': 'vs median',
+  'tip.percentile': 'Percentile',
+  'tip.source': 'Source: {source}',
   'globe.aria':
     'Interactive hotspot globe for {month}. Drag to rotate, scroll or pinch to zoom; arrow keys and plus/minus also work.',
   'globe.harmonized': 'Harmonized',

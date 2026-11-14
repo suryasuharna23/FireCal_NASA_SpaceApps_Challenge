@@ -966,3 +966,44 @@ h3 {
 .time-controls__month option {
   background: var(--panel-solid);
 }
+
+/* ---------- calendar tooltip ---------- */
+.calendar-area {
+  position: relative;
+}
+
+.cal-tooltip {
+  position: absolute;
+  z-index: 4;
+  min-width: 210px;
+  padding: 10px 12px;
+  transform: translate(-50%, calc(-100% - 8px));
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: rgba(8, 12, 26, 0.96);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.cal-tooltip dl {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2px 14px;
+  margin: 6px 0;
+}
+
+.cal-tooltip dt {
+  color: var(--muted);
+}
+
+.cal-tooltip dd {
+  margin: 0;
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-tooltip small {
+  color: var(--muted);
+}
