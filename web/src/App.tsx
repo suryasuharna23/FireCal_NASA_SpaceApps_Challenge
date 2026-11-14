@@ -11,6 +11,7 @@ import { AoiPanel } from './components/AoiPanel';
 import { CircleForm } from './components/CircleForm';
 import { RegionSearch } from './components/RegionSearch';
 import { GeoJsonUpload } from './components/GeoJsonUpload';
+import { Methodology } from './components/Methodology';
 import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
 import { useUrlSync } from './state/useUrlSync';
@@ -75,8 +76,7 @@ export default function App() {
         </main>
       ) : (
         <main id="main" className="page">
-          <h2>{t('nav.methodology')}</h2>
-          <p className="muted">{t('common.comingSoon')}</p>
+          <Methodology />
         </main>
       )}
 
