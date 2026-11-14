@@ -5,6 +5,28 @@ import { Methodology } from './Methodology';
 afterEach(() => vi.unstubAllGlobals());
 
 describe('Methodology', () => {
+  it('discloses the experimental country dataset and its actual source versions', async () => {
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        dataset_status: 'experimental',
+        source_versions: { MODIS: ['6.2', '6.03', '61.03'] },
+        coverage: {
+          country: 'Indonesia',
+          satellites: ['Terra', 'Aqua', 'S-NPP', 'NOAA-20'],
+          includes_nrt: false,
+          region_fallback: 'latitude zones',
+        },
+      },
+    });
+    renderWithQuery(<Methodology />);
+    expect(await screen.findByText(/Experimental dataset/)).toBeInTheDocument();
+    expect(screen.getByText(/Reported MODIS versions: 6.2, 6.03, 61.03/)).toBeInTheDocument();
+    expect(screen.getByText('Indonesia hold-out validation')).toBeInTheDocument();
+    expect(screen.getByText(/NRT data have not been appended/)).toBeInTheDocument();
+    expect(screen.queryByText('MODIS Collection 6.1')).not.toBeInTheDocument();
+  });
+
   it('explains sources, filters and harmonization with the live validation results', async () => {
     mockFetch({
       '/meta': {

@@ -59,6 +59,14 @@ export interface Meta {
   transition_month?: string;
   calibration_period?: string;
   grid_res_deg?: number;
+  dataset_status?: string | null;
+  source_versions?: Record<string, string[]> | null;
+  coverage?: {
+    country: string;
+    satellites: string[];
+    includes_nrt: boolean;
+    region_fallback: string;
+  } | null;
   nrt?: {
     provisional: boolean;
     since: string | null;

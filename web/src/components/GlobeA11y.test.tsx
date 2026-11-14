@@ -1,5 +1,5 @@
 import '../test/mapMocks';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
 import { AOI } from '../test/fixtures';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
@@ -13,7 +13,11 @@ const reducedMotion = (matches: boolean) =>
 
 beforeEach(() => {
   useAppStore.setState({ aoi: null, selected: { year: 2019, month: 9 }, mode: 'harmonized' });
-  mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0 }, '/points': { features: [] } });
+  mockFetch({
+    '/meta': META_OK,
+    '/globe': { cells: [], max: 0 },
+    '/points': { type: 'FeatureCollection', features: [], count: 0, aggregated: false },
+  });
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -24,7 +28,7 @@ describe('Globe accessibility (T-45)', () => {
     expect(globe).toHaveAttribute('tabindex', '0');
     expect(globe).toHaveAccessibleName(/September 2019, harmonized values, no area selected/);
 
-    useAppStore.setState({ aoi: AOI, mode: 'raw' });
+    act(() => useAppStore.setState({ aoi: AOI, mode: 'raw' }));
     await waitFor(() =>
       expect(globe).toHaveAccessibleName(/September 2019, raw per sensor values, area Area/),
     );

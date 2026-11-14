@@ -6,6 +6,29 @@ import pandas as pd
 import shapely
 
 
+def test_export_preserves_experimental_scope_and_version_disclosure():
+    from app.aoi import Aoi
+    from app.routers.export import header
+
+    aoi = Aoi.from_geojson(shapely.geometry.mapping(shapely.box(104, -2, 105, -1)), 1_000_000)
+    text = header(
+        "monthly",
+        aoi,
+        "2001-01",
+        "2025-12",
+        {
+            "data_version": "pilot",
+            "transition_month": "2021-12",
+            "dataset_status": "experimental",
+            "coverage": {"country": "Indonesia"},
+            "source_versions": {"MODIS": ["6.03", "61.03"]},
+        },
+    )
+    assert "coverage: Indonesia" in text and "experimental" in text
+    assert "MODIS: 6.03, 61.03" in text
+    assert "MODIS C6.1" not in text
+
+
 def _csv(text: str) -> tuple[list[str], pd.DataFrame]:
     comments = [line for line in text.splitlines() if line.startswith("#")]
     return comments, pd.read_csv(io.StringIO(text), comment="#")

@@ -8,13 +8,17 @@ and excluded from Git. No synthetic observations are used.
 
 - Official archive entry point: https://firms.modaps.eosdis.nasa.gov/download/
 - Machine-readable catalog: https://firms.modaps.eosdis.nasa.gov/data/country/yearly_summary_files.txt
-- MODIS C6.1: annual files for 2000-2025 (the record starts in November 2000).
+- MODIS: annual files for 2000-2025 (the record starts in November 2000).
+  The version audit found codes `6.2` (2000-2017), `6.03` (2018-2022), and
+  `61.03` (2023-2025). A homogeneous C6.1 history has not been verified; the
+  earlier blanket C6.1 label was incorrect for this pilot.
 - VIIRS S-NPP: annual files for 2012-2025.
 - VIIRS NOAA-20 (`viirs-jpss1`): annual files for 2018-2025.
 - NOAA-21 and 2026 are not included in this historical pilot.
 
 `archive_manifest.json` records the original URLs, catalog timestamps, byte sizes,
-SHA-256 checksums, row counts, detection date ranges, and satellite codes.
+SHA-256 checksums, row counts, detection date ranges, satellite codes, and reported
+versions on new downloads. `source_versions.json` audits ingested version codes.
 The downloader refuses missing expected product-years and does not publish a
 truncated download as a CSV. Completed files are reused on retry.
 Use `--reuse-catalog` to resume with the saved catalog during a NASA outage.
@@ -99,6 +103,11 @@ regional limitations. Regional accuracy needs further work before wider use.
 The overlap diagnostic suggests 2013-2019; the preselected 2013-2021 window was
 retained for this first evaluation. Any model/window revision needs training-only
 selection and a fresh evaluation protocol, rather than tuning to these hold-outs.
+
+The subsequent [regional audit](regional-audit-findings.md) found that only 9 of
+27 training-eligible provinces pass on 2022-2025. The country aggregate still
+passes, but that does not establish regional validity. The serving dataset is
+marked experimental, and its original coefficients are retained.
 
 To extend through 2026, acquire the missing standard-processing/NRT history with
 the FIRMS archive/API and inspect per-satellite availability before appending

@@ -96,11 +96,13 @@ def main() -> None:
     }
     write_json(paths.reports / "indonesia_verification.json", report)
     validation = read_json(paths.reports / "validation.json")
-    validation["administrative_regions"] = {
-        r["province"]: {k: r[k] for k in ("before", "after", "meets_target")} for r in results
-    }
+    validation.setdefault("administrative_regions", {}).update(
+        {r["province"]: {k: r[k] for k in ("before", "after", "meets_target")} for r in results}
+    )
     validation["limitations"] = [
-        text for text in validation.get("limitations", []) if not text.startswith("Province ")
+        text
+        for text in validation.get("limitations", [])
+        if not any(text.startswith(f"Province {name}:") for name in PROVINCES)
     ] + [
         f"Province {r['province']}: hold-out r={r['after']['r']:.4f}, "
         f"bias={r['after']['bias']:+.2%} misses the regional target (|bias| <= 10%)."

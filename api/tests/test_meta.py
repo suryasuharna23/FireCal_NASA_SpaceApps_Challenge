@@ -1,6 +1,25 @@
 import json
 
 
+def test_meta_exposes_experimental_scope_and_reported_versions(client, data_dir, monkeypatch):
+    from app.db import Dataset
+
+    meta = json.loads((data_dir / "meta.json").read_text())
+    meta.update(
+        {
+            "dataset_status": "experimental",
+            "source_versions": {"MODIS": ["6.03", "61.03"]},
+            "coverage": {"country": "Indonesia", "includes_nrt": False},
+        }
+    )
+    monkeypatch.setattr(Dataset, "meta", lambda self, con=None: meta)
+    body = client.get("/meta").json()
+    assert body["dataset_status"] == "experimental"
+    assert body["coverage"]["country"] == "Indonesia"
+    assert body["source_versions"]["MODIS"] == ["6.03", "61.03"]
+    assert "C6.1" not in body["attribution"]
+
+
 def test_meta_reports_version_range_and_nrt(client, data_dir) -> None:
     body = client.get("/meta").json()
     meta = json.loads((data_dir / "meta.json").read_text())

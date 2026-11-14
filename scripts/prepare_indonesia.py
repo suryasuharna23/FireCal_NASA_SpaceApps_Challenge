@@ -17,6 +17,7 @@ from firecal.harmonize import calibrate, merge_series
 from firecal.ingest import discover, ingest
 from firecal.io import read_json, write_json
 from firecal.overlap import monthly_pairs, suggest_period, yearly_ratios
+from firecal.provenance import audit_source_versions
 from firecal.regions import regions
 from firecal.schema import check_schema, publish_points
 from firecal.validate import validate
@@ -57,6 +58,7 @@ def main() -> None:
     ingest_reports = ingest(paths)
     if not all(r.years_match and not r.warnings for r in ingest_reports):
         raise ValueError("Review ingest coverage/satellite warnings before calibration")
+    provenance = audit_source_versions(paths)
     clean_report = clean(paths, settings.clean_config)
     publish_points(paths, settings.grid)
     problems = check_schema(paths.clean)
@@ -86,6 +88,9 @@ def main() -> None:
     calibrate(paths, settings.grid, settings.harmonize_config)
     meta = merge_series(paths, settings.grid, settings.harmonize_config)
     validation = validate(paths, settings.grid, settings.harmonize_config)
+    validation["limitations"].extend(provenance["limitations"])
+    validation["source_version_audit"] = provenance
+    write_json(paths.reports / "validation.json", validation)
 
     with duckdb.connect() as con:
         points_glob = f"{paths.points.as_posix()}/**/*.parquet"
@@ -95,7 +100,9 @@ def main() -> None:
                 f"SELECT DISTINCT satellite FROM read_parquet('{points_glob}') ORDER BY satellite"
             ).fetchall()
         ]
-    meta["sources"] = "NASA FIRMS MODIS C6.1 and VIIRS 375 m: " + ", ".join(satellites)
+    meta["sources"] = "NASA FIRMS MODIS annual archives and VIIRS 375 m: " + ", ".join(satellites)
+    meta["source_versions"] = provenance["reported_versions"]
+    meta["dataset_status"] = "experimental"
     meta["coverage"] = {
         "country": "Indonesia",
         "archive_years": manifest["requested_years"],
@@ -103,7 +110,7 @@ def main() -> None:
         "is_global": False,
         "includes_nrt": False,
         "region_fallback": "latitude zones (ecoregion map not supplied)",
-        "limitations": manifest["limitations"],
+        "limitations": manifest["limitations"] + provenance["limitations"],
     }
     write_json(paths.meta, meta)
     write_json(

@@ -86,6 +86,7 @@ def inspect_csv(path: Path, expected_year: int) -> dict:
         digest = hashlib.file_digest(raw, "sha256").hexdigest()
     count, first, last = 0, "9999", ""
     satellites: dict[str, int] = {}
+    versions: dict[str, int] = {}
     months: set[str] = set()
     with path.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -108,6 +109,8 @@ def inspect_csv(path: Path, expected_year: int) -> dict:
             months.add(date_text[:7])
             sat = row["satellite"]
             satellites[sat] = satellites.get(sat, 0) + 1
+            version = row.get("version", "unknown")
+            versions[version] = versions.get(version, 0) + 1
     return {
         "sha256": digest,
         "rows": count,
@@ -115,6 +118,7 @@ def inspect_csv(path: Path, expected_year: int) -> dict:
         "last_detection": last or None,
         "months_with_detections": sorted(months),
         "satellites": satellites,
+        "reported_versions": versions,
     }
 
 

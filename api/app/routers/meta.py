@@ -10,7 +10,7 @@ router = APIRouter(tags=["meta"])
 
 ATTRIBUTION = (
     "NASA FIRMS (Fire Information for Resource Management System), "
-    "MODIS C6.1 and VIIRS 375 m — https://firms.modaps.eosdis.nasa.gov"
+    "MODIS and VIIRS 375 m — https://firms.modaps.eosdis.nasa.gov"
 )
 
 
@@ -56,6 +56,9 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
         "transition_month": meta.get("transition_month"),
         "calibration_period": meta.get("calibration_period"),
         "grid_res_deg": meta.get("grid_res_deg"),
+        "coverage": meta.get("coverage"),
+        "source_versions": meta.get("source_versions"),
+        "dataset_status": meta.get("dataset_status"),
         "nrt": {
             "provisional": bool(provisional_months),
             "since": meta.get("nrt_since"),

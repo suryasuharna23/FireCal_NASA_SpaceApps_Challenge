@@ -2,7 +2,7 @@
 
 **Harmonized MODIS–VIIRS Fire Activity Calendar** — NASA Space Apps Challenge.
 
-FireCal is a web app that shows a monthly calendar of fire hotspot activity, from November 2000 to today, for any area the user selects. It combines MODIS and VIIRS data from [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) that are harmonized to a common MODIS-equivalent scale, so the switch between sensors does not create false trends.
+FireCal is a web app that shows a monthly calendar of fire hotspot activity from November 2000 to the latest processed month for a selected area. It estimates a common MODIS-equivalent scale from MODIS and VIIRS data supplied by [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov). The Indonesia pilot is experimental: regional bias and source-version limitations are documented in the [regional audit](docs/regional-audit-findings.md).
 
 The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireCal.pdf`](docs/FRD-Tickets-FireCal.pdf) (in Indonesian, the original project brief).
 
@@ -31,7 +31,7 @@ The pipeline runs daily and writes Parquet files. The API and the web app only r
 ## Prerequisites
 
 - Git, [Python 3.12](https://www.python.org/), and [uv](https://docs.astral.sh/uv/) 0.5 or newer
-- [Node.js 22 LTS](https://nodejs.org/) and [pnpm](https://pnpm.io/) 9 or newer (`corepack enable`)
+- [Node.js 22 LTS](https://nodejs.org/) 22.19.0 or newer and [pnpm](https://pnpm.io/) 9 or newer (`corepack enable`)
 - Docker and Docker Compose v2 (optional)
 - A free FIRMS `MAP_KEY` from the [FIRMS API page](https://firms.modaps.eosdis.nasa.gov/api/map_key/)
 
@@ -99,4 +99,4 @@ The backend and pipeline read `.env` in the repository root; the frontend reads 
 
 ## License and attribution
 
-The code is released under the [MIT license](LICENSE). Hotspot data comes from **NASA FIRMS** (Fire Information for Resource Management System), using MODIS Collection 6.1 and VIIRS 375 m (S-NPP, NOAA-20 and NOAA-21).
+The code is released under the [MIT license](LICENSE). Hotspot data comes from **NASA FIRMS** (Fire Information for Resource Management System), using MODIS and VIIRS 375 m products. Actual included satellites and reported source versions depend on the processed dataset and are exposed in `/meta`; homogeneous MODIS C6.1 coverage has not been verified for the public annual Indonesia archives.
