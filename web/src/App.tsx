@@ -7,6 +7,7 @@ import { MapAoi } from './components/MapAoi';
 import { Panel } from './components/Panel';
 import { StatusBar } from './components/StatusBar';
 import { AoiPanel } from './components/AoiPanel';
+import { CircleForm } from './components/CircleForm';
 import { useT } from './i18n';
 
 type Page = 'app' | 'methodology';
@@ -51,7 +52,9 @@ export default function App() {
             <MapAoi />
           </section>
           <section className="layout__side" aria-label={t('region.controls')}>
-            <AoiPanel />
+            <AoiPanel>
+              <CircleForm />
+            </AoiPanel>
             <Panel title={t('panel.time')}>
               <p className="muted">{t('common.comingSoon')}</p>
             </Panel>

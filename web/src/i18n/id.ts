@@ -40,6 +40,16 @@ export const id = {
   'aoi.drawn': 'Area yang digambar',
   'aoi.none': 'Belum ada area terpilih.',
   'aoi.clear': 'Hapus area',
+  'aoi.circleLabel': 'Lingkaran {r} km di {lat}, {lon}',
+  'circle.title': 'Area lingkaran dari koordinat',
+  'circle.lat': 'Lintang',
+  'circle.lon': 'Bujur',
+  'circle.radius': 'Radius (km)',
+  'circle.apply': 'Pakai lingkaran',
+  'circle.err.lat': 'Lintang harus antara −90 dan 90.',
+  'circle.err.lon': 'Bujur harus antara −180 dan 180.',
+  'circle.err.radius': 'Radius minimal 1 km.',
+  'circle.err.radiusMax': 'Radius maksimum {max} km.',
 };
 
 export type Messages = Record<keyof typeof id, string>;

@@ -370,3 +370,44 @@ select {
     height: 400px;
   }
 }
+
+/* ---------- forms ---------- */
+.aoi-summary {
+  margin: 0 0 12px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+  min-width: 0;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-2);
+}
+
+.field input[aria-invalid='true'] {
+  border-color: var(--error-fg);
+}
+
+.field small {
+  font-size: 0.74rem;
+}
+
+.field__error {
+  color: var(--error-fg);
+}
