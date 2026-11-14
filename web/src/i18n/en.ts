@@ -129,4 +129,9 @@ export const messages = {
     'Monthly climatology chart: median, P25–P75 range and the latest year. Fire season: {months}.',
   'clim.note':
     'Shaded months form the fire season: their median is above the 75th percentile of all months ({threshold}).',
+  'annual.total': 'Total hotspots',
+  'annual.rank': 'Rank {rank} of {of}',
+  'annual.partial': 'Incomplete year (partial range)',
+  'annual.aria': 'Annual hotspot totals. The highest year is {year} with {total} hotspots.',
+  'annual.table': 'View ranking as table',
 } as const;
