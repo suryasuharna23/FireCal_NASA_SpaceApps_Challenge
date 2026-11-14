@@ -65,6 +65,10 @@ Without `make` (for example on Windows), run the commands in the [`Makefile`](Ma
 
 After setting `FIRMS_MAP_KEY`, check it with `uv run firecal check-key`. For CI, store the same key as the GitHub secret `FIRMS_MAP_KEY` and run the **Check FIRMS MAP_KEY** workflow.
 
+For the real-data Indonesia pilot, the public annual archives can be downloaded
+without a MAP_KEY. See [the pilot guide](docs/indonesia-pilot.md) for the verified
+download command, processing steps, coverage, and validation limits.
+
 ## Commands
 
 | Command       | What it does                                                      |

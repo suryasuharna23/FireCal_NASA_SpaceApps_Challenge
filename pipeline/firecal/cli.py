@@ -100,6 +100,21 @@ def ingest() -> None:
         )
 
 
+@app.command("download-archive")
+def download_archive_cmd(
+    country: str = typer.Option("Indonesia", help="Exact country name in the NASA catalog."),
+    start: int = typer.Option(2000, help="First archive year."),
+    end: int = typer.Option(2025, help="Last published archive year to download."),
+    workers: int = typer.Option(4, min=1, max=8, help="Concurrent downloads."),
+    reuse_catalog: bool = typer.Option(False, help="Resume using the latest saved NASA catalog."),
+) -> None:
+    """Download public annual FIRMS country archives and verify their provenance."""
+    from firecal.archive import download_archive
+
+    report = download_archive(get_settings().paths, country, start, end, workers, reuse_catalog)
+    typer.echo(f"Verified {len(report['files'])} files, {report['rows']:,} rows for {country}.")
+
+
 @app.command()
 def synth(
     out: Path = typer.Option(None, help="Output folder (default: data/raw/synthetic)."),
