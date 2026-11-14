@@ -40,7 +40,7 @@ export function gradient(color: (t: number) => string, stops = 9): string {
 }
 
 export function formatCount(v: number, lang: string): string {
-  const locale = lang === 'en' ? 'en-GB' : 'id-ID';
+  const locale = lang;
   if (v >= 100) return Math.round(v).toLocaleString(locale);
   return v.toLocaleString(locale, { maximumFractionDigits: 1 });
 }

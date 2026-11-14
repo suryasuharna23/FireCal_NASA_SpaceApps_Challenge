@@ -37,13 +37,13 @@ describe('time rules', () => {
 describe('TimePanel', () => {
   it('shows defaults and applies a valid range and reference years', async () => {
     renderWithQuery(<TimePanel />);
-    const start = await screen.findByLabelText('Bulan awal');
+    const start = await screen.findByLabelText('Start month');
     expect(start).toHaveValue('2001-01');
-    expect(screen.getByLabelText('Bulan akhir')).toHaveValue('2026-11');
+    expect(screen.getByLabelText('End month')).toHaveValue('2026-11');
 
     fireEvent.change(start, { target: { value: '2010-01' } });
-    fireEvent.change(screen.getByLabelText('Dari'), { target: { value: '2005' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Terapkan' }));
+    fireEvent.change(screen.getByLabelText('From'), { target: { value: '2005' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
     const state = useAppStore.getState();
     expect(state.start).toBe('2010-01');
     expect(state.end).toBeNull(); // still the default
@@ -52,9 +52,11 @@ describe('TimePanel', () => {
 
   it('rejects an invalid range with a clear message', async () => {
     renderWithQuery(<TimePanel />);
-    fireEvent.change(await screen.findByLabelText('Bulan awal'), { target: { value: '1998-05' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Terapkan' }));
-    expect(screen.getByText(/di luar ketersediaan data \(2000-11 – 2026-11\)/)).toBeInTheDocument();
+    fireEvent.change(await screen.findByLabelText('Start month'), { target: { value: '1998-05' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
+    expect(
+      screen.getByText(/outside the available data \(2000-11 – 2026-11\)/),
+    ).toBeInTheDocument();
     expect(useAppStore.getState().start).toBeNull();
   });
 });

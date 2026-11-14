@@ -24,7 +24,7 @@ describe('Calendar', () => {
     useAppStore.setState({ aoi: null });
     mockFetch({ '/meta': META_OK });
     renderWithQuery(<Calendar />);
-    expect(screen.getByText(/Pilih area/)).toBeInTheDocument();
+    expect(screen.getByText(/Select an area/)).toBeInTheDocument();
   });
 
   it('renders a year x month grid from /calendar with a legend', async () => {
@@ -37,8 +37,8 @@ describe('Calendar', () => {
         .map((r) => r.textContent),
     ).toEqual(['2019', '2020', '2021']);
     expect(grid.querySelectorAll('button[role="gridcell"]')).toHaveLength(12 + 12 + 6);
-    expect(screen.getByLabelText(/September 2019: 200 titik panas/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Legenda')).toBeInTheDocument();
+    expect(screen.getByLabelText(/September 2019: 200 hotspots/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Legend')).toBeInTheDocument();
 
     const body = JSON.parse(
       (fetch.mock.calls as unknown as [string, RequestInit][]).find((c) =>
@@ -51,12 +51,12 @@ describe('Calendar', () => {
   it('switches to log scale and selects a month on click', async () => {
     mockFetch({ '/meta': META_OK, '/calendar': calendarFixture() });
     renderWithQuery(<Calendar />);
-    const cell = await screen.findByLabelText(/Maret 2020/);
+    const cell = await screen.findByLabelText(/March 2020/);
     const linear = cell.style.background;
     fireEvent.click(screen.getByRole('button', { name: 'Log' }));
-    expect(screen.getByLabelText(/Maret 2020/).style.background).not.toBe(linear);
+    expect(screen.getByLabelText(/March 2020/).style.background).not.toBe(linear);
 
-    fireEvent.click(screen.getByLabelText(/Maret 2020/));
+    fireEvent.click(screen.getByLabelText(/March 2020/));
     expect(useAppStore.getState().selected).toEqual({ year: 2020, month: 3 });
   });
 

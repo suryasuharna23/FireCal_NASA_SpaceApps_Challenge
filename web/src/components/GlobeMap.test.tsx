@@ -75,8 +75,8 @@ describe('GlobeMap', () => {
         ),
       ).toBe(true),
     );
-    expect(screen.getByText(/Terharmonisasi · VIIRS/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Legenda')).toHaveTextContent('40');
+    expect(screen.getByText(/Harmonized · VIIRS/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Legend')).toHaveTextContent('40');
   });
 
   it('follows the month selected in the calendar', async () => {
@@ -91,8 +91,8 @@ describe('GlobeMap', () => {
 
   it('stores a drawn polygon as the AOI and can delete it', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Poligon' })).toBeEnabled());
-    fireEvent.click(screen.getByRole('button', { name: 'Poligon' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Polygon' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Polygon' }));
     expect(FakeDraw.last?.mode).toBe('polygon');
 
     act(() => FakeDraw.last!.finish({ id: 'a', geometry: square(2), properties: {} }));
@@ -101,25 +101,25 @@ describe('GlobeMap', () => {
     expect(aoi!.areaKm2).toBeGreaterThan(40_000);
     expect(mapCalls.fitBounds.length).toBeGreaterThan(0);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Hapus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(useAppStore.getState().aoi).toBeNull();
   });
 
   it('rejects an AOI that is too large with a message', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Persegi' })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Rectangle' })).toBeEnabled());
     act(() => FakeDraw.last!.finish({ id: 'big', geometry: square(15), properties: {} }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('terlalu luas');
+    expect(await screen.findByRole('alert')).toHaveTextContent('too large');
     expect(useAppStore.getState().aoi).toBeNull();
     expect(FakeDraw.last!.features).toHaveLength(0);
   });
 
   it('toggles the idle rotation', async () => {
     renderWithQuery(<GlobeMap />);
-    const spin = await screen.findByRole('button', { name: 'Hentikan putaran' });
+    const spin = await screen.findByRole('button', { name: 'Stop rotation' });
     await waitFor(() => expect(spin).toBeEnabled());
     fireEvent.click(spin);
-    expect(screen.getByRole('button', { name: 'Putar otomatis' })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: 'Auto-rotate' })).toHaveAttribute(
       'aria-pressed',
       'false',
     );

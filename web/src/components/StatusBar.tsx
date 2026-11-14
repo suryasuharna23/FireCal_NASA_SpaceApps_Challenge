@@ -6,7 +6,7 @@ function formatDate(iso: string | null | undefined, lang: string) {
   const date = new Date(iso);
   return Number.isNaN(date.getTime())
     ? iso
-    : date.toLocaleDateString(lang === 'en' ? 'en-GB' : 'id-ID', {
+    : date.toLocaleDateString(lang, {
         day: 'numeric',
         month: 'short',
         year: 'numeric',

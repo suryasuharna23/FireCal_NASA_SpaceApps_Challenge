@@ -1,24 +1,17 @@
-import { en } from './en';
-import { id, type Messages } from './id';
+import { messages } from './en';
 
-export type Lang = 'id' | 'en';
-export type MessageKey = keyof Messages;
+export type MessageKey = keyof typeof messages;
 
-export const dictionaries: Record<Lang, Messages> = { id, en };
+/** Locale used for date and number formatting (the interface is English-only). */
+export const LOCALE = 'en-GB';
 
-export const defaultLang: Lang = import.meta.env.VITE_DEFAULT_LANG === 'en' ? 'en' : 'id';
-
-export function translate(lang: Lang, key: MessageKey, vars?: Record<string, string | number>) {
-  let text: string = dictionaries[lang][key] ?? dictionaries.id[key] ?? key;
+export function translate(key: MessageKey, vars?: Record<string, string | number>): string {
+  let text: string = messages[key];
   for (const [k, v] of Object.entries(vars ?? {})) text = text.replaceAll(`{${k}}`, String(v));
   return text;
 }
 
-/** Translator bound to the current language (language switcher arrives with T-40). */
+/** Translator for components; `lang` is the formatting locale. */
 export function useT() {
-  const lang = defaultLang;
-  return {
-    lang,
-    t: (key: MessageKey, vars?: Record<string, string | number>) => translate(lang, key, vars),
-  };
+  return { lang: LOCALE, t: translate };
 }

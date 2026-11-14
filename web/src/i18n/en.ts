@@ -1,6 +1,5 @@
-import type { Messages } from './id';
-
-export const en: Messages = {
+/** All interface text. The interface is English-only. */
+export const messages = {
   'app.tagline': 'Harmonized MODIS–VIIRS fire activity calendar, 2000–present',
   'nav.app': 'Calendar',
   'nav.methodology': 'Methodology',
@@ -88,4 +87,4 @@ export const en: Messages = {
   'globe.orbit': 'Back to orbit',
   'globe.help':
     'Drag to rotate the globe, scroll to zoom, then draw a polygon or rectangle to choose an area.',
-};
+} as const;

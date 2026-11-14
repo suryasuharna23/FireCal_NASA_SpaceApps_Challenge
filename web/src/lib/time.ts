@@ -60,7 +60,7 @@ export function validateTime(
 
 export function monthLabel(ym: string, lang: string): string {
   const [y, m] = ym.split('-').map(Number);
-  return new Date(Date.UTC(y!, m! - 1, 1)).toLocaleDateString(lang === 'en' ? 'en-GB' : 'id-ID', {
+  return new Date(Date.UTC(y!, m! - 1, 1)).toLocaleDateString(lang, {
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
