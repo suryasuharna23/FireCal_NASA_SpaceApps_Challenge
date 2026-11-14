@@ -167,4 +167,13 @@ export const messages = {
   'search.province': 'Province / state',
   'search.district': 'District',
   'search.tooLarge': 'Too large to analyse',
+  'upload.button': 'Upload GeoJSON',
+  'upload.hint': 'One Polygon or MultiPolygon in WGS84, up to 5 MB.',
+  'upload.err.size': 'The file is larger than 5 MB.',
+  'upload.err.json': 'The file is not valid JSON.',
+  'upload.err.notGeojson': 'The file is not GeoJSON.',
+  'upload.err.count': 'The file must contain exactly one polygon feature.',
+  'upload.err.type': 'The geometry must be a Polygon or MultiPolygon.',
+  'upload.err.coords': 'Coordinates must be longitude/latitude in WGS84 (−180…180, −90…90).',
+  'upload.err.tooLarge': 'The polygon covers {area}; the maximum is {max}.',
 } as const;

@@ -1196,3 +1196,27 @@ h3 {
   color: var(--muted);
   font-size: 0.74rem;
 }
+
+/* ---------- GeoJSON upload ---------- */
+.upload {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.upload__button {
+  cursor: pointer;
+}
+
+.upload:focus-within .upload__button {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.upload .form-error {
+  flex-basis: 100%;
+}

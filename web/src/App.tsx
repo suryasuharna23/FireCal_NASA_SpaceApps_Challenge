@@ -10,6 +10,7 @@ import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
 import { CircleForm } from './components/CircleForm';
 import { RegionSearch } from './components/RegionSearch';
+import { GeoJsonUpload } from './components/GeoJsonUpload';
 import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
 import { useUrlSync } from './state/useUrlSync';
@@ -60,6 +61,7 @@ export default function App() {
             <AoiPanel>
               <RegionSearch />
               <CircleForm />
+              <GeoJsonUpload />
             </AoiPanel>
             <TimePanel />
           </section>
