@@ -351,20 +351,73 @@ h3 {
   min-width: 0;
 }
 
+/*
+ * Results: one column on phones; on wide screens the summary spans the full width and
+ * the calendar sits next to the charts, so nothing is squeezed or stretched.
+ */
+.layout__results {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'summary'
+    'calendar'
+    'charts';
+}
+
+.results__summary {
+  grid-area: summary;
+}
+
+.results__calendar {
+  grid-area: calendar;
+}
+
+.results__charts {
+  grid-area: charts;
+}
+
+.results__summary,
+.results__calendar,
+.results__charts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.layout {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
 @media (min-width: 900px) {
   .layout {
-    padding: 20px;
-    grid-template-columns: minmax(0, 3fr) minmax(280px, 1.2fr);
+    gap: 20px;
+    padding: 20px 24px;
+    grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
     grid-template-areas:
       'view side'
       'results results';
+    align-items: start;
+  }
+
+  .layout__results {
+    gap: 20px;
   }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1200px) {
   .layout {
-    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.6fr) minmax(0, 1.4fr);
-    grid-template-areas: 'view side results';
+    grid-template-columns: minmax(0, 1.9fr) minmax(340px, 1fr);
+  }
+
+  .layout__results {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-areas:
+      'summary summary'
+      'calendar charts';
     align-items: start;
   }
 }
@@ -653,6 +706,8 @@ h3 {
   display: grid;
   gap: 2px;
   min-width: 420px;
+  /* Cap the width so cells stay close to square-ish instead of stretching into bars. */
+  max-width: 820px;
 }
 
 .calendar__row {
@@ -1092,6 +1147,28 @@ h3 {
   grid-column: 1 / -1;
 }
 
+/* Phones: the headline card on top, the other three in a 3-up row below it. */
+.kpis {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* With the summary spanning the page, all four cards fit in one row. */
+@media (min-width: 900px) {
+  .kpis {
+    grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr));
+  }
+
+  .kpi--current {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .kpi--hot {
   border-color: rgba(255, 122, 61, 0.55);
   background: linear-gradient(135deg, rgba(255, 122, 61, 0.18), rgba(4, 6, 13, 0.45) 60%);
@@ -1344,4 +1421,48 @@ h3 {
 .time-controls select:focus {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* ---------- phones: compact chrome so the globe and results get the space ---------- */
+@media (max-width: 600px) {
+  .app__header {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .brand p {
+    display: none;
+  }
+
+  .brand h1 {
+    font-size: var(--text-lg);
+  }
+
+  .tabs__tab {
+    padding: 5px 10px;
+    font-size: var(--text-sm);
+  }
+
+  .status {
+    gap: 2px 12px;
+    padding: 6px 12px;
+    font-size: var(--text-xs);
+  }
+
+  .layout,
+  .layout__results {
+    gap: 12px;
+  }
+
+  .layout {
+    padding: 12px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  .map--globe {
+    height: 380px;
+  }
 }

@@ -67,11 +67,17 @@ export default function App() {
             <TimePanel />
           </section>
           <section className="layout__results" aria-label={t('region.results')}>
-            <Kpi />
-            <Calendar />
-            <Climatology />
-            <AnnualTotals />
-            <ExportPanel />
+            <div className="results__summary">
+              <Kpi />
+            </div>
+            <div className="results__calendar">
+              <Calendar />
+            </div>
+            <div className="results__charts">
+              <Climatology />
+              <AnnualTotals />
+              <ExportPanel />
+            </div>
           </section>
         </main>
       ) : (
