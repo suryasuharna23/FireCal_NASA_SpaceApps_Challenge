@@ -71,6 +71,11 @@ download command, processing steps, coverage, and validation limits.
 
 ## Progress (14 November 2026)
 
+Current status and evidence are maintained in the [progress tracker](docs/PROGRESS.md).
+The next task is documented in the [bias-audit handover](docs/handover-bias-audit.md).
+For teammates, follow the [data onboarding guide](docs/DATA-ONBOARDING.md) to
+obtain the separate snapshot packages and run the app against the shared data.
+
 - [x] Historical Indonesia archive prepared and verified through December 2025.
 - [x] Regional calibration audit completed; baseline retained with documented limits.
 - [x] Missing 2026 and NOAA-21 data acquired: 463 verified API responses across
