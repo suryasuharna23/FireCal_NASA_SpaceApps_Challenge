@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useStats } from '../api/queries';
 import { annualOption } from '../charts/annual';
 import { EChart } from '../charts/EChart';
+import { useChartPng } from '../charts/useChartPng';
+import { PngButton } from './PngButton';
 import { useT } from '../i18n';
 import { formatCount } from '../lib/colors';
 import { useAppStore } from '../state/useAppStore';
@@ -12,6 +14,7 @@ export function AnnualTotals() {
   const { t, lang } = useT();
   const aoi = useAppStore((s) => s.aoi);
   const { data, error, isFetching } = useStats();
+  const png = useChartPng();
 
   const option = useMemo(() => {
     if (!data?.annual.length) return null;
@@ -29,7 +32,18 @@ export function AnnualTotals() {
   const top = ranked[0];
 
   return (
-    <Panel title={t('panel.annual')} id="annual">
+    <Panel
+      title={t('panel.annual')}
+      id="annual"
+      actions={
+        data && (
+          <PngButton
+            label={t('png.annual')}
+            onExport={() => png.exportPng(t('panel.annual'), data, 'annual')}
+          />
+        )
+      }
+    >
       {error && (
         <p className="form-error" role="alert">
           {(error as Error).message}
@@ -41,6 +55,7 @@ export function AnnualTotals() {
           <EChart
             option={option}
             height={240}
+            onReady={png.onReady}
             ariaLabel={t('annual.aria', {
               year: top?.year ?? '–',
               total: formatCount(top?.total ?? 0, lang),
