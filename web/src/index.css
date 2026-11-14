@@ -910,3 +910,59 @@ h3 {
   color: var(--muted);
   font-size: 0.72rem;
 }
+
+/* ---------- time controls ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.time-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(4, 6, 13, 0.45);
+}
+
+.time-controls__play {
+  min-width: 70px;
+  justify-content: center;
+}
+
+.time-controls__slider {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.time-controls__slider input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.time-controls__ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.time-controls__month select {
+  padding: 4px 8px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: rgba(4, 6, 13, 0.6);
+}
+
+.time-controls__month option {
+  background: var(--panel-solid);
+}
