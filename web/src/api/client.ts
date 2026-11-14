@@ -1,23 +1,86 @@
 import { useQuery } from '@tanstack/react-query';
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000').replace(/\/$/, '');
+export const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000').replace(
+  /\/$/,
+  '',
+);
 
-export async function apiGet<T>(path: string, params?: Record<string, string>): Promise<T> {
-  const url = new URL(`${BASE_URL}${path}`);
-  if (params) url.search = new URLSearchParams(params).toString();
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`GET ${path} failed: ${response.status}`);
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
+async function parse<T>(response: Response, path: string): Promise<T> {
+  if (!response.ok) {
+    let detail = `${path} failed (${response.status})`;
+    try {
+      const body = await response.json();
+      if (typeof body?.detail === 'string') detail = body.detail;
+    } catch {
+      /* non-JSON error body */
+    }
+    throw new ApiError(detail, response.status);
+  }
   return (await response.json()) as T;
+}
+
+export async function apiGet<T>(path: string, params?: Record<string, string | number>) {
+  const url = new URL(`${BASE_URL}${path}`);
+  for (const [k, v] of Object.entries(params ?? {})) url.searchParams.set(k, String(v));
+  return parse<T>(await fetch(url), path);
+}
+
+export async function apiPost<T>(path: string, body: unknown, signal?: AbortSignal) {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+    signal,
+  });
+  return parse<T>(response, path);
 }
 
 export interface Meta {
   api_version: string;
-  data_version: string | null;
-  last_updated: string | null;
-  nrt_provisional: boolean | null;
+  status: 'ok' | 'no_data';
+  detail?: string;
   attribution: string;
+  max_aoi_km2: number;
+  default_reference_years: [number, number];
+  data_version: string | null;
+  last_updated?: string;
+  last_acq_date?: string | null;
+  start_month?: string;
+  end_month?: string;
+  transition_month?: string;
+  calibration_period?: string;
+  grid_res_deg?: number;
+  nrt?: {
+    provisional: boolean;
+    since: string | null;
+    provisional_months: string[];
+    last_run: string | null;
+    ok: boolean;
+    errors: Record<string, string>;
+  };
+  validation?: {
+    test_years: number[] | null;
+    r: number | null;
+    bias: number | null;
+    mae: number | null;
+    meets_target: boolean | null;
+    limitations: string[];
+  };
 }
 
 export function useMeta() {
-  return useQuery({ queryKey: ['meta'], queryFn: () => apiGet<Meta>('/meta') });
+  return useQuery({
+    queryKey: ['meta'],
+    queryFn: () => apiGet<Meta>('/meta'),
+    staleTime: 5 * 60 * 1000,
+  });
 }

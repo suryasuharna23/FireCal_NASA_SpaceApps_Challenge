@@ -3,10 +3,10 @@ import { Panel } from './Panel';
 
 /** Placeholder - implemented in T-41. */
 export function Globe() {
-  const t = useT();
+  const { t } = useT();
   return (
-    <Panel title={t('globe')}>
-      <p>{t('comingSoon')}</p>
+    <Panel title={t('panel.globe')}>
+      <p className="muted">{t('common.comingSoon')}</p>
     </Panel>
   );
 }

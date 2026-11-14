@@ -3,10 +3,10 @@ import { Panel } from './Panel';
 
 /** Placeholder - implemented in T-28. */
 export function Kpi() {
-  const t = useT();
+  const { t } = useT();
   return (
-    <Panel title={t('kpi')}>
-      <p>{t('comingSoon')}</p>
+    <Panel title={t('panel.kpi')}>
+      <p className="muted">{t('common.comingSoon')}</p>
     </Panel>
   );
 }
