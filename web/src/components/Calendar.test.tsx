@@ -6,7 +6,13 @@ import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { Calendar } from './Calendar';
 
 beforeEach(() => {
-  useAppStore.setState({ aoi: AOI, scale: 'linear', mode: 'harmonized', selected: null });
+  useAppStore.setState({
+    aoi: AOI,
+    scale: 'linear',
+    mode: 'harmonized',
+    selected: null,
+    calendarView: 'count',
+  });
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -58,6 +64,33 @@ describe('Calendar', () => {
 
     fireEvent.click(screen.getByLabelText(/March 2020/));
     expect(useAppStore.getState().selected).toEqual({ year: 2020, month: 3 });
+  });
+
+  it('shows a tooltip with harmonized, per-sensor, interval and anomaly values', async () => {
+    mockFetch({ '/meta': META_OK, '/calendar': calendarFixture() });
+    renderWithQuery(<Calendar />);
+    fireEvent.mouseEnter(await screen.findByLabelText(/^September 2020/));
+    const tip = screen.getByRole('tooltip');
+    expect(tip).toHaveTextContent('September 2020');
+    expect(tip).toHaveTextContent('Harmonized205');
+    expect(tip).toHaveTextContent('MODIS205');
+    expect(tip).toHaveTextContent('VIIRS615');
+    expect(tip).toHaveTextContent('90% interval205–205');
+    expect(tip).toHaveTextContent('+3%');
+    expect(tip).toHaveTextContent('median 200');
+    expect(tip).toHaveTextContent('Source: MODIS');
+  });
+
+  it('switches to the diverging anomaly view', async () => {
+    mockFetch({ '/meta': META_OK, '/calendar': calendarFixture() });
+    renderWithQuery(<Calendar />);
+    const cell = await screen.findByLabelText(/^September 2021/);
+    const before = cell.style.background;
+    fireEvent.click(screen.getByRole('button', { name: 'Anomaly' }));
+    expect(useAppStore.getState().calendarView).toBe('anomaly');
+    expect(screen.getByLabelText(/^September 2021/).style.background).not.toBe(before);
+    expect(screen.getByText(/red = above, blue = below/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Log' })).toBeNull();
   });
 
   it('shows API errors', async () => {

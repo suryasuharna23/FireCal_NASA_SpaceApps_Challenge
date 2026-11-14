@@ -44,3 +44,10 @@ export function formatCount(v: number, lang: string): string {
   if (v >= 100) return Math.round(v).toLocaleString(locale);
   return v.toLocaleString(locale, { maximumFractionDigits: 1 });
 }
+
+/** Signed percentage such as "+12%" or "−8%" ("–" when unknown). */
+export function formatPct(v: number | null, lang: string): string {
+  if (v === null || !Number.isFinite(v)) return '–';
+  const abs = Math.abs(v).toLocaleString(lang, { maximumFractionDigits: 0 });
+  return `${v > 0 ? '+' : v < 0 ? '−' : '±'}${abs}%`;
+}
