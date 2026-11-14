@@ -25,6 +25,21 @@ export const id = {
   'status.provisional': 'Data NRT belum final',
   'status.firmsFailed': 'Pembaruan FIRMS terakhir gagal — menampilkan data terakhir',
   'footer.attribution': 'Data: NASA FIRMS (MODIS C6.1 & VIIRS 375 m).',
+  'map.aria': 'Peta interaktif untuk menggambar area (AOI)',
+  'map.tools': 'Alat gambar',
+  'map.polygon': 'Poligon',
+  'map.rectangle': 'Persegi',
+  'map.edit': 'Ubah',
+  'map.delete': 'Hapus',
+  'map.hint.static': '',
+  'map.hint.polygon': 'Klik untuk menambah titik sudut, klik titik pertama untuk menutup poligon.',
+  'map.hint.rectangle': 'Klik satu sudut lalu klik sudut seberangnya.',
+  'map.hint.select': 'Seret area atau titik sudutnya untuk mengubah bentuk.',
+  'map.tooLarge': 'Area {area} terlalu luas; maksimum {max}. Gambar area yang lebih kecil.',
+  'map.invalid': 'Bentuk area tidak valid. Coba gambar ulang.',
+  'aoi.drawn': 'Area yang digambar',
+  'aoi.none': 'Belum ada area terpilih.',
+  'aoi.clear': 'Hapus area',
 };
 
 export type Messages = Record<keyof typeof id, string>;

@@ -1,3 +1,4 @@
+import './test/mapMocks';
 import { fireEvent, screen } from '@testing-library/react';
 import App from './App';
 import { META_OK, mockFetch, renderWithQuery } from './test/render';
