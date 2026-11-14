@@ -1,4 +1,4 @@
-import { circle as turfCircle } from '@turf/turf';
+import { circle as turfCircle } from '@turf/circle';
 import type { MessageKey } from '../i18n';
 import { areaKm2, type Aoi } from './aoi';
 
