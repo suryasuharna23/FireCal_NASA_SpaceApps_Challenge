@@ -77,11 +77,23 @@ class Dataset:
             self._meta = (time.monotonic(), meta)
             return meta
 
-    def report(self, name: str) -> dict[str, Any] | None:
-        if self.remote:
+    def report(
+        self, name: str, con: duckdb.DuckDBPyConnection | None = None
+    ) -> dict[str, Any] | None:
+        """A JSON report written by the pipeline (processed/reports/<name>), if any."""
+        location = self.path(f"reports/{name}")
+        try:
+            if self.remote:
+                row = (
+                    (con or connect())
+                    .execute("SELECT content FROM read_text(?)", [location])
+                    .fetchone()
+                )
+                return json.loads(row[0]) if row else None
+            path = Path(location)
+            return json.loads(path.read_text()) if path.exists() else None
+        except (OSError, duckdb.Error, ValueError):
             return None
-        path = Path(self.path(f"reports/{name}"))
-        return json.loads(path.read_text()) if path.exists() else None
 
 
 _datasets: dict[str, Dataset] = {}
