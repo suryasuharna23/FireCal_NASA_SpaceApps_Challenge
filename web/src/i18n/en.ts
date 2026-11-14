@@ -158,4 +158,13 @@ export const messages = {
   'share.button': 'Share view',
   'share.copied': 'Link copied',
   'share.manual': 'Copy this link to share the current view:',
+  'search.label': 'Find a country or province',
+  'search.placeholder': 'e.g. Riau, California, Portugal',
+  'search.hint': 'Type at least two letters. Boundaries are used as the area.',
+  'search.results': 'Matching regions',
+  'search.none': 'No matching region.',
+  'search.country': 'Country',
+  'search.province': 'Province / state',
+  'search.district': 'District',
+  'search.tooLarge': 'Too large to analyse',
 } as const;

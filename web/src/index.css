@@ -1133,3 +1133,66 @@ h3 {
   margin-left: 6px;
   border-radius: 999px;
 }
+
+/* ---------- region search ---------- */
+.region-search {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  font-size: 0.84rem;
+}
+
+.region-search__label {
+  color: #c9d3f5;
+}
+
+.region-search input {
+  padding: 6px 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: rgba(4, 6, 13, 0.6);
+}
+
+.region-search input:focus {
+  border-color: var(--orbit);
+}
+
+.region-search__results {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.region-search__results button {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(20, 29, 56, 0.6);
+  text-align: left;
+  cursor: pointer;
+}
+
+.region-search__results li:last-child button {
+  border-bottom: 0;
+}
+
+.region-search__results button:hover:not(:disabled) {
+  background: rgba(94, 231, 255, 0.12);
+}
+
+.region-search__results button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.region-search__meta {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
