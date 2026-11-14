@@ -8,13 +8,16 @@ test.beforeEach(async ({ page }) => {
 test('app shell renders', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1, name: 'FireCal' })).toBeVisible();
-  await expect(page.getByText('NRT data not final')).toBeVisible();
+  await expect(page.locator('.status').getByText('NRT data not final')).toBeVisible();
 });
 
 test('main flow: globe → region → calendar → CSV', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('application', { name: /Interactive hotspot globe/ })).toBeVisible();
-  await page.getByRole('button', { name: /South Sumatra/ }).click();
+  await page
+    .locator('#aoi-panel')
+    .getByRole('button', { name: /South Sumatra/ })
+    .click();
   await expect(page.locator('.aoi-summary')).toContainText('South Sumatra, Indonesia');
   await expect(page.getByRole('gridcell', { name: /^September 2016/ })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'November 2026 vs usual' })).toBeVisible();

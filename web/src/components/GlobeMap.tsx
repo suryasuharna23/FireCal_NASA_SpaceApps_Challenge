@@ -40,7 +40,6 @@ import { monthNames } from '../lib/months';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
 import { aoiForClick } from '../lib/regions';
-import { RegionList } from './RegionList';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
@@ -65,6 +64,11 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const [tool, setTool] = useState<Tool>('static');
   const [error, setError] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(() => !prefersReducedMotion());
+  // The legend starts folded on phones so it does not cover the globe.
+  const [legendOpen, setLegendOpen] = useState(
+    () =>
+      typeof window.matchMedia !== 'function' || !window.matchMedia('(max-width: 600px)').matches,
+  );
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const mode = useAppStore((s) => s.mode);
@@ -437,7 +441,16 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           )}
         </div>
         <div className="globe__hud globe__hud--bottom">
-          <div className="globe__legend" aria-label={t('calendar.legend')}>
+          <details
+            className="globe__legend"
+            aria-label={t('calendar.legend')}
+            open={legendOpen}
+            onToggle={(e) => setLegendOpen((e.currentTarget as HTMLDetailsElement).open)}
+          >
+            <summary>
+              {t('globe.legend')}
+              {aoi && points.data ? ` · ${formatCount(points.data.count, lang)}` : ''}
+            </summary>
             <div className="legend__bar" style={{ background: gradient(countColor) }} />
             <div className="legend__ticks">
               <span>0</span>
@@ -489,7 +502,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
                 )}
               </div>
             )}
-          </div>
+          </details>
           <div className="globe__buttons">
             <button
               type="button"
@@ -521,7 +534,6 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           {(globe.error as Error).message}
         </p>
       )}
-      <RegionList />
       {children}
     </Panel>
   );
