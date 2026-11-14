@@ -4,8 +4,8 @@ import { Climatology } from './components/Climatology';
 import { Globe } from './components/Globe';
 import { Kpi } from './components/Kpi';
 import { MapAoi } from './components/MapAoi';
-import { Panel } from './components/Panel';
 import { StatusBar } from './components/StatusBar';
+import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
 import { CircleForm } from './components/CircleForm';
 import { useT } from './i18n';
@@ -55,9 +55,7 @@ export default function App() {
             <AoiPanel>
               <CircleForm />
             </AoiPanel>
-            <Panel title={t('panel.time')}>
-              <p className="muted">{t('common.comingSoon')}</p>
-            </Panel>
+            <TimePanel />
           </section>
           <section className="layout__results" aria-label={t('region.results')}>
             <Kpi />
