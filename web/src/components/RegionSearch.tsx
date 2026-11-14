@@ -85,7 +85,7 @@ export function RegionSearch() {
         value={query}
         placeholder={t('search.placeholder')}
         autoComplete="off"
-        aria-controls={listId}
+        aria-controls={hits.length > 0 ? listId : undefined}
         aria-describedby={`${listId}-hint`}
         onChange={(e) => setQuery(e.target.value)}
       />
