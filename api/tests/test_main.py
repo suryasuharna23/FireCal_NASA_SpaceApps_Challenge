@@ -18,6 +18,6 @@ def test_meta_includes_firms_attribution() -> None:
     assert "NASA FIRMS" in response.json()["attribution"]
 
 
-@pytest.mark.parametrize("path", ["/points", "/export", "/globe"])
+@pytest.mark.parametrize("path", ["/export", "/globe"])
 def test_planned_endpoints_return_501(path: str) -> None:
     assert client.get(path).status_code == 501
