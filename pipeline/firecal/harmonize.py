@@ -295,6 +295,7 @@ def merge_series(paths: DataPaths, grid: GridSpec, cfg: HarmonizeConfig) -> dict
         "sources": "NASA FIRMS MODIS C6.1 (Terra, Aqua) and VIIRS 375 m (S-NPP, NOAA-20, NOAA-21)",
     }
     write_json(paths.meta, meta)
+    build_globe(paths, grid)
     apply_weights(paths)
     log.info("Harmonized %s .. %s (%d months), version %s",
              meta["start_month"], meta["end_month"], len(index), meta["data_version"])  # fmt: skip
@@ -340,3 +341,39 @@ def apply_weights(paths: DataPaths) -> int:
     shutil.rmtree(paths.points)
     tmp.rename(paths.points)
     return con.execute(f"SELECT count(*) FROM {read_sql(paths.points)}").fetchone()[0]
+
+
+GLOBE_RES = 0.5
+
+
+def build_globe(paths: DataPaths, grid: GridSpec, res: float = GLOBE_RES) -> int:
+    """Coarse (0.5°) monthly cube for the globe, sorted by (year, month) (T-42).
+
+    Columns: ``year, month, lon, lat, harmonized, raw`` where ``raw`` is the
+    unconverted count of the month's source sensor. Sorting by month lets the API
+    read a single month through row-group pruning in well under a second.
+    """
+    res = max(res, grid.res)
+    con = duckdb.connect()
+    con.execute(
+        f"""COPY (
+            WITH h AS (
+                SELECT year, month, n_harmonized,
+                       CASE WHEN source = 'MODIS' THEN n_modis ELSE n_viirs END AS raw,
+                       -180 + (cell_id % {grid.ncols} + 0.5) * {grid.res} AS lon,
+                       90 - (cell_id // {grid.ncols} + 0.5) * {grid.res} AS lat
+                FROM read_parquet('{paths.harmonized.as_posix()}')
+            )
+            SELECT CAST(year AS SMALLINT) AS year, CAST(month AS TINYINT) AS month,
+                   CAST(floor((lon + 180) / {res}) * {res} - 180 + {res / 2} AS FLOAT) AS lon,
+                   CAST(floor((lat + 90) / {res}) * {res} - 90 + {res / 2} AS FLOAT) AS lat,
+                   CAST(sum(n_harmonized) AS FLOAT) AS harmonized,
+                   CAST(sum(raw) AS FLOAT) AS raw
+            FROM h GROUP BY ALL
+            HAVING sum(n_harmonized) > 0 OR sum(raw) > 0
+            ORDER BY year, month, lon, lat
+        ) TO '{paths.globe.as_posix()}' (FORMAT parquet, COMPRESSION zstd, ROW_GROUP_SIZE 20000)"""
+    )
+    return con.execute(f"SELECT count(*) FROM read_parquet('{paths.globe.as_posix()}')").fetchone()[
+        0
+    ]
