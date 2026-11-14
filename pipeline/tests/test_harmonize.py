@@ -125,3 +125,16 @@ def test_viirs_point_weights_sum_to_harmonized(gridded) -> None:
     # every point: in-series weights reproduce the merged series per cell-month
     total = pts[pts.in_series].groupby(["cell_id", "year", "month"]).weight.sum()
     assert (total - h.loc[total.index, "n_harmonized"]).abs().max() < 1e-9
+
+
+def test_globe_cube_aggregates_to_half_degree(gridded) -> None:
+    from firecal.harmonize import merge_series
+
+    calibrate(gridded, SPEC, CFG)
+    merge_series(gridded, SPEC, CFG)
+    globe = pd.read_parquet(gridded.globe)
+    h = pd.read_parquet(gridded.harmonized)
+    assert ((globe.lon + 180 - 0.25) % 0.5 == 0).all()
+    assert globe.harmonized.sum() == pytest.approx(h.n_harmonized.sum(), rel=1e-5)
+    ym = globe.year.astype(int) * 100 + globe.month.astype(int)
+    assert ym.is_monotonic_increasing

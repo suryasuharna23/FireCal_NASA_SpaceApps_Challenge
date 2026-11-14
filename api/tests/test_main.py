@@ -32,8 +32,3 @@ def test_meta_without_data_reports_no_data(empty_client) -> None:
 def test_data_endpoints_without_data_return_503(empty_client) -> None:
     aoi = {"type": "Polygon", "coordinates": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]}
     assert empty_client.post("/calendar", json={"aoi": aoi}).status_code == 503
-
-
-@pytest.mark.parametrize("path", ["/globe"])
-def test_planned_endpoints_return_501(empty_client, path: str) -> None:
-    assert empty_client.get(path).status_code == 501

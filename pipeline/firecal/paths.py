@@ -62,6 +62,11 @@ class DataPaths:
         return self.processed / "harmonized.parquet"
 
     @property
+    def globe(self) -> Path:
+        """Harmonized counts on a coarse grid, sorted by month (globe view)."""
+        return self.processed / "globe.parquet"
+
+    @property
     def points(self) -> Path:
         return self.processed / "points"
 
