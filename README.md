@@ -97,7 +97,7 @@ unresolved in the [regional audit record](docs/regional-audit-findings.md).
 
 ## Commands
 
-For the continuation of hsbu's 2026 bias investigation, see the [progress tracker](docs/PROGRESS.md) and [fixed-coefficient audit protocol](docs/bias-audit-protocol.md). Start with `uv run --no-sync python scripts/audit_indonesia_bias.py --check-inputs`; the real snapshot and acquisition receipts must be transferred separately because they are excluded from Git.
+The real-data 2026 bias diagnostics are complete: see the [findings and charts](docs/bias-audit-findings.md), [progress tracker](docs/PROGRESS.md), and [next evaluation proposal](docs/bias-evaluation-next.md). The national bias remains -12.20%; no correction is promoted. To reproduce the audit, start with `uv run --no-sync python scripts/audit_indonesia_bias.py --check-inputs`; the snapshot and acquisition receipts are transferred separately because they are excluded from Git.
 
 | Command       | What it does                                                      |
 | ------------- | ----------------------------------------------------------------- |

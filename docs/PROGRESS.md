@@ -1,6 +1,62 @@
 # FireCal progress - 14 November 2026
 
-## Shared data handoff update from ASUS
+## Current status: real-data diagnostic audit completed
+
+The supplied processed and sources ZIPs are now on the faiz computer. Origin was
+fetched and the branch fast-forwarded to `568b9db` before analysis. The historical
+transfer-wait record below is retained as history, not the current blocker.
+
+- [x] Verify both archive SHA-256 values and every packaged file (52 + 991 files).
+- [x] Extract without overwriting existing work; confirm snapshot `593ae2d95fdf`.
+- [x] Verify all 463 saved API responses and 27 point partitions.
+- [x] Freeze inputs and reproduce all 102 saved national/provincial regression rows.
+- [x] Reconcile point counts, satellite divisors and point weights with the cube.
+- [x] Run fixed-coefficient source/platform/month/province sensitivity diagnostics.
+- [x] Retrieve the actual NASA missing-data table (178 source/platform/date records).
+- [x] Join it to 1,590 snapshot platform-days and document exposure limitations.
+- [x] Verify actual API/CSV behavior for the three pilot provinces without changing
+      snapshot reports or serving configuration.
+- [x] Publish [findings, charts and tables](bias-audit-findings.md).
+- [x] Lock [the next evaluation proposal](bias-evaluation-next.md) before fitting
+      or selecting any replacement model.
+- [x] Make the test input fixture work when Windows cannot create directory symlinks.
+- [x] Run the full Python suite: **153 passed**, one dependency deprecation warning.
+      Ruff lint/format and documentation/artifact checks also pass.
+
+The national January-October 2026 bias is reproduced at -12.20%; 8/27 eligible
+provinces meet both targets. August and September account for 91.47% of the net
+shortfall. Excluding NOAA-21 changes national bias by only +0.239 percentage
+points and does not resolve it. No correction is promoted.
+
+The exposure investigation has results, not a numerical exposure correction:
+31 NASA-flagged S-NPP days in May also contain 2,889 retained SP detections.
+Those flags cannot be subtracted as whole lost observation days. Valid swath
+or equivalent area/time coverage remains necessary for exposure-aware fitting.
+
+Completed full local runs:
+
+- `data/interim/bias-audit-20261114/audit.json`
+- `data/interim/bias-audit-exposure-20261114-r2/exposure.json`
+- `data/interim/bias-audit-live-api-checks-20261114.json`
+- `data/interim/bias-audit-tests-20261114.log`
+
+Small shareable artifacts are in `docs/reports/bias-audit-20261114/`. The
+snapshot's raw data, receipts and large working tables remain ignored by Git.
+The model and serving settings remain unchanged. Do not interpret a completed
+diagnostic audit as proof that its accuracy shortcomings have been corrected.
+
+## Future work, gated on new evidence
+
+- [ ] Qualify valid-observation exposure and product-version provenance.
+- [ ] Obtain matched SP/NRT products for any processing-mode correction hypothesis.
+- [ ] Fit the finite, predeclared development family and perform training-only selection.
+- [ ] Evaluate a locked candidate prospectively on complete December 2026-November
+      2027 standard-product months when available; current known outcomes are not fresh tests.
+- [ ] Review regional accuracy and uncertainty before any serving promotion.
+
+## Historical record before the data transfer
+
+### Shared data handoff update from ASUS
 
 The continuation commit `90da7d7` and onboarding commit `dac4c13` are integrated
 on the same branch. The machine-specific continuation record below is retained;
@@ -22,7 +78,7 @@ its missing-input and test results describe the faiz computer before transfer.
   pass. Preflight against the extracted packages reports ready, 27 point
   partitions and 463 verified API responses. The full numerical audit is pending.
 
-## Branch and continuation
+### Branch and continuation
 
 - Branch: `feat/firms-api-acquisition`, based on hsbu's `54a2ed9`.
 - Continuation checkout on this computer:
@@ -32,7 +88,7 @@ its missing-input and test results describe the faiz computer before transfer.
 - The supplied [handover](handover-bias-audit.md) is preserved as context. Its
   results and previous-machine paths are not evidence of files existing here.
 
-## Previously completed by hsbu
+### Previously completed by hsbu
 
 The branch contains real Indonesia acquisition, country filtering, the pilot,
 regional-model audit, and experimental extension. See
@@ -44,7 +100,7 @@ national January-October 2026 bias -12.20%, r 0.9944, and 8/27 eligible province
 meeting both targets. Those values have **not been reproduced on this computer**.
 The previous model was retained after its candidate-selection rule failed.
 
-## Added in this continuation
+### Added in this continuation
 
 - [x] Identify hsbu's remote branch and inspect its acquisition/audit code.
 - [x] Create a separate checkout tracking his existing branch.
@@ -72,7 +128,7 @@ The model, serving configuration, existing datasets, and deployment are unchange
 No new real-data acquisition was performed. The continuation is published on
 hsbu's existing branch; numerical execution remains pending the data transfer.
 
-## Missing input, not an unsuccessful scientific result
+### Missing input, not an unsuccessful scientific result
 
 A bounded search in this computer's Documents, Desktop and Downloads found the
 handover and the earlier synthetic onboarding data, but not hsbu's real snapshot.
@@ -106,7 +162,7 @@ reproduction before completed diagnostics are published. Existing output
 directories cannot be reused. A failed numerical run retains only its input
 lock; inspect for a completed `audit.json` before treating a run as successful.
 
-## Validation on this machine
+### Validation on this machine
 
 | Check | Observed result |
 | --- | --- |

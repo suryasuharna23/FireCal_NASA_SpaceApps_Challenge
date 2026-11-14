@@ -1,0 +1,35 @@
+{
+  "status": "diagnostics_complete_exposure_unresolved",
+  "data_version": "593ae2d95fdf",
+  "baseline_reproduction": {
+    "rows_compared": 102,
+    "matches": true,
+    "rtol": 1e-08,
+    "atol": 1e-08
+  },
+  "point_grid_reconciliation": {
+    "cell_months_checked": 108102,
+    "months_checked": 83,
+    "mismatches": 0
+  },
+  "max_point_weight_balance_error": 3.376499080331996e-11,
+  "eligible_provinces": 27,
+  "national_2026_jan_oct": {
+    "r": 0.9943572383292403,
+    "bias": -0.12201664297866348,
+    "mae": 1559.5768617100027,
+    "months": 10,
+    "meets_target": false
+  },
+  "model_refitted": false,
+  "serving_changed": false,
+  "limitations": [
+    "SP/NRT periods are seasonally confounded, not paired processing experiments.",
+    "Satellite-subset diagnostics retain coefficients trained on another mixture.",
+    "Terra/Aqua separately are uncalibrated references, not replacement target scales.",
+    "Successful requests and detection days do not establish valid observation exposure.",
+    "November 2026 is partial; S-NPP availability ending Nov 2 is not proof of outage.",
+    "2016/2019, 2022-2025 and observed 2026 outcomes are known, not fresh hold-outs.",
+    "Residual contributions are accounting, not causal effects of source/satellite."
+  ]
+}

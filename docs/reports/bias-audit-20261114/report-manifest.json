@@ -1,0 +1,29 @@
+{
+  "data_version": "593ae2d95fdf",
+  "report_script_sha256": "9b5948b138de93fb27c3aedd5b2ee98797696bffd50079458206456de81c4e23",
+  "source_files": {
+    "data\\interim\\bias-audit-20261114\\period_metrics.csv": "b5e0b26566d4fd32c2ac2d0f0edf3aabacd9a64058f591491a8453cec1ec593f",
+    "data\\interim\\bias-audit-20261114\\monthly_sensitivity.csv": "cc8b5a1abc3db647d0ac9a22b39e07a1533f5e48d672fc5517de7a7cf1626314",
+    "data\\interim\\bias-audit-20261114\\retained_platform_source_versions.csv": "8624429b43135342db2ab5c7d6e723750d072c586f1fad2e6e418cf539212995",
+    "data\\interim\\bias-audit-exposure-20261114-r2\\exposure.json": "b4211cddf1cc065d963c7585edc30d18efb43a8d07704946cfb8ad863efe92c0",
+    "data\\interim\\bias-audit-exposure-20261114-r2\\daily_evidence_inventory.csv": "e0590b4434502f31bc930460cab30a72425550eca6d08f2f21fdc66c2c98d1c3"
+  },
+  "outputs": {
+    "audit-result.json": "e9ec5288387f0d7adccc1cee0035630678c96223a561eb70b32419f517d89908",
+    "daily-exposure-evidence.csv": "d790ef3f221f44a65affc075fa564b04aceb804e965b07259bd5123274527b48",
+    "exposure-result.json": "c957d88516ebe7e1eef73b354c2b333dd74978aa30a25db83d3a037443bcd644",
+    "input-manifest.json": "161577945708ba2a8f0edbfd0d3d00d0f29c041353cb53bab4a76c9f3313cf3e",
+    "monthly-diagnosis.png": "5c1cabe0ab8ceb5a5e5e705515c92671fc08f05d56a4a924fe9dfa8587e06008",
+    "monthly-gap-flags.csv": "3c268f48eb165347e42220673e5e985f82f6d021b2f62529edab1c567a99230a",
+    "nasa-missing-data-response.json.gz": "2fed42f353251d5cf58ffefe80dfb0e934ebfedaa66dbd9c4b252b0ee3d43da2",
+    "nasa-missing-days.csv": "9ee6b8e3f915842c7fe344e199703bacfcbb5c063a1892cab0c0d4f9f2823d79",
+    "national-monthly-sensitivity.csv": "eee5b46af41c4d2ef6d5c3c2e8c6557dec82697f6057ba9a57ad7b55e916954c",
+    "national-periods.csv": "7c8ac67d5f41a1f3d2104aa0f318c7f676703a6c4275c5af0fd364e1fea281de",
+    "regional-bias.png": "880055a9191d989ada71e4ae1b63e8d0acfd9ab937818ddd53b9d001bebf2f82",
+    "regional-periods.csv": "f0c4895f5ba0ac120bd4a8abacd56203e29fe3db53b45fe9210cefca63e96a97",
+    "satellite-sensitivity.csv": "38588f3089b4479baf7ef4b54e3433a61de9f1b3a6b6faef32383181ca0cd6b0",
+    "satellite-sensitivity.png": "04b5dd7a8acc1b7a22e44344c8cfdb5440890e095d2200b1f684bfbe3951b6b7",
+    "source-composition-2026.csv": "46d8b602815226162d7cd2ab3ac5ef79a60d4da719e8e438d644cece638b4724",
+    "summary.json": "cfd7128f8ce7cd672451caebac46ba7ca8d4227cca869531a7d6cc382245ae44"
+  }
+}

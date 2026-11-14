@@ -1,0 +1,25 @@
+{
+  "data_version": "593ae2d95fdf",
+  "files": {
+    "audit-result.json": "e9ec5288387f0d7adccc1cee0035630678c96223a561eb70b32419f517d89908",
+    "daily-exposure-evidence.csv": "d790ef3f221f44a65affc075fa564b04aceb804e965b07259bd5123274527b48",
+    "exposure-result.json": "c957d88516ebe7e1eef73b354c2b333dd74978aa30a25db83d3a037443bcd644",
+    "input-manifest.json": "161577945708ba2a8f0edbfd0d3d00d0f29c041353cb53bab4a76c9f3313cf3e",
+    "live-api-checks.json": "ed1bdf56ac606a3417c2b3c189b1ce7013de9ffbb8f8d6f215bdf54953f7af51",
+    "monthly-diagnosis.png": "5c1cabe0ab8ceb5a5e5e705515c92671fc08f05d56a4a924fe9dfa8587e06008",
+    "monthly-gap-flags.csv": "3c268f48eb165347e42220673e5e985f82f6d021b2f62529edab1c567a99230a",
+    "nasa-missing-data-response.json.gz": "2fed42f353251d5cf58ffefe80dfb0e934ebfedaa66dbd9c4b252b0ee3d43da2",
+    "nasa-missing-days.csv": "9ee6b8e3f915842c7fe344e199703bacfcbb5c063a1892cab0c0d4f9f2823d79",
+    "national-monthly-sensitivity.csv": "eee5b46af41c4d2ef6d5c3c2e8c6557dec82697f6057ba9a57ad7b55e916954c",
+    "national-periods.csv": "7c8ac67d5f41a1f3d2104aa0f318c7f676703a6c4275c5af0fd364e1fea281de",
+    "package-transfer.json": "83f291c7547e75dc38cbbd5ba1544e6414ade9c0cb864d4111f1a00b47ba9b63",
+    "regional-bias.png": "880055a9191d989ada71e4ae1b63e8d0acfd9ab937818ddd53b9d001bebf2f82",
+    "regional-periods.csv": "f0c4895f5ba0ac120bd4a8abacd56203e29fe3db53b45fe9210cefca63e96a97",
+    "report-manifest.json": "f266eae322ddf79b2a2d9999a97cb962397b1bd3b933953b84d517e34f59671c",
+    "satellite-sensitivity.csv": "38588f3089b4479baf7ef4b54e3433a61de9f1b3a6b6faef32383181ca0cd6b0",
+    "satellite-sensitivity.png": "04b5dd7a8acc1b7a22e44344c8cfdb5440890e095d2200b1f684bfbe3951b6b7",
+    "source-composition-2026.csv": "46d8b602815226162d7cd2ab3ac5ef79a60d4da719e8e438d644cece638b4724",
+    "summary.json": "cfd7128f8ce7cd672451caebac46ba7ca8d4227cca869531a7d6cc382245ae44",
+    "validation.json": "173a27c46ec933537a30f9618bc06c0a39bdcf4df3fdaa87034407aa5fb93a78"
+  }
+}
