@@ -94,6 +94,32 @@ function useSeries<T>(path: '/calendar' | '/stats') {
 export const useCalendar = () => useSeries<CalendarResponse>('/calendar');
 export const useStats = () => useSeries<StatsResponse>('/stats');
 
+export interface PointsResponse {
+  type: 'FeatureCollection';
+  year: number;
+  month: number;
+  count: number;
+  aggregated: boolean;
+  cell_size_deg?: number;
+  features: {
+    type: 'Feature';
+    geometry: { type: 'Point'; coordinates: [number, number] };
+    properties: Record<string, string | number | null>;
+  }[];
+}
+
+/** Raw detections of one month inside the AOI, or grid cells above 50,000 (FR-W-15). */
+export function usePoints(ym: { year: number; month: number } | null) {
+  const aoi = useAppStore((s) => s.aoi);
+  const body = aoi && ym ? { aoi: aoi.geometry, year: ym.year, month: ym.month } : null;
+  return useQuery({
+    queryKey: ['/points', body],
+    queryFn: ({ signal }) => apiPost<PointsResponse>('/points', body, signal),
+    enabled: body !== null,
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
 export interface GlobeResponse {
   year: number;
   month: number;

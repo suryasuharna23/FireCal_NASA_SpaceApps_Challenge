@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Aoi } from '../lib/aoi';
+import type { PointsColor } from '../lib/points';
 
 /** Shared view state for globe, map and calendar (FR-W-25: single time source). */
 export type ViewMode = 'harmonized' | 'raw';
@@ -21,6 +22,7 @@ interface AppState {
   mode: ViewMode;
   scale: ColorScale;
   calendarView: CalendarView;
+  pointsColor: PointsColor;
   setAoi: (aoi: Aoi | null) => void;
   setRange: (start: string | null, end: string | null) => void;
   setReferenceYears: (years: [number, number] | null) => void;
@@ -28,6 +30,7 @@ interface AppState {
   setMode: (mode: ViewMode) => void;
   setScale: (scale: ColorScale) => void;
   setCalendarView: (view: CalendarView) => void;
+  setPointsColor: (by: PointsColor) => void;
 }
 
 export const useAppStore = create<AppState>()((set) => ({
@@ -39,6 +42,7 @@ export const useAppStore = create<AppState>()((set) => ({
   mode: 'harmonized',
   scale: 'linear',
   calendarView: 'count',
+  pointsColor: 'sensor',
   setAoi: (aoi) => set({ aoi }),
   setRange: (start, end) => set({ start, end }),
   setReferenceYears: (referenceYears) => set({ referenceYears }),
@@ -46,4 +50,5 @@ export const useAppStore = create<AppState>()((set) => ({
   setMode: (mode) => set({ mode }),
   setScale: (scale) => set({ scale }),
   setCalendarView: (calendarView) => set({ calendarView }),
+  setPointsColor: (pointsColor) => set({ pointsColor }),
 }));

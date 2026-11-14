@@ -11,7 +11,14 @@ import {
 } from 'terra-draw';
 import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import { useMeta } from '../api/client';
-import { useGlobe } from '../api/queries';
+import { useGlobe, usePoints } from '../api/queries';
+import {
+  FRP_STOPS,
+  pointColorExpression,
+  pointPopupHtml,
+  pointRadiusExpression,
+  SENSOR_COLORS,
+} from '../lib/points';
 import { useT } from '../i18n';
 import {
   aoiBbox,
@@ -65,6 +72,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const maxKm2 = meta?.max_aoi_km2 ?? DEFAULT_MAX_AOI_KM2;
   const month = useGlobeMonth();
   const globe = useGlobe(meta?.status === 'ok' ? month : null, mode);
+  const points = usePoints(aoi ? month : null);
+  const pointsColor = useAppStore((s) => s.pointsColor);
+  const setPointsColor = useAppStore((s) => s.setPointsColor);
   const maxRef = useRef(maxKm2);
   const tRef = useRef(t);
   maxRef.current = maxKm2;
@@ -143,6 +153,20 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         source: 'aoi',
         paint: { 'line-color': DRAW_COLOR, 'line-width': 2 },
       });
+      // Raw detections of the selected month inside the AOI (FR-W-15).
+      map.addSource('points', { type: 'geojson', data: EMPTY });
+      map.addLayer({
+        id: 'points',
+        type: 'circle',
+        source: 'points',
+        paint: {
+          'circle-radius': pointRadiusExpression() as never,
+          'circle-color': pointColorExpression(useAppStore.getState().pointsColor) as never,
+          'circle-opacity': 0.9,
+          'circle-stroke-color': 'rgba(4, 6, 13, 0.8)',
+          'circle-stroke-width': 0.5,
+        },
+      });
 
       const draw = new TerraDraw({
         adapter: new TerraDrawMapLibreGLAdapter({ map }),
@@ -212,6 +236,23 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       // circle around the point, and flies to it (FR-W-24).
       map.on('click', (e) => {
         if (toolRef.current !== 'static') return;
+        const hit = map.queryRenderedFeatures(e.point, { layers: ['points'] })[0];
+        if (hit) {
+          const tr = tRef.current;
+          new maplibregl.Popup({ closeButton: true, className: 'globe-popup' })
+            .setLngLat((hit.geometry as unknown as { coordinates: [number, number] }).coordinates)
+            .setHTML(
+              pointPopupHtml(hit.properties ?? {}, {
+                detections: tr('points.detections'),
+                frp: tr('points.frp'),
+                confidence: tr('points.confidence'),
+                time: tr('points.time'),
+                weight: tr('points.weight'),
+              }),
+            )
+            .addTo(map);
+          return;
+        }
         const { lng, lat } = e.lngLat;
         const label = tRef.current('regions.clicked', { lat: lat.toFixed(2), lon: lng.toFixed(2) });
         useAppStore.getState().setAoi(aoiForClick(lng, lat, label));
@@ -260,6 +301,24 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const source = map.getSource('hotspots') as GeoJSONSource | undefined;
     source?.setData(cellsToGeoJSON(globe.data.cells, globe.data.max));
   }, [globe.data, ready]);
+
+  // --- raw points of the selected month (FR-W-15) ------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    const source = map.getSource('points') as GeoJSONSource | undefined;
+    const shown = Boolean(aoi && points.data);
+    source?.setData(shown ? (points.data as never) : EMPTY);
+    // Dim the coarse world cells while the detailed points are visible.
+    map.setPaintProperty('hotspots', 'circle-opacity', shown ? 0.25 : 0.95);
+    map.setPaintProperty('hotspots-glow', 'circle-opacity', shown ? 0.1 : 0.35);
+  }, [points.data, aoi, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    map.setPaintProperty('points', 'circle-color', pointColorExpression(pointsColor) as never);
+  }, [pointsColor, ready]);
 
   // --- AOI from other sources (circle, region, upload) + framing ----------------------------
   useEffect(() => {
@@ -372,6 +431,51 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
               <span>{formatCount(globe.data?.max ?? 0, lang)}</span>
             </div>
             <small>{t('globe.unit')}</small>
+            {aoi && points.data && (
+              <div className="points-legend">
+                <div className="points-legend__head">
+                  <span>
+                    {t(points.data.aggregated ? 'points.cells' : 'points.count', {
+                      n: formatCount(points.data.count, lang),
+                    })}
+                  </span>
+                  <div className="segmented" role="group" aria-label={t('points.colorBy')}>
+                    {(['sensor', 'frp'] as const).map((by) => (
+                      <button
+                        key={by}
+                        type="button"
+                        className="btn btn--small"
+                        aria-pressed={pointsColor === by}
+                        onClick={() => setPointsColor(by)}
+                      >
+                        {t(by === 'sensor' ? 'points.bySensor' : 'points.byFrp')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {pointsColor === 'sensor' ? (
+                  <div className="points-legend__keys">
+                    <span>
+                      <i style={{ background: SENSOR_COLORS.MODIS }} /> MODIS
+                    </span>
+                    <span>
+                      <i style={{ background: SENSOR_COLORS.VIIRS }} /> VIIRS
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="legend__bar"
+                      style={{ background: gradient((x) => countColor(0.2 + 0.8 * x)) }}
+                    />
+                    <div className="legend__ticks">
+                      <span>0</span>
+                      <span>{FRP_STOPS[FRP_STOPS.length - 1]}+ MW</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
           <div className="globe__buttons">
             <button

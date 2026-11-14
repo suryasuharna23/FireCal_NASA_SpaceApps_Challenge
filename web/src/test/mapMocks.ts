@@ -4,10 +4,36 @@
  */
 type Handler = (...args: unknown[]) => void;
 
-export const mapCalls: { fitBounds: unknown[]; setData: unknown[] } = {
+export const mapCalls: {
+  fitBounds: unknown[];
+  setData: unknown[];
+  paint: [string, string, unknown][];
+  popups: string[];
+  /** Features returned by queryRenderedFeatures (simulates clicking a rendered point). */
+  hits: { geometry: unknown; properties: Record<string, unknown> }[];
+} = {
   fitBounds: [],
   setData: [],
+  paint: [],
+  popups: [],
+  hits: [],
 };
+
+class FakePopup {
+  private html = '';
+  setLngLat() {
+    return this;
+  }
+  setHTML(html: string) {
+    this.html = html;
+    return this;
+  }
+  addTo() {
+    mapCalls.popups.push(this.html);
+    return this;
+  }
+  remove() {}
+}
 
 export class FakeMap {
   static last: FakeMap | null = null;
@@ -42,7 +68,12 @@ export class FakeMap {
   }
   removeLayer() {}
   setLayoutProperty() {}
-  setPaintProperty() {}
+  setPaintProperty(layer: string, prop: string, value: unknown) {
+    mapCalls.paint.push([layer, prop, value]);
+  }
+  queryRenderedFeatures() {
+    return mapCalls.hits;
+  }
   fitBounds(b: unknown) {
     mapCalls.fitBounds.push(b);
   }
@@ -106,7 +137,7 @@ export class FakeDraw {
 }
 
 vi.mock('maplibre-gl', () => ({
-  default: { Map: FakeMap, NavigationControl: class {}, Popup: class {} },
+  default: { Map: FakeMap, NavigationControl: class {}, Popup: FakePopup },
 }));
 vi.mock('maplibre-gl/dist/maplibre-gl.css', () => ({}));
 vi.mock('terra-draw', () => ({
