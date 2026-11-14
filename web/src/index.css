@@ -287,3 +287,86 @@ select {
   flex-wrap: wrap;
   gap: 6px;
 }
+
+/* ---------- controls ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn[aria-pressed='true'] {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+.btn--small {
+  padding: 3px 10px;
+  font-size: 0.85rem;
+}
+
+.btn--danger:not(:disabled) {
+  color: var(--error-fg);
+  background: var(--error-bg);
+  border-color: transparent;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hint,
+.small {
+  font-size: 0.82rem;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.form-error {
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--error-bg);
+  color: var(--error-fg);
+  font-size: 0.85rem;
+}
+
+/* ---------- map ---------- */
+.map {
+  height: 340px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--ocean);
+}
+
+@media (min-width: 900px) {
+  .map {
+    height: 400px;
+  }
+}
