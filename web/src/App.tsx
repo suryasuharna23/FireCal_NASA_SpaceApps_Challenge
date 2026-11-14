@@ -9,6 +9,7 @@ import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
 import { CircleForm } from './components/CircleForm';
+import { RegionSearch } from './components/RegionSearch';
 import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
 import { useUrlSync } from './state/useUrlSync';
@@ -57,6 +58,7 @@ export default function App() {
           </section>
           <section className="layout__side" aria-label={t('region.controls')}>
             <AoiPanel>
+              <RegionSearch />
               <CircleForm />
             </AoiPanel>
             <TimePanel />
