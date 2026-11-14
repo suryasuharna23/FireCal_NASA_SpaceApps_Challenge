@@ -38,7 +38,10 @@ test('anomaly view and methodology page pass axe WCAG 2.1 AA', async ({ page }) 
 
 test('keyboard only: choose a region, open a month, read its tooltip', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: /South Sumatra/ }).focus();
+  await page
+    .locator('#aoi-panel')
+    .getByRole('button', { name: /South Sumatra/ })
+    .focus();
   await page.keyboard.press('Enter');
   const cell = page.getByRole('gridcell', { name: /^September 2016/ });
   await expect(cell).toBeVisible();

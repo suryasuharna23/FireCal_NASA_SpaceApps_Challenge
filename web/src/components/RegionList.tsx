@@ -10,7 +10,6 @@ export function RegionList() {
 
   return (
     <div className="region-list">
-      <h3 className="region-list__title">{t('regions.title')}</h3>
       <ul aria-label={t('regions.title')}>
         {FIRE_REGIONS.map((region) => (
           <li key={region.id}>

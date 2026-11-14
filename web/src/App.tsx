@@ -8,12 +8,11 @@ import { GlobeMap } from './components/GlobeMap';
 import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
-import { CircleForm } from './components/CircleForm';
-import { RegionSearch } from './components/RegionSearch';
-import { GeoJsonUpload } from './components/GeoJsonUpload';
+import { EmptyState } from './components/EmptyState';
 import { Methodology } from './components/Methodology';
 import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
+import { useAppStore } from './state/useAppStore';
 import { useUrlSync } from './state/useUrlSync';
 
 type Page = 'app' | 'methodology';
@@ -21,6 +20,7 @@ type Page = 'app' | 'methodology';
 export default function App() {
   const { t } = useT();
   const [page, setPage] = useState<Page>('app');
+  const aoi = useAppStore((s) => s.aoi);
   useUrlSync();
 
   return (
@@ -59,25 +59,29 @@ export default function App() {
             <GlobeMap />
           </section>
           <section className="layout__side" aria-label={t('region.controls')}>
-            <AoiPanel>
-              <RegionSearch />
-              <CircleForm />
-              <GeoJsonUpload />
-            </AoiPanel>
+            <AoiPanel />
             <TimePanel />
           </section>
           <section className="layout__results" aria-label={t('region.results')}>
-            <div className="results__summary">
-              <Kpi />
-            </div>
-            <div className="results__calendar">
-              <Calendar />
-            </div>
-            <div className="results__charts">
-              <Climatology />
-              <AnnualTotals />
-              <ExportPanel />
-            </div>
+            {aoi ? (
+              <>
+                <div className="results__summary">
+                  <Kpi />
+                </div>
+                <div className="results__calendar">
+                  <Calendar />
+                </div>
+                <div className="results__charts">
+                  <Climatology />
+                  <AnnualTotals />
+                  <ExportPanel />
+                </div>
+              </>
+            ) : (
+              <div className="results__summary">
+                <EmptyState />
+              </div>
+            )}
           </section>
         </main>
       ) : (
