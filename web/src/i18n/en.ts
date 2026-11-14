@@ -151,4 +151,8 @@ export const messages = {
     'Files cover the selected area and date range. Monthly: harmonized and per-sensor counts, 90% interval and anomaly. Raw points: every detection with its harmonization weight. Both include NASA FIRMS attribution.',
   'export.progress': 'Downloading… {rows} rows ({size} MB)',
   'export.done': 'Saved {file}',
+  'png.button': 'PNG',
+  'png.calendar': 'Download the calendar as PNG',
+  'png.climatology': 'Download the climatology chart as PNG',
+  'png.annual': 'Download the annual totals chart as PNG',
 } as const;

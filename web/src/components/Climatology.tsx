@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useStats } from '../api/queries';
 import { climatologyOption } from '../charts/climatology';
 import { EChart } from '../charts/EChart';
+import { useChartPng } from '../charts/useChartPng';
+import { PngButton } from './PngButton';
 import { useT } from '../i18n';
 import { formatCount } from '../lib/colors';
 import { monthNames } from '../lib/months';
@@ -14,6 +16,7 @@ export function Climatology() {
   const aoi = useAppStore((s) => s.aoi);
   const { data, error, isFetching } = useStats();
   const year = data?.end.slice(0, 4) ?? '';
+  const png = useChartPng();
 
   const option = useMemo(() => {
     if (!data) return null;
@@ -41,7 +44,18 @@ export function Climatology() {
     data?.critical_months.map((m) => longMonths[m - 1]).join(', ') || t('kpi.noSeason');
 
   return (
-    <Panel title={t('panel.climatology')} id="climatology">
+    <Panel
+      title={t('panel.climatology')}
+      id="climatology"
+      actions={
+        data && (
+          <PngButton
+            label={t('png.climatology')}
+            onExport={() => png.exportPng(t('panel.climatology'), data, 'climatology')}
+          />
+        )
+      }
+    >
       {error && (
         <p className="form-error" role="alert">
           {(error as Error).message}
@@ -50,7 +64,11 @@ export function Climatology() {
       {!data && !error && <div className="skeleton" style={{ height: 260 }} aria-busy="true" />}
       {data && option && (
         <div className={isFetching ? 'is-stale' : ''}>
-          <EChart option={option} ariaLabel={t('clim.aria', { months: season })} />
+          <EChart
+            option={option}
+            ariaLabel={t('clim.aria', { months: season })}
+            onReady={png.onReady}
+          />
           <p className="muted small">
             {t('clim.note', { threshold: formatCount(data.critical_threshold ?? 0, lang) })}
           </p>

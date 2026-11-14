@@ -11,6 +11,9 @@ import {
   gradient,
 } from '../lib/colors';
 import { monthNames } from '../lib/months';
+import { calendarLayout, drawCalendar, exportFramedPng } from '../lib/png';
+import { usePngFrame } from '../lib/usePngFrame';
+import { PngButton } from './PngButton';
 import { useAppStore } from '../state/useAppStore';
 import { Panel } from './Panel';
 
@@ -42,6 +45,7 @@ export function Calendar() {
   const { data, error, isFetching } = useCalendar();
   const area = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<Hover | null>(null);
+  const pngFrame = usePngFrame();
 
   const valueOf = (m: MonthValue) => (mode === 'raw' ? m.raw : m.value);
   const grid = useMemo(() => {
@@ -61,6 +65,41 @@ export function Calendar() {
   const cellColor = (m: MonthValue) =>
     view === 'anomaly' ? anomalyColor(m.anomaly_pct) : color(valueOf(m));
   const fmt = (v: number) => formatCount(v, lang);
+
+  // PNG export (FR-W-18): redraw the grid with the on-screen colours on a 2x canvas.
+  const exportPng = async () => {
+    if (!data) return;
+    const cells = data.months.map((m) => ({ year: m.year, month: m.month, color: cellColor(m) }));
+    const layout = calendarLayout(new Set(cells.map((c) => c.year)).size);
+    const unit =
+      view === 'anomaly'
+        ? t('calendar.anomalyUnit', {
+            start: data.reference_years[0],
+            end: data.reference_years[1],
+          })
+        : t(mode === 'raw' ? 'calendar.unitRaw' : 'calendar.unit');
+    const { frame, filename } = pngFrame(
+      view === 'anomaly'
+        ? `${t('panel.calendar')} · ${t('calendar.anomaly')}`
+        : t('panel.calendar'),
+      data,
+      view === 'anomaly' ? 'calendar-anomaly' : 'calendar',
+    );
+    await exportFramedPng(
+      frame,
+      {
+        width: layout.width,
+        height: layout.height + 22,
+        draw: (ctx) => {
+          drawCalendar(ctx, cells, months);
+          ctx.fillStyle = '#9aa6c8';
+          ctx.font = '11px Inter, sans-serif';
+          ctx.fillText(unit, 0, layout.height + 16);
+        },
+      },
+      filename,
+    );
+  };
 
   const actions = (
     <>
@@ -92,6 +131,7 @@ export function Calendar() {
           ))}
         </div>
       )}
+      {data && <PngButton label={t('png.calendar')} onExport={exportPng} />}
     </>
   );
 
