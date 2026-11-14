@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from app import __version__
 from app.aoi import AoiError
 from app.db import DataUnavailableError
-from app.routers import calendar, export, globe, meta, points, stats
+from app.routers import calendar, export, globe, meta, points, regions, stats
 from app.series import RangeError
 from app.settings import get_settings
 
@@ -42,7 +42,7 @@ def create_app() -> FastAPI:
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    for module in (calendar, stats, points, export, globe, meta):
+    for module in (calendar, stats, points, export, globe, regions, meta):
         application.include_router(module.router)
     return application
 

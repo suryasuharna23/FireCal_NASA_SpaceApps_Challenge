@@ -66,6 +66,23 @@ def cells(
     )
 
 
+@app.command("regions")
+def regions_cmd(
+    source: list[str] = typer.Option(
+        None,
+        "--source",
+        help="Boundary file or URL (GADM .gpkg or Natural Earth GeoJSON); repeatable.",
+    ),
+) -> None:
+    """Build the administrative region table for region search (T-24)."""
+    from firecal.regions import regions
+
+    settings = get_settings()
+    table = regions(settings.paths.ensure(), source or None)
+    levels = table["level"].value_counts().sort_index().to_dict()
+    typer.echo(f"{len(table):,} regions {levels} -> {settings.paths.regions}")
+
+
 @app.command()
 def ingest() -> None:
     """Load FIRMS archive CSVs from data/raw into partitioned Parquet (T-04, T-05)."""

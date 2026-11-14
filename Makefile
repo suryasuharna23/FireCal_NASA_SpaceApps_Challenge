@@ -9,8 +9,9 @@ setup: ## Install Python + JS dependencies and pre-commit hooks
 	pnpm install --dir web
 	uv run pre-commit install
 
-data: ## Run the full pipeline: data/raw -> data/processed (+ land cells once)
+data: ## Run the full pipeline: data/raw -> data/processed (+ cells and regions once)
 	@test -f data/processed/cells.parquet || uv run firecal cells
+	@test -f data/processed/regions.parquet || uv run firecal regions
 	uv run firecal run
 
 synth: ## Generate a synthetic FIRMS archive in data/raw/synthetic (no MAP_KEY needed)
