@@ -44,6 +44,22 @@ export class FakeMap {
   fitBounds(b: unknown) {
     mapCalls.fitBounds.push(b);
   }
+  setProjection() {}
+  setSky() {}
+  getStyle() {
+    return { layers: [] };
+  }
+  getZoom() {
+    return 1.5;
+  }
+  getCenter() {
+    return { lng: 0, lat: 0 };
+  }
+  setCenter() {}
+  isMoving() {
+    return false;
+  }
+  flyTo() {}
   getCanvas() {
     return document.createElement('canvas');
   }
