@@ -50,6 +50,21 @@ export const id = {
   'circle.err.lon': 'Bujur harus antara −180 dan 180.',
   'circle.err.radius': 'Radius minimal 1 km.',
   'circle.err.radiusMax': 'Radius maksimum {max} km.',
+  'time.start': 'Bulan awal',
+  'time.end': 'Bulan akhir',
+  'time.defaultStart': 'Bawaan {v}',
+  'time.defaultEnd': 'Bawaan: bulan terakhir',
+  'time.reference': 'Tahun referensi median',
+  'time.referenceHint': 'Median historis dihitung dari tahun-tahun ini.',
+  'time.from': 'Dari',
+  'time.to': 'Sampai',
+  'time.apply': 'Terapkan',
+  'time.reset': 'Kembali ke bawaan',
+  'time.err.format': 'Gunakan format bulan-tahun.',
+  'time.err.outside': 'Bulan di luar ketersediaan data ({start} – {end}).',
+  'time.err.order': 'Bulan akhir harus setelah bulan awal.',
+  'time.err.refOrder': 'Tahun awal referensi harus sebelum tahun akhir.',
+  'time.err.refOutside': 'Tahun referensi di luar ketersediaan data.',
 };
 
 export type Messages = Record<keyof typeof id, string>;

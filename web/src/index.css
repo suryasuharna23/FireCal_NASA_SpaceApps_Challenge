@@ -411,3 +411,19 @@ select {
 .field__error {
   color: var(--error-fg);
 }
+
+.field-row--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 4px 0 10px;
+}
+
+.fieldset legend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
