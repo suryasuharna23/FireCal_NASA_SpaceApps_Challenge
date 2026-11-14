@@ -1,20 +1,23 @@
-import { interpolateRdBu, interpolateYlOrRd, scaleSequential, scaleSequentialLog } from 'd3';
+import { interpolateInferno, interpolateRdBu, scaleSequential, scaleSequentialLog } from 'd3';
 import type { ColorScale } from '../state/useAppStore';
 
 /**
- * Sequential palette for counts: ColorBrewer YlOrRd, which stays ordered in lightness
- * for deuteranopia/protanopia (NFR-04). Zero gets a neutral tone so "no fire" is
- * distinguishable from "a little fire".
+ * Sequential palette for counts: inferno (perceptually uniform, ordered in lightness and
+ * readable with deuteranopia/protanopia, NFR-04). The darkest 15 % is skipped so low
+ * values stay visible on the dark space background; zero gets a neutral tone so
+ * "no fire" is distinguishable from "a little fire".
  */
 export const ZERO_COLOR = 'var(--zero-cell)';
+
+export const countColor = (t: number) => interpolateInferno(0.15 + 0.85 * t);
 
 export function countScale(max: number, scale: ColorScale) {
   const top = Math.max(max, 1);
   if (scale === 'log') {
-    const s = scaleSequentialLog(interpolateYlOrRd).domain([1, top + 1]);
+    const s = scaleSequentialLog(countColor).domain([1, top + 1]);
     return (v: number) => (v <= 0 ? ZERO_COLOR : s(v + 1));
   }
-  const s = scaleSequential(interpolateYlOrRd).domain([0, top]);
+  const s = scaleSequential(countColor).domain([0, top]);
   return (v: number) => (v <= 0 ? ZERO_COLOR : s(Math.max(v, top * 0.04)));
 }
 

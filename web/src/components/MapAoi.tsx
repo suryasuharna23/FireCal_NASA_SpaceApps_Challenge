@@ -23,11 +23,11 @@ import {
 import { useAppStore } from '../state/useAppStore';
 import { Panel } from './Panel';
 
-const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/positron';
+const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/dark';
 const EMPTY = { type: 'FeatureCollection' as const, features: [] };
 type Tool = 'polygon' | 'rectangle' | 'select' | 'static';
 
-const DRAW_COLOR = '#c2410c';
+const DRAW_COLOR = '#ff7a3d';
 
 /** MapLibre AOI map with polygon/rectangle drawing, editing and deletion (FR-W-01). */
 export function MapAoi({ children }: { children?: React.ReactNode }) {
