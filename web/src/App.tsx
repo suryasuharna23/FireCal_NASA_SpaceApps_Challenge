@@ -9,13 +9,16 @@ import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
 import { CircleForm } from './components/CircleForm';
+import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
+import { useUrlSync } from './state/useUrlSync';
 
 type Page = 'app' | 'methodology';
 
 export default function App() {
   const { t } = useT();
   const [page, setPage] = useState<Page>('app');
+  useUrlSync();
 
   return (
     <div className="app">
@@ -42,6 +45,7 @@ export default function App() {
               {t(p === 'app' ? 'nav.app' : 'nav.methodology')}
             </button>
           ))}
+          <ShareButton />
         </nav>
       </header>
       <StatusBar />

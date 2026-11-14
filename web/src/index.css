@@ -1128,3 +1128,8 @@ h3 {
 .globe-popup .maplibregl-popup-close-button {
   color: var(--muted);
 }
+
+.share-btn {
+  margin-left: 6px;
+  border-radius: 999px;
+}
