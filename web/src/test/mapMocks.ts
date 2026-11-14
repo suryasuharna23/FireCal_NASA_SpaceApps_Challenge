@@ -10,9 +10,11 @@ export const mapCalls: { fitBounds: unknown[]; setData: unknown[] } = {
 };
 
 export class FakeMap {
+  static last: FakeMap | null = null;
   handlers: Record<string, Handler[]> = {};
   sources: Record<string, { setData: (d: unknown) => void }> = {};
   constructor() {
+    FakeMap.last = this;
     queueMicrotask(() => this.handlers.load?.forEach((h) => h()));
   }
   on(event: string, handler: Handler) {

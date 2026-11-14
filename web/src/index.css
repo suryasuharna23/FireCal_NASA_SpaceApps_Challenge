@@ -860,3 +860,53 @@ h3 {
     animation: none;
   }
 }
+
+/* ---------- region chips ---------- */
+.region-list {
+  margin-top: 12px;
+}
+
+.region-list__title {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.region-list ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: rgba(20, 29, 56, 0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--orbit);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: rgba(255, 122, 61, 0.16);
+  box-shadow: 0 0 12px rgba(255, 122, 61, 0.3);
+}
+
+.chip__meta {
+  color: var(--muted);
+  font-size: 0.72rem;
+}

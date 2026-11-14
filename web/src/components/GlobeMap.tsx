@@ -32,6 +32,8 @@ import {
 import { monthNames } from '../lib/months';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
+import { aoiForClick } from '../lib/regions';
+import { RegionList } from './RegionList';
 import { Panel } from './Panel';
 
 const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/dark';
@@ -50,6 +52,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const mapRef = useRef<MapLibreMap | null>(null);
   const drawRef = useRef<TerraDraw | null>(null);
   const drawnId = useRef<string | number | null>(null);
+  const toolRef = useRef<Tool>('static');
   const [ready, setReady] = useState(false);
   const [tool, setTool] = useState<Tool>('static');
   const [error, setError] = useState<string | null>(null);
@@ -204,6 +207,14 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           label: tRef.current('aoi.drawn'),
         });
       });
+      // Clicking the globe (outside drawing) selects the fire region there, or a
+      // circle around the point, and flies to it (FR-W-24).
+      map.on('click', (e) => {
+        if (toolRef.current !== 'static') return;
+        const { lng, lat } = e.lngLat;
+        const label = tRef.current('regions.clicked', { lat: lat.toFixed(2), lon: lng.toFixed(2) });
+        useAppStore.getState().setAoi(aoiForClick(lng, lat, label));
+      });
       setReady(true);
     });
 
@@ -277,6 +288,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     if (!draw) return;
     setSpinning(false);
     setTool(next);
+    toolRef.current = next;
     draw.setMode(next);
     if (next === 'select' && drawnId.current != null) draw.selectFeature(drawnId.current);
   };
@@ -286,6 +298,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     drawRef.current?.setMode('static');
     drawnId.current = null;
     setTool('static');
+    toolRef.current = 'static';
     setError(null);
     setAoi(null);
   };
@@ -389,6 +402,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           {(globe.error as Error).message}
         </p>
       )}
+      <RegionList />
       {children}
     </Panel>
   );

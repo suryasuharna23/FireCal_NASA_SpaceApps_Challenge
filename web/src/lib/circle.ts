@@ -29,13 +29,21 @@ export function validateCircle(
   return Object.keys(errors).length ? { errors } : { errors, value: { lat, lon, radiusKm } };
 }
 
-export function circleAoi(lat: number, lon: number, radiusKm: number, label?: string): Aoi {
+export function circleAoi(
+  lat: number,
+  lon: number,
+  radiusKm: number,
+  label?: string,
+  kind: Aoi['kind'] = 'circle',
+  regionId?: string,
+): Aoi {
   const geometry = turfCircle([lon, lat], radiusKm, { units: 'kilometers', steps: 72 }).geometry;
   return {
-    kind: 'circle',
+    kind,
     geometry,
     areaKm2: areaKm2(geometry),
     label,
     circle: { lat, lon, radiusKm },
+    ...(regionId ? { regionId } : {}),
   };
 }

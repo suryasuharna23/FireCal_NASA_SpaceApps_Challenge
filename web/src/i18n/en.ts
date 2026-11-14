@@ -86,5 +86,7 @@ export const messages = {
   'globe.stopSpin': 'Stop rotation',
   'globe.orbit': 'Back to orbit',
   'globe.help':
-    'Drag to rotate the globe, scroll to zoom, then draw a polygon or rectangle to choose an area.',
+    'Drag to rotate and scroll to zoom. Click the globe or pick a fire region to open its calendar, or draw a polygon or rectangle.',
+  'regions.title': 'Fire regions',
+  'regions.clicked': 'Area around {lat}, {lon}',
 } as const;
