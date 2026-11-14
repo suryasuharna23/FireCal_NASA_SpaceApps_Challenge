@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AnnualTotals } from './components/AnnualTotals';
+import { ExportPanel } from './components/ExportPanel';
 import { Calendar } from './components/Calendar';
 import { Climatology } from './components/Climatology';
 import { Kpi } from './components/Kpi';
@@ -61,6 +62,7 @@ export default function App() {
             <Calendar />
             <Climatology />
             <AnnualTotals />
+            <ExportPanel />
           </section>
         </main>
       ) : (
