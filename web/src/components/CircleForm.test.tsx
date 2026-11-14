@@ -39,7 +39,7 @@ describe('CircleForm', () => {
   it('sets a circular AOI from valid input', () => {
     renderWithQuery(<CircleForm />);
     fireEvent.change(screen.getByLabelText('Radius (km)'), { target: { value: '75' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Pakai lingkaran' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Use circle' }));
     const aoi = useAppStore.getState().aoi;
     expect(aoi?.kind).toBe('circle');
     expect(aoi?.circle).toEqual({ lat: -4.75, lon: 102.75, radiusKm: 75 });
@@ -47,10 +47,10 @@ describe('CircleForm', () => {
 
   it('shows field errors and keeps the AOI unchanged for invalid input', () => {
     renderWithQuery(<CircleForm />);
-    fireEvent.change(screen.getByLabelText('Lintang'), { target: { value: '120' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Pakai lingkaran' }));
-    expect(screen.getByText(/Lintang harus/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Lintang')).toHaveAttribute('aria-invalid', 'true');
+    fireEvent.change(screen.getByLabelText('Latitude'), { target: { value: '120' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Use circle' }));
+    expect(screen.getByText(/Latitude must/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Latitude')).toHaveAttribute('aria-invalid', 'true');
     expect(useAppStore.getState().aoi).toBeNull();
   });
 });

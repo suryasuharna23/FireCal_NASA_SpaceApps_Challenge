@@ -1,5 +1,5 @@
 export function monthNames(lang: string, style: 'short' | 'long' | 'narrow' = 'short') {
-  const fmt = new Intl.DateTimeFormat(lang === 'en' ? 'en-GB' : 'id-ID', {
+  const fmt = new Intl.DateTimeFormat(lang, {
     month: style,
     timeZone: 'UTC',
   });

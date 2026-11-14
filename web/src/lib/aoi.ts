@@ -47,6 +47,6 @@ export function toFeature(aoi: Aoi): Feature<AoiGeometry> {
   return { type: 'Feature', properties: { kind: aoi.kind }, geometry: aoi.geometry };
 }
 
-export function formatKm2(km2: number, lang = 'id'): string {
-  return `${Math.round(km2).toLocaleString(lang === 'en' ? 'en-GB' : 'id-ID')} km²`;
+export function formatKm2(km2: number, lang = 'en-GB'): string {
+  return `${Math.round(km2).toLocaleString(lang)} km²`;
 }

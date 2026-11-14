@@ -1,102 +1,94 @@
 # FireCal
 
-**Kalender Aktivitas Kebakaran Terharmonisasi (MODIS–VIIRS)** — NASA Space Apps Challenge.
+**Harmonized MODIS–VIIRS Fire Activity Calendar** — NASA Space Apps Challenge.
 
-FireCal adalah aplikasi web yang menampilkan kalender aktivitas titik panas bulanan dari
-November 2000 hingga hari ini untuk area yang dipilih pengguna. Data MODIS (C6.1) dan VIIRS
-375 m dari [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) diharmonisasi ke skala
-setara-MODIS sehingga peralihan sensor tidak menimbulkan lonjakan tren palsu.
+FireCal is a web app that shows a monthly calendar of fire hotspot activity, from November 2000 to today, for any area the user selects. It combines MODIS and VIIRS data from [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov) that are harmonized to a common MODIS-equivalent scale, so the switch between sensors does not create false trends.
 
-Spesifikasi lengkap, user story, dan tiket ada di
-[`docs/FRD-Tickets-FireCal.pdf`](docs/FRD-Tickets-FireCal.pdf).
+The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireCal.pdf`](docs/FRD-Tickets-FireCal.pdf) (in Indonesian, the original project brief).
 
-## Arsitektur
+## Architecture
 
 ```
 NASA FIRMS ──► pipeline (ingest → clean → grid → harmonize → validate) ──► Parquet
                                                                               │ DuckDB
-                         web (React + MapLibre + D3) ◄── JSON ── api (FastAPI)
+                         web (React + MapLibre) ◄── JSON ── api (FastAPI)
 ```
 
-Pipeline berjalan harian dan menulis Parquet; API dan web hanya membaca hasilnya, sehingga
-query cepat dan tetap jalan walau FIRMS sedang tidak dapat diakses.
+The pipeline runs daily and writes Parquet files. The API and the web app only read those results, so queries stay fast and keep working when FIRMS is unavailable.
 
-## Struktur repositori
+## Repository layout
 
-| Path                 | Isi                                                                 |
-| -------------------- | ------------------------------------------------------------------- |
-| `data/`              | `raw/`, `interim/`, `processed/` — tidak di-commit                  |
-| `pipeline/firecal/`  | Paket Python + CLI Typer `firecal` (ingest, clean, grid, harmonize) |
-| `pipeline/notebooks` | Notebook analisis (T-10, T-13)                                      |
-| `api/app/`           | FastAPI: `/calendar`, `/stats`, `/points`, `/export`, `/globe`, `/meta` |
-| `web/src/`           | React + TypeScript + Vite: globe, peta AOI, kalender, grafik        |
-| `.github/workflows/` | CI (lint + test + build di setiap PR)                               |
-| `docs/`              | FRD dan tiket                                                       |
+| Path                 | Contents                                                              |
+| -------------------- | --------------------------------------------------------------------- |
+| `data/`              | `raw/`, `interim/`, `processed/` — not committed                      |
+| `pipeline/firecal/`  | Python package and `firecal` Typer CLI (ingest, clean, grid, harmonize, validate) |
+| `pipeline/notebooks` | Analysis notebooks (T-10, T-13)                                       |
+| `api/app/`           | FastAPI service: `/calendar`, `/stats`, `/points`, `/export`, `/globe`, `/regions`, `/meta` |
+| `web/src/`           | React + TypeScript + Vite: interactive globe, area tools, calendar, statistics |
+| `.github/workflows/` | CI (lint, tests and build on every pull request) and the daily NRT job |
+| `docs/`              | Functional requirements and tickets (FRD)                             |
 
-## Prasyarat
+## Prerequisites
 
-- Git, [Python 3.12](https://www.python.org/), [uv](https://docs.astral.sh/uv/) ≥ 0.5
-- [Node.js 22 LTS](https://nodejs.org/) dan [pnpm](https://pnpm.io/) ≥ 9 (`corepack enable`)
-- Docker + Docker Compose v2 (opsional)
-- `MAP_KEY` FIRMS gratis dari [halaman API FIRMS](https://firms.modaps.eosdis.nasa.gov/api/map_key/)
+- Git, [Python 3.12](https://www.python.org/), and [uv](https://docs.astral.sh/uv/) 0.5 or newer
+- [Node.js 22 LTS](https://nodejs.org/) and [pnpm](https://pnpm.io/) 9 or newer (`corepack enable`)
+- Docker and Docker Compose v2 (optional)
+- A free FIRMS `MAP_KEY` from the [FIRMS API page](https://firms.modaps.eosdis.nasa.gov/api/map_key/)
 
-## Menjalankan secara lokal
+## Running locally
 
 ```bash
 git clone https://github.com/suryasuharna23/FireCal_NASA_SpaceApps_Challenge.git firecal
 cd firecal
 
-# 1. Konfigurasi — isi FIRMS_MAP_KEY di .env (jangan di-commit)
+# 1. Configuration: set FIRMS_MAP_KEY in .env (never commit it)
 cp .env.example .env
 cp web/.env.example web/.env
 
-# 2. Dependensi + hook pre-commit
+# 2. Dependencies and pre-commit hooks
 make setup
 
-# 3. Data — simpan CSV arsip FIRMS (per tahun & sensor) di data/raw/, lalu:
-make data                       # persempit COVERAGE_BBOX ke satu negara untuk uji cepat
-uv run firecal nrt --days 7     # data near-real-time terbaru
+# 3. Data: put the FIRMS archive CSVs (per year and sensor) in data/raw/, then:
+make data                       # narrow COVERAGE_BBOX to one country for a quick test
+uv run firecal nrt --days 5     # latest near-real-time detections
 
-# 4. Jalankan
+# 4. Run
 make api                        # http://localhost:8000/docs
 make web                        # http://localhost:5173
-# atau keduanya lewat Docker:
+# or both at once with Docker:
 make dev
 ```
 
-Tanpa `make` (mis. Windows), jalankan perintah di [`Makefile`](Makefile) secara langsung.
+No synthetic data? Run `make synth` to generate a FIRMS-format archive for development without a MAP_KEY.
 
-## Perintah
+Without `make` (for example on Windows), run the commands in the [`Makefile`](Makefile) directly.
 
-| Perintah      | Fungsi                                                       |
-| ------------- | ------------------------------------------------------------ |
-| `make setup`  | Instal dependensi Python dan JavaScript, pasang pre-commit   |
-| `make data`   | Jalankan seluruh pipeline dari `data/raw/` ke `data/processed/` |
-| `make dev`    | Jalankan API dan frontend sekaligus lewat Docker Compose     |
-| `make test`   | Ruff, pytest, ESLint, Prettier, typecheck, dan Vitest        |
-| `make e2e`    | Uji Playwright pada alur utama                               |
-| `make format` | Format otomatis kode Python dan TypeScript                   |
+After setting `FIRMS_MAP_KEY`, check it with `uv run firecal check-key`. For CI, store the same key as the GitHub secret `FIRMS_MAP_KEY` and run the **Check FIRMS MAP_KEY** workflow.
 
-Jalankan `make test` sebelum membuka PR.
+## Commands
 
-## Variabel lingkungan
+| Command       | What it does                                                      |
+| ------------- | ----------------------------------------------------------------- |
+| `make setup`  | Install Python and JavaScript dependencies and the pre-commit hooks |
+| `make data`   | Run the whole pipeline from `data/raw/` to `data/processed/`      |
+| `make synth`  | Generate a synthetic FIRMS archive in `data/raw/synthetic/`       |
+| `make dev`    | Run the API and the web app together with Docker Compose          |
+| `make test`   | Ruff, pytest, ESLint, Prettier, typecheck and Vitest              |
+| `make e2e`    | Playwright end-to-end tests                                       |
+| `make format` | Auto-format the Python and TypeScript code                        |
 
-Backend dan pipeline membaca `.env` di root; frontend membaca `web/.env`. Hanya variabel
-berawalan `VITE_` yang sampai ke browser, sehingga `FIRMS_MAP_KEY` tetap di server (NFR-08).
-Lihat [`.env.example`](.env.example) dan [`web/.env.example`](web/.env.example).
+Run `make test` before opening a pull request.
 
-Setelah mengisi `FIRMS_MAP_KEY`, uji dengan `uv run firecal check-key`. Untuk CI, simpan key yang sama
-sebagai GitHub secret `FIRMS_MAP_KEY` lalu jalankan workflow **Check FIRMS MAP_KEY**.
+## Environment variables
 
-## Kontribusi
+The backend and pipeline read `.env` in the repository root; the frontend reads `web/.env`. Only variables starting with `VITE_` reach the browser, so `FIRMS_MAP_KEY` stays on the server (NFR-08). See [`.env.example`](.env.example) and [`web/.env.example`](web/.env.example).
 
-- Branch dari `main` dengan nama `<tipe>/<tiket>-<ringkas>`, mis. `feat/T-15-calendar-endpoint`.
-- Pesan commit mengikuti [Conventional Commits](https://www.conventionalcommits.org/),
-  mis. `feat(api): add /calendar endpoint`.
-- CI wajib hijau sebelum merge.
+## Contributing
 
-## Lisensi dan atribusi
+- Branch from `main` with the name `<type>/<ticket>-<short-name>`, for example `feat/T-15-calendar-endpoint`.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/), for example `feat(api): add /calendar endpoint`.
+- CI must pass before a pull request is merged.
 
-Kode dirilis di bawah [lisensi MIT](LICENSE). Data titik panas berasal dari
-**NASA FIRMS** (Fire Information for Resource Management System), MODIS Collection 6.1
-dan VIIRS 375 m (S-NPP, NOAA-20, NOAA-21).
+## License and attribution
+
+The code is released under the [MIT license](LICENSE). Hotspot data comes from **NASA FIRMS** (Fire Information for Resource Management System), using MODIS Collection 6.1 and VIIRS 375 m (S-NPP, NOAA-20 and NOAA-21).
