@@ -121,4 +121,12 @@ export const messages = {
   'timectl.year': 'Year',
   'timectl.month': 'Month',
   'timectl.values': 'Values',
+  'clim.median': 'Median {start}–{end}',
+  'clim.medianShort': 'Median',
+  'clim.band': 'P25–P75',
+  'clim.season': 'Fire season',
+  'clim.aria':
+    'Monthly climatology chart: median, P25–P75 range and the latest year. Fire season: {months}.',
+  'clim.note':
+    'Shaded months form the fire season: their median is above the 75th percentile of all months ({threshold}).',
 } as const;

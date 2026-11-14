@@ -1071,3 +1071,13 @@ h3 {
 .kpi--cool .kpi__value {
   color: #a5d8ff;
 }
+
+/* ---------- charts ---------- */
+.chart {
+  width: 100%;
+}
+
+.is-stale {
+  opacity: 0.55;
+  transition: opacity 0.2s;
+}
