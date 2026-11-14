@@ -79,6 +79,10 @@ After setting `FIRMS_MAP_KEY`, check it with `uv run firecal check-key`. For CI,
 
 Run `make test` before opening a pull request.
 
+## Deployment
+
+The web app is a static site (Cloudflare Pages), the API is a container (Fly.io or Cloud Run) and the processed data live in an S3-compatible bucket (Cloudflare R2). `.github/workflows/deploy.yml` pushes the API image to GHCR on every push to `main` and deploys each target once its credentials are configured. See [`docs/deployment.md`](docs/deployment.md) for the step-by-step setup and a local production check.
+
 ## Environment variables
 
 The backend and pipeline read `.env` in the repository root; the frontend reads `web/.env`. Only variables starting with `VITE_` reach the browser, so `FIRMS_MAP_KEY` stays on the server (NFR-08). See [`.env.example`](.env.example) and [`web/.env.example`](web/.env.example).

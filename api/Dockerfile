@@ -20,4 +20,5 @@ USER firecal
 
 ENV DATA_URI=/app/data/processed
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# PORT is set by Cloud Run / Fly.io; proxy headers keep scheme and client IP behind HTTPS.
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips=*"]
