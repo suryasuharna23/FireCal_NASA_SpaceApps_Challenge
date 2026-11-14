@@ -63,6 +63,7 @@ def build(kind):
         files += [
             ROOT / "data/processed/reports/archive_manifest.json",
             ROOT / "data/processed/regions.parquet",
+            ROOT / "data/interim/regional-audit/selection_lock.json",
         ]
     files = sorted({p for p in files if p.is_file()})
     if any(p.suffix not in {".csv", ".json", ".parquet", ".png", ".geojson"} for p in files):

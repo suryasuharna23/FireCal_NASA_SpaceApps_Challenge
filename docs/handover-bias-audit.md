@@ -9,6 +9,12 @@ Untuk memindahkan data ke rekan, gunakan [panduan onboarding](DATA-ONBOARDING.md
 Paket processed dan sources beserta checksum sudah disiapkan lokal; upload
 bersama belum dilakukan.
 
+Update kolaborasi: commit `90da7d7` menambahkan runner
+`scripts/audit_indonesia_bias.py`, calculation module, tests, evidence register,
+dan [protokol diagnosis](bias-audit-protocol.md). Implementasi audit sudah tersedia;
+eksekusi numerik terhadap snapshot nyata masih menunggu transfer pada komputer
+rekan. Checklist berikut mencatat tujuan dan hasil yang perlu dipastikan.
+
 ## Kondisi awal
 
 - Repository: `suryasuharna23/FireCal_NASA_SpaceApps_Challenge`.

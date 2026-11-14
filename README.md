@@ -97,6 +97,8 @@ unresolved in the [regional audit record](docs/regional-audit-findings.md).
 
 ## Commands
 
+For the continuation of hsbu's 2026 bias investigation, see the [progress tracker](docs/PROGRESS.md) and [fixed-coefficient audit protocol](docs/bias-audit-protocol.md). Start with `uv run --no-sync python scripts/audit_indonesia_bias.py --check-inputs`; the real snapshot and acquisition receipts must be transferred separately because they are excluded from Git.
+
 | Command       | What it does                                                      |
 | ------------- | ----------------------------------------------------------------- |
 | `make setup`  | Install Python and JavaScript dependencies and the pre-commit hooks |

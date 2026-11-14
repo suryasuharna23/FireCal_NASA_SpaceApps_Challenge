@@ -25,7 +25,7 @@ Paket dibuat lokal di `data/interim/share/`, di luar Git:
 | Paket | Isi | Penggunaan |
 | --- | --- | --- |
 | `firecal-indonesia-593ae2d95fdf-processed.zip` | Seluruh processed snapshot, termasuk 7,7 juta points, koefisien, grid, regions, metadata, dan laporan | Menjalankan API/frontend serta mengaudit hasil tanpa download ulang |
-| `firecal-indonesia-593ae2d95fdf-sources.zip` | 48 CSV tahunan asli, respons API beserta receipt, availability/rencana, batas negara, archive manifest, dan regions baseline untuk reproduksi | Menelusuri provenance, gap, dan membangun ulang snapshot |
+| `firecal-indonesia-593ae2d95fdf-sources.zip` | 48 CSV tahunan asli, respons API beserta receipt, availability/rencana, batas negara, archive manifest, regions baseline, serta prior selection lock | Menelusuri provenance, gap, audit runner, dan reproduksi snapshot |
 | Berkas `.zip.sha256` masing-masing | SHA-256 seluruh arsip | Memastikan transfer utuh |
 
 Setiap ZIP memiliki `SNAPSHOT-MANIFEST-*.json` dengan checksum setiap berkas,
@@ -112,6 +112,18 @@ $env:COVERAGE_BBOX = '94,-12,142,7'
 uv run --no-sync python scripts/verify_indonesia_extended.py
 ```
 
+Untuk audit runner yang ditambahkan rekan pada commit `90da7d7`:
+
+```powershell
+uv run --no-sync python scripts/audit_indonesia_bias.py --check-inputs
+# Jalankan analisis setelah preflight siap; direktori output harus baru:
+uv run --no-sync python scripts/audit_indonesia_bias.py
+```
+
+Sources ZIP terbaru menyertakan `data/interim/regional-audit/selection_lock.json`
+yang diperlukan preflight. Periksa `audit.json` sebelum menganggap eksekusi audit
+selesai; keberadaan direktori output saja belum membuktikan keberhasilan.
+
 Verifier memeriksa jumlah/coverage platform, rekonsiliasi point weights, API/CSV,
 dan regression check regional. Verifier menulis ulang laporan pada snapshot
 lokal; simpan manifest/checksum paket sebagai acuan transfer yang tidak berubah.
@@ -145,10 +157,14 @@ seluruh isi ZIP, lalu menulis checksum arsip. Paket yang sudah ada tidak ditimpa
 ## Hasil penyiapan lokal, 14 November 2026
 
 - Processed ZIP: 106.674.802 byte, 52 berkas data/laporan ditambah manifest.
-- Sources ZIP: 187.264.518 byte, 990 berkas sumber/provenance ditambah manifest.
+- Sources ZIP terbaru: 187.265.986 byte, 991 berkas sumber/provenance ditambah manifest.
 - Checksum per berkas di kedua ZIP telah diverifikasi dan pemindaian seluruh
   isi paket tidak menemukan MAP_KEY lokal.
 - Kedua ZIP diekstrak ke folder qualification kosong. Verifier snapshot,
   rekonsiliasi points, dan API/CSV tiga provinsi lolos dari folder tersebut.
+- Setelah integrasi runner rekan, preflight dari paket hasil ekstraksi juga
+  lolos: `ready=true`, 27 point partitions, 463 respons API terverifikasi.
+- Sebanyak 16 tests audit runner lolos pada ASUS setelah integrasi kode remote;
+  audit numerik penuh belum dijalankan pada tahap commit/push ini.
 - Qualification memakai environment Python yang sudah tersedia pada komputer
   ini. Instalasi dependency pada komputer rekan dan upload bersama belum diuji.

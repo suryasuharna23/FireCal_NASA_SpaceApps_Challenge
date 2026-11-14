@@ -1,54 +1,142 @@
-# Progres FireCal — 14 November 2026
+# FireCal progress - 14 November 2026
 
-Tahap saat ini: persiapan dan harmonisasi data nyata Indonesia selesai untuk
-snapshot yang tersedia. Audit penyebab bias 2026 menjadi pekerjaan berikutnya.
-Dataset masih berstatus **eksperimental**.
+## Shared data handoff update from ASUS
 
-## Status pekerjaan
+The continuation commit `90da7d7` and onboarding commit `dac4c13` are integrated
+on the same branch. The machine-specific continuation record below is retained;
+its missing-input and test results describe the faiz computer before transfer.
 
-| Pekerjaan | Status | Bukti / hasil |
-| --- | --- | --- |
-| Arsip Indonesia 2000–2025 | Selesai | 48 berkas NASA; [laporan pilot](indonesia-pilot.md) |
-| Audit regional awal | Selesai | 16 kandidat; perbaikan CV terbaik 1,94% di bawah ambang 5%; baseline dipertahankan; [laporan audit](regional-audit-findings.md) |
-| Akuisisi 2026 dan NOAA-21 | Selesai sesuai rencana snapshot | 463 respons dari 8 sumber SP/NRT; 3.015.711 deteksi bbox; checksum dan receipt tersimpan |
-| Country filtering dan harmonisasi | Selesai | 313 bulan; 7.716.551 deteksi setelah filtering; versi `593ae2d95fdf` |
-| Pemeriksaan hasil | Lolos secara teknis | Rekonsiliasi point weights, API/CSV, 126 Python tests, Ruff lint/format |
-| Paket kolaborasi data | Selesai lokal | Processed ZIP 106,7 MB dan sources ZIP 187,3 MB; manifest/checksum, pemindaian key, dan verifikasi dari ekstraksi kosong lolos; [onboarding](DATA-ONBOARDING.md) |
-| Distribusi data ke rekan | Belum diunggah | Kedua ZIP dan checksum siap dibagikan dari `data/interim/share/`; akses repository privat perlu tersedia |
-| Akurasi regional / transfer 2026 | Belum memenuhi target | Bias nasional Januari–Oktober 2026 −12,20%; 8/27 provinsi memenuhi kedua target |
-| Audit SP/NRT, satelit, dan exposure | Belum dimulai | Urutan kerja tersedia di [handover audit bias](handover-bias-audit.md) |
-| Protokol evaluasi model berikutnya | Belum disusun | Periode yang hasilnya sudah dibaca perlu diperlakukan sebagai regression check |
-| Integrasi snapshot baru ke serving | Belum dilakukan | Baseline `a9443c4efd84` tetap terpisah dari snapshot baru |
-| CI remote | Belum terselesaikan pada pemeriksaan sebelumnya | `startup_failure` tanpa job; status run terbaru belum diperiksa pada handover ini |
+- The real snapshot exists on ASUS: version `593ae2d95fdf`, 7,716,551 retained
+  points. Existing snapshot/API checks passed there; this does not claim the new
+  numerical bias audit has run.
+- Processed and sources ZIPs with per-file manifests/checksums are prepared under
+  `data/interim/share/`. The sources package now also includes the prior
+  `regional-audit/selection_lock.json` required by the continuation runner.
+- [Data onboarding](DATA-ONBOARDING.md) explains transfer, setup and verification.
+  Upload to shared storage and installation on the recipient computer remain pending.
+- The earlier 126-test result on ASUS predates the new audit module. The faiz
+  test results below are preserved with their own machine-specific limitations.
+- Scientific status remains experimental; the next step after transfer is input
+  preflight, then baseline reproduction and the fixed-coefficient audit.
+- Integration validation on ASUS: all 16 new audit tests pass; Ruff lint/format
+  pass. Preflight against the extracted packages reports ready, 27 point
+  partitions and 463 verified API responses. The full numerical audit is pending.
 
-Jumlah respons lengkap membuktikan kelengkapan rencana permintaan. Coverage
-observasi sensor, outage, dan valid observation masih perlu diperiksa terpisah.
+## Branch and continuation
 
-## Hasil kuantitatif snapshot terbaru
+- Branch: `feat/firms-api-acquisition`, based on hsbu's `54a2ed9`.
+- Continuation checkout on this computer:
+  `C:\Users\faiz\Documents\02 Areas\compe\lonba nasa\FireCal-hsbu`.
+- The original checkout's uncommitted onboarding material remains in
+  `FireCal_NASA_SpaceApps_Challenge` on `main`.
+- The supplied [handover](handover-bias-audit.md) is preserved as context. Its
+  results and previous-machine paths are not evidence of files existing here.
 
-| Periode pembanding | r nasional | Bias nasional | Provinsi memenuhi target |
-| --- | ---: | ---: | ---: |
-| 2016 dan 2019 | 0,9992 | −6,20% | 12/27 |
-| 2022–2025 | 0,9949 | −2,88% | 9/27 |
-| Januari–Oktober 2026, provisional | 0,9944 | −12,20% | 8/27 |
+## Previously completed by hsbu
 
-Target: r ≥ 0,9 dan absolute aggregate bias ≤ 10% terhadap MODIS. Provinsi yang
-dinilai memiliki minimal 1.000 deteksi MODIS selama training, dengan bobot
-overlap wilayah. MODIS digunakan sebagai referensi sensor; validasi terhadap
-kejadian kebakaran di lapangan belum tersedia. November 2026 parsial dan tidak
-masuk tabel evaluasi di atas.
+The branch contains real Indonesia acquisition, country filtering, the pilot,
+regional-model audit, and experimental extension. See
+[the extension report](indonesia-extended.md) and
+[regional findings](regional-audit-findings.md).
 
-## Status repository dan verifikasi
+The handover reports snapshot `593ae2d95fdf`, 7,716,551 retained observations,
+national January-October 2026 bias -12.20%, r 0.9944, and 8/27 eligible provinces
+meeting both targets. Those values have **not been reproduced on this computer**.
+The previous model was retained after its candidate-selection rule failed.
 
-- Branch implementasi: `feat/firms-api-acquisition`.
-- Commit implementasi terakhir: `54a2ed9`, sudah di-push ke `origin`.
-- Commit sebelumnya: `a07311d` untuk pilot dan `a39a785` untuk audit regional.
-- Pemeriksaan sebelum penyusunan dokumen ini: working tree bersih; HEAD dan
-  upstream tidak memiliki selisih commit menurut referensi lokal.
-- Log pengujian implementasi: `data/interim/extended-tests.log`, 126 passed,
-  1 dependency deprecation warning. Pengujian ini mendahului perubahan dokumentasi.
-- Data hasil download, output olahan, dan `.env` tidak disertakan dalam Git.
-  Checkout baru memerlukan penyiapan atau pemindahan data lokal secara terpisah.
+## Added in this continuation
 
-Lihat [laporan snapshot](indonesia-extended.md) untuk jumlah data dan bukti
-verifikasi, serta [handover](handover-bias-audit.md) untuk melanjutkan pekerjaan.
+- [x] Identify hsbu's remote branch and inspect its acquisition/audit code.
+- [x] Create a separate checkout tracking his existing branch.
+- [x] Install its locked Python workspace without changing the lockfile.
+- [x] Preserve the handover and create this progress tracker (the referenced
+      tracker was not present in the pushed branch).
+- [x] Implement [the fixed-coefficient audit runner](../scripts/audit_indonesia_bias.py)
+      and [calculation module](../pipeline/firecal/bias_audit.py).
+- [x] Add missing-input preflight, receipt/path-relocation/checksum checks,
+      immutable pre-analysis input manifest, and all-area baseline reproduction.
+- [x] Implement monthly source/version/platform accounting, global subset
+      divisors, leave-one-out and single-platform sensitivity, Terra/Aqua
+      comparisons, zero-month handling, and explicit unavailable metrics.
+- [x] Add tests using hand-calculated examples and a small generated snapshot.
+      These tests do not substitute for the real snapshot audit.
+- [x] Review official exposure references and create an
+      [evidence register](bias-audit-exposure-evidence.csv), retaining unknowns.
+- [x] Write [the diagnostic and next-evaluation protocol](bias-audit-protocol.md).
+- [ ] Reproduce the actual snapshot's national and all-province baseline.
+- [ ] Run real SP/NRT/platform/month sensitivity and interpret the tables.
+- [ ] Obtain region/product-specific observation exposure and gap evidence.
+- [ ] Write evidence-backed numerical findings and finalize a candidate protocol.
+
+The model, serving configuration, existing datasets, and deployment are unchanged.
+No new real-data acquisition was performed. The continuation is published on
+hsbu's existing branch; numerical execution remains pending the data transfer.
+
+## Missing input, not an unsuccessful scientific result
+
+A bounded search in this computer's Documents, Desktop and Downloads found the
+handover and the earlier synthetic onboarding data, but not hsbu's real snapshot.
+The new checkout has zero real point partitions and no acquisition manifests or
+previous selection lock. The preflight therefore reports not ready.
+
+Transfer these directories, preserving their relative contents:
+
+```text
+data/interim/indonesia-extended-20261114/processed/
+data/interim/api-acquisition/
+data/interim/regional-audit/selection_lock.json
+```
+
+The acquisition folder must include nested CSV responses and JSON sidecars,
+not merely its summary files. Preserve original historical raw archives too if
+full upstream reprocessing is required; this audit consumes the already prepared
+snapshot, and does not rebuild it. Never transfer `.env` or credentials in a
+public archive.
+
+Once transferred, use explicit paths if the layout differs:
+
+```powershell
+uv run --no-sync python scripts/audit_indonesia_bias.py --check-inputs
+uv run --no-sync python scripts/audit_indonesia_bias.py
+```
+
+The first command checks prerequisites and saved API responses without writing
+results. The second freezes inputs before analysis, then requires baseline
+reproduction before completed diagnostics are published. Existing output
+directories cannot be reused. A failed numerical run retains only its input
+lock; inspect for a completed `audit.json` before treating a run as successful.
+
+## Validation on this machine
+
+| Check | Observed result |
+| --- | --- |
+| New audit tests | 16 passed, including a complete miniature snapshot/receipt run |
+| Full Python suite | 116 passed; 26 existing fixture setup errors on Windows |
+| Ruff lint | Passed |
+| Ruff format | Passed, 86 Python files already formatted |
+| `git diff --check` | Passed |
+| Real-data input preflight | Exit 2, not ready; 24 missing prerequisite paths/categories |
+
+The 26 setup errors all come from the existing pipeline fixture's directory
+symlink (`pipeline/tests/conftest.py:31`) and `WinError 1314` in this Windows
+session. The fixture and OS settings were left unchanged. The full suite also
+reports the existing Starlette/HTTPX deprecation warning. The blocked test bodies
+are not claimed to have passed.
+
+The new tests cover hand-computed conversion and AOI weighting, global subset
+divisors, zero local months, unavailable global subsets, preserved source
+versions, one-month metrics, tamper detection, relocated receipts, mismatched
+baseline rejection, and input/output immutability. Generated fixtures are clearly
+separate from hsbu's real-data evidence.
+
+The local machine-readable readiness report is
+`data/interim/bias-audit-readiness-20261114.json` (ignored by Git). A fresh terminal
+can run the preflight without relying on uv's installation location:
+
+```powershell
+.\.venv\Scripts\python.exe scripts/audit_indonesia_bias.py --check-inputs
+```
+
+No real snapshot input manifest, numerical audit tables, or new bias findings
+were produced. Baseline reproduction remains pending transfer. Exposure-aware
+correction and a genuinely prospective evaluation remain proposals.
