@@ -144,4 +144,11 @@ export const messages = {
   'points.confidence': 'Confidence',
   'points.time': 'Time (UTC)',
   'points.weight': 'MODIS-equivalent weight',
+  'export.monthly': 'Monthly CSV',
+  'export.points': 'Raw points CSV',
+  'export.cancel': 'Cancel',
+  'export.hint':
+    'Files cover the selected area and date range. Monthly: harmonized and per-sensor counts, 90% interval and anomaly. Raw points: every detection with its harmonization weight. Both include NASA FIRMS attribution.',
+  'export.progress': 'Downloading… {rows} rows ({size} MB)',
+  'export.done': 'Saved {file}',
 } as const;
