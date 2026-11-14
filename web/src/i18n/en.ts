@@ -89,4 +89,10 @@ export const messages = {
     'Drag to rotate and scroll to zoom. Click the globe or pick a fire region to open its calendar, or draw a polygon or rectangle.',
   'regions.title': 'Fire regions',
   'regions.clicked': 'Area around {lat}, {lon}',
+  'timectl.label': 'Time controls',
+  'timectl.play': 'Play',
+  'timectl.pause': 'Pause',
+  'timectl.year': 'Year',
+  'timectl.month': 'Month',
+  'timectl.values': 'Values',
 } as const;

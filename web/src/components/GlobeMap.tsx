@@ -34,6 +34,7 @@ import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
 import { aoiForClick } from '../lib/regions';
 import { RegionList } from './RegionList';
+import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
 const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/dark';
@@ -389,6 +390,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         </div>
         {globe.isFetching && <div className="globe__loading" aria-hidden="true" />}
       </div>
+      <TimeControls />
       <p id="globe-help" className="hint">
         {tool !== 'static' ? t(`map.hint.${tool}` as const) : t('globe.help')}
       </p>
