@@ -93,7 +93,13 @@ on Node 22.23.5. The old local Node 22.13.1 cannot load the locked undici versio
 so the declared minimum is corrected to 22.19.0. An incomplete accessibility-test
 points fixture was also corrected to include the actual API's count field.
 
+Update, 14 November 2026: the isolated [extended snapshot](indonesia-extended.md)
+now includes 2026 and NOAA-21 within reported availability, with all 463 API
+responses verified and harmonization/API checks completed. January-October 2026
+national bias is -12.20%, and 8/27 eligible provinces meet both targets. This
+extends acquisition and processing, while regional transfer remains unresolved.
+
 Next: acquire consistent documented MODIS processing and valid-observation/gap
-metadata; complete 2026 and NOAA-21 with a local FIRMS MAP_KEY. Revise selection
+metadata, and investigate satellite-specific and SP/NRT effects. Revise selection
 using training data and freeze a new evaluation protocol before inspecting a
 fresh period. Avoid promoting a model solely to make the known hold-outs pass.

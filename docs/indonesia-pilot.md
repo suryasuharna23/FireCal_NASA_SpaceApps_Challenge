@@ -16,6 +16,10 @@ and excluded from Git. No synthetic observations are used.
 - VIIRS NOAA-20 (`viirs-jpss1`): annual files for 2018-2025.
 - NOAA-21 and 2026 are not included in this historical pilot.
 
+An isolated [extended snapshot through 14 November 2026](indonesia-extended.md)
+now includes NOAA-21 and 2026 SP/NRT responses. Its coverage, checks and
+additional limitations are documented separately.
+
 `archive_manifest.json` records the original URLs, catalog timestamps, byte sizes,
 SHA-256 checksums, row counts, detection date ranges, satellite codes, and reported
 versions on new downloads. `source_versions.json` audits ingested version codes.

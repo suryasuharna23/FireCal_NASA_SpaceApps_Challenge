@@ -7,10 +7,14 @@ import typer
 
 from firecal import __version__
 from firecal.config import get_settings
-from firecal.firms import FirmsClient, FirmsError, mask_key
+from firecal.firms import FirmsClient, FirmsError
 from firecal.io import resolve_source
 
-app = typer.Typer(help="FireCal data pipeline.", no_args_is_help=True)
+app = typer.Typer(
+    help="FireCal data pipeline.",
+    no_args_is_help=True,
+    pretty_exceptions_show_locals=False,
+)
 
 
 @app.callback()
@@ -36,7 +40,7 @@ def check_key() -> None:
         typer.secho(str(exc), fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1) from exc
     typer.secho(
-        f"MAP_KEY {mask_key(settings.firms_map_key)} OK: "
+        "MAP_KEY OK: "
         f"{status.remaining}/{status.transaction_limit} transactions left "
         f"per {status.transaction_interval}.",
         fg=typer.colors.GREEN,

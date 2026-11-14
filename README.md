@@ -69,6 +69,27 @@ For the real-data Indonesia pilot, the public annual archives can be downloaded
 without a MAP_KEY. See [the pilot guide](docs/indonesia-pilot.md) for the verified
 download command, processing steps, coverage, and validation limits.
 
+## Progress (14 November 2026)
+
+- [x] Historical Indonesia archive prepared and verified through December 2025.
+- [x] Regional calibration audit completed; baseline retained with documented limits.
+- [x] Missing 2026 and NOAA-21 data acquired: 463 verified API responses across
+  eight SP/NRT sources, through 14 November 2026 within each source's availability.
+- [x] Isolated extended snapshot harmonized: 313 months, 7,716,551 retained
+  detections, data version `593ae2d95fdf`.
+- [x] Real-data API/CSV and point-weight checks passed; 126 Python tests and
+  Ruff lint/format checks passed for this extension.
+- [ ] Resolve satellite-specific, SP/NRT and observation-exposure effects. The
+  January-October 2026 national bias is -12.20%; only 8/27 eligible provinces meet
+  both targets. The dataset remains experimental, and November is partial.
+- [ ] Establish a new evaluation protocol before selecting a revised correction.
+- [ ] Promote the extended snapshot to serving after its limitations are resolved
+  or an explicit experimental serving decision is made; current serving is unchanged.
+
+See the [extended snapshot report](docs/indonesia-extended.md) for reproduction,
+output locations and limitations. Remote CI's earlier startup failure remains
+unresolved in the [regional audit record](docs/regional-audit-findings.md).
+
 ## Commands
 
 | Command       | What it does                                                      |
