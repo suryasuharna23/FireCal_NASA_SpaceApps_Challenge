@@ -409,7 +409,20 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           className="map map--globe"
           role="application"
           tabIndex={0}
-          aria-label={t('globe.aria', { month: monthLabel })}
+          aria-label={t('globe.aria', {
+            month: monthLabel,
+            mode: t(mode === 'raw' ? 'globe.raw' : 'globe.harmonized').toLowerCase(),
+            region: aoi?.label ? t('globe.regionLabel', { name: aoi.label }) : t('globe.noRegion'),
+          })}
+          onKeyDown={(e) => {
+            // Keyboard equivalent of clicking the globe (FR-W-27): select the area at
+            // the centre of the view. MapLibre already handles arrows and +/-.
+            if (e.key !== 'Enter' || toolRef.current !== 'static' || !mapRef.current) return;
+            e.preventDefault();
+            const { lng, lat } = mapRef.current.getCenter();
+            const label = t('regions.clicked', { lat: lat.toFixed(2), lon: lng.toFixed(2) });
+            setAoi(aoiForClick(lng, lat, label));
+          }}
           aria-describedby="globe-help"
           data-testid="globe-map"
         />

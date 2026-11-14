@@ -104,7 +104,9 @@ export const messages = {
   'kpi.maxYear': 'Highest year',
   'kpi.yearTotal': '{v} hotspots that year',
   'globe.aria':
-    'Interactive hotspot globe for {month}. Drag to rotate, scroll or pinch to zoom; arrow keys and plus/minus also work.',
+    'Interactive hotspot globe, {month}, {mode} values, {region}. Arrow keys rotate, plus and minus zoom, Enter selects the area at the centre.',
+  'globe.noRegion': 'no area selected',
+  'globe.regionLabel': 'area {name}',
   'globe.harmonized': 'Harmonized',
   'globe.raw': 'Raw per sensor',
   'globe.unit': 'Hotspots per 0.5° cell per month',
