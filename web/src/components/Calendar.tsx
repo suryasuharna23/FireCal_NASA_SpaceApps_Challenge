@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
 import { useCalendar, type MonthValue } from '../api/queries';
 import { useT } from '../i18n';
-import { countScale, formatCount, gradient } from '../lib/colors';
+import { countColor, countScale, formatCount, gradient } from '../lib/colors';
 import { monthNames } from '../lib/months';
 import { useAppStore } from '../state/useAppStore';
-import { interpolateYlOrRd } from 'd3';
 import { Panel } from './Panel';
 
 /** Year x month heatmap of harmonized hotspot counts in the AOI (FR-W-07, FR-W-08). */
@@ -127,7 +126,7 @@ export function Calendar() {
       )}
       {grid && (
         <div className="legend" aria-label={t('calendar.legend')}>
-          <div className="legend__bar" style={{ background: gradient(interpolateYlOrRd) }} />
+          <div className="legend__bar" style={{ background: gradient(countColor) }} />
           <div className="legend__ticks">
             <span>{scale === 'log' ? '1' : '0'}</span>
             <span>
