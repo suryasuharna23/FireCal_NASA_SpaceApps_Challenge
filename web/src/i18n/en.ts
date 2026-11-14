@@ -7,7 +7,7 @@ export const en: Messages = {
   'region.view': 'Globe and area map',
   'region.controls': 'Area and time settings',
   'region.results': 'Calendar and analytics',
-  'panel.globe': 'Hotspot globe',
+  'panel.globe': 'Hotspot globe & area',
   'panel.map': 'Area map (AOI)',
   'panel.aoi': 'Area',
   'panel.time': 'Time',
@@ -78,4 +78,14 @@ export const en: Messages = {
   'calendar.nrtNote': 'Dashed outline = NRT data not final',
   'calendar.asTable': 'View as table',
   'calendar.year': 'Year',
+  'globe.aria':
+    'Interactive hotspot globe for {month}. Drag to rotate, scroll or pinch to zoom; arrow keys and plus/minus also work.',
+  'globe.harmonized': 'Harmonized',
+  'globe.raw': 'Raw per sensor',
+  'globe.unit': 'Hotspots per 0.5° cell per month',
+  'globe.spin': 'Auto-rotate',
+  'globe.stopSpin': 'Stop rotation',
+  'globe.orbit': 'Back to orbit',
+  'globe.help':
+    'Drag to rotate the globe, scroll to zoom, then draw a polygon or rectangle to choose an area.',
 };

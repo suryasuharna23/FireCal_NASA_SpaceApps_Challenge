@@ -5,7 +5,7 @@ export const id = {
   'region.view': 'Globe dan peta area',
   'region.controls': 'Pengaturan area dan waktu',
   'region.results': 'Kalender dan analitik',
-  'panel.globe': 'Globe titik panas',
+  'panel.globe': 'Globe titik panas & area',
   'panel.map': 'Peta area (AOI)',
   'panel.aoi': 'Area',
   'panel.time': 'Waktu',
@@ -76,6 +76,16 @@ export const id = {
   'calendar.nrtNote': 'Garis putus-putus = data NRT belum final',
   'calendar.asTable': 'Lihat sebagai tabel',
   'calendar.year': 'Tahun',
+  'globe.aria':
+    'Globe interaktif titik panas {month}. Seret untuk memutar, gulir atau cubit untuk memperbesar, panah dan tombol plus/minus pada keyboard juga bisa dipakai.',
+  'globe.harmonized': 'Terharmonisasi',
+  'globe.raw': 'Mentah per sensor',
+  'globe.unit': 'Titik panas per sel 0,5° per bulan',
+  'globe.spin': 'Putar otomatis',
+  'globe.stopSpin': 'Hentikan putaran',
+  'globe.orbit': 'Kembali ke orbit',
+  'globe.help':
+    'Seret untuk memutar globe, gulir untuk memperbesar, lalu gambar poligon atau persegi untuk memilih area.',
 };
 
 export type Messages = Record<keyof typeof id, string>;

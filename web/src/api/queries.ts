@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useAppStore } from '../state/useAppStore';
-import { apiPost } from './client';
+import { apiGet, apiPost } from './client';
 
 export interface MonthValue {
   year: number;
@@ -93,3 +93,30 @@ function useSeries<T>(path: '/calendar' | '/stats') {
 
 export const useCalendar = () => useSeries<CalendarResponse>('/calendar');
 export const useStats = () => useSeries<StatsResponse>('/stats');
+
+export interface GlobeResponse {
+  year: number;
+  month: number;
+  mode: 'harmonized' | 'raw';
+  res: number;
+  source: 'MODIS' | 'VIIRS';
+  provisional: boolean;
+  count: number;
+  total: number;
+  max: number;
+  truncated: boolean;
+  /** [lon, lat, value] triples on a 0.5° grid, strongest first. */
+  cells: [number, number, number][];
+  data_version: string | null;
+}
+
+/** World hotspot cells for one month (FR-W-23). */
+export function useGlobe(ym: { year: number; month: number } | null, mode: 'harmonized' | 'raw') {
+  return useQuery({
+    queryKey: ['/globe', ym?.year, ym?.month, mode],
+    queryFn: () => apiGet<GlobeResponse>('/globe', { year: ym!.year, month: ym!.month, mode }),
+    enabled: ym !== null,
+    placeholderData: keepPreviousData,
+    staleTime: 30 * 60 * 1000,
+  });
+}

@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Calendar } from './components/Calendar';
 import { Climatology } from './components/Climatology';
-import { Globe } from './components/Globe';
 import { Kpi } from './components/Kpi';
-import { MapAoi } from './components/MapAoi';
+import { GlobeMap } from './components/GlobeMap';
 import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
@@ -48,8 +47,7 @@ export default function App() {
       {page === 'app' ? (
         <main id="main" className="layout">
           <section className="layout__view" aria-label={t('region.view')}>
-            <Globe />
-            <MapAoi />
+            <GlobeMap />
           </section>
           <section className="layout__side" aria-label={t('region.controls')}>
             <AoiPanel>
