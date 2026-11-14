@@ -1,4 +1,5 @@
 import { saveBlob } from './download';
+import { FONT_BODY, FONT_DISPLAY, FONT_MONO, fontsReady } from './fonts';
 
 /** Pixel ratio of exported images (FR-W-18: at least 2x). */
 export const EXPORT_SCALE = 2;
@@ -34,6 +35,7 @@ export async function exportFramedPng(
   body: { width: number; height: number; draw: (ctx: CanvasRenderingContext2D) => void },
   filename: string,
 ): Promise<void> {
+  await fontsReady();
   const { width, height } = frameSize(body.width, body.height);
   const canvas = document.createElement('canvas');
   canvas.width = width * EXPORT_SCALE;
@@ -45,10 +47,10 @@ export async function exportFramedPng(
   ctx.fillRect(0, 0, width, height);
 
   ctx.fillStyle = FG;
-  ctx.font = '600 17px "Space Grotesk", Inter, sans-serif';
+  ctx.font = `600 17px ${FONT_DISPLAY}`;
   ctx.fillText(frame.title, PAD, 28);
   ctx.fillStyle = MUTED;
-  ctx.font = '12px Inter, sans-serif';
+  ctx.font = `12px ${FONT_BODY}`;
   ctx.fillText(frame.subtitle, PAD, 46);
 
   ctx.save();
@@ -57,7 +59,7 @@ export async function exportFramedPng(
   ctx.restore();
 
   ctx.fillStyle = MUTED;
-  ctx.font = '11px Inter, sans-serif';
+  ctx.font = `11px ${FONT_BODY}`;
   ctx.fillText(ATTRIBUTION, PAD, height - 11);
 
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
@@ -107,7 +109,7 @@ export function drawCalendar(
 ): void {
   const years = [...new Set(cells.map((c) => c.year))].sort((a, b) => a - b);
   const L = calendarLayout(years.length);
-  ctx.font = '10px Inter, sans-serif';
+  ctx.font = `10px ${FONT_MONO}`;
   ctx.fillStyle = MUTED;
   ctx.textAlign = 'center';
   months.forEach((m, i) => ctx.fillText(m, L.label + i * (L.cellW + L.gap) + L.cellW / 2, 10));
