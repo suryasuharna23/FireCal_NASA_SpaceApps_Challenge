@@ -1,0 +1,11 @@
+{
+  "desktop": true,
+  "mobile": true,
+  "visible_hotspot_features": true,
+  "foreign_area_selected_through_ui": true,
+  "hourly_and_daily_api_responses": true,
+  "scope_switch": true,
+  "harmonized_disabled_for_global": true,
+  "page_errors": [],
+  "horizontal_overflow": false
+}

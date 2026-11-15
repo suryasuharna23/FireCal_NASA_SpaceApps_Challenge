@@ -11,6 +11,7 @@ class ApiSettings(BaseSettings):
 
     firms_map_key: SecretStr = SecretStr("")
     data_uri: str = "./data/processed"
+    global_data_uri: str = "./data/global/current.json"
     max_aoi_km2: float = 2_000_000
     reference_years: str = "2003:2022"
     cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"

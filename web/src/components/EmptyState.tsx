@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useT } from '../i18n';
 import {
+  FEATURED_GLOBAL_IDS,
   FEATURED_REGION_IDS,
   listFireRegions,
   loadRegionAoi,
@@ -15,21 +16,23 @@ import { useAppStore } from '../state/useAppStore';
  */
 export function EmptyState() {
   const { t } = useT();
+  const scope = useAppStore((s) => s.scope);
   const setAoi = useAppStore((s) => s.setAoi);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const regions = useQuery({
-    queryKey: ['fire-regions'],
-    queryFn: listFireRegions,
+    queryKey: ['fire-regions', scope],
+    queryFn: () => listFireRegions(scope),
     staleTime: 60 * 60 * 1000,
   });
-  const featured = (regions.data ?? []).filter((region) => FEATURED_REGION_IDS.includes(region.id));
+  const featuredIds = scope === 'global' ? FEATURED_GLOBAL_IDS : FEATURED_REGION_IDS;
+  const featured = (regions.data ?? []).filter((region) => featuredIds.includes(region.id));
 
   const choose = async (region: FireRegion) => {
     setLoadingId(region.id);
     setError(null);
     try {
-      setAoi(await loadRegionAoi(region));
+      setAoi(await loadRegionAoi(region, scope));
     } catch (cause) {
       setError((cause as Error).message);
     } finally {

@@ -1,10 +1,12 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
+import { AOI } from '../test/fixtures';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { STEP_MS, TimeControls } from './TimeControls';
 
 beforeEach(() => {
   useAppStore.setState({
+    scope: 'indonesia',
     selected: null,
     mode: 'harmonized',
     playbackPeriod: 'month',
@@ -19,6 +21,55 @@ afterEach(() => {
 });
 
 describe('TimeControls', () => {
+  it('switches to the real global window and prevents unavailable corrections and dates', async () => {
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_date: '2026-08-15',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          last_acq_date: '2026-11-15',
+        },
+      },
+      '/globe': { cells: [], max: 0 },
+    });
+    renderWithQuery(<TimeControls />);
+    const coverage = await screen.findByRole('combobox', { name: 'Data coverage' });
+    act(() => useAppStore.getState().setAoi(AOI));
+    fireEvent.change(coverage, { target: { value: 'global' } });
+    expect(useAppStore.getState().scope).toBe('global');
+    expect(useAppStore.getState().aoi).toBeNull();
+    expect(useAppStore.getState().mode).toBe('raw');
+    expect(screen.getByRole('button', { name: 'Harmonized' })).toBeDisabled();
+    expect(screen.getByRole('slider', { name: 'Year' })).toHaveAttribute('min', '2026');
+    expect(screen.getByText('August 2026')).toBeInTheDocument();
+    expect(screen.getByText('November 2026')).toBeInTheDocument();
+    fireEvent.change(screen.getByRole('combobox', { name: 'Month' }), { target: { value: '8' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Playback interval' }), {
+      target: { value: 'day' },
+    });
+    expect(useAppStore.getState().playbackDay).toBe(15);
+    expect(screen.getByRole('combobox', { name: 'Day' }).querySelector('option')?.value).toBe('15');
+    fireEvent.change(coverage, { target: { value: 'indonesia' } });
+    expect(screen.getByRole('button', { name: 'Harmonized' })).toBeEnabled();
+    expect(screen.getByRole('slider', { name: 'Year' })).toHaveAttribute('min', '2000');
+  });
+
+  it.each(['NE0-IDN', 'NE1-IDN-492'])(
+    'uses the Indonesia history when global region %s is selected',
+    async (regionId) => {
+      renderWithQuery(<TimeControls />);
+      await screen.findByRole('slider', { name: 'Year' });
+      act(() => useAppStore.getState().setScope('global'));
+      act(() => useAppStore.getState().setAoi({ ...AOI, regionId, label: 'Indonesia region' }));
+      expect(useAppStore.getState().scope).toBe('indonesia');
+      expect(useAppStore.getState().aoi?.regionId).toBe(regionId);
+      expect(screen.getByRole('slider', { name: 'Year' })).toHaveAttribute('min', '2000');
+    },
+  );
+
   it('moves the shared month with the year slider and month picker', async () => {
     renderWithQuery(<TimeControls />);
     const slider = await screen.findByRole('slider', { name: 'Year' });
@@ -29,17 +80,17 @@ describe('TimeControls', () => {
     expect(useAppStore.getState().selected).toEqual({ year: 2015, month: 8 });
   });
 
-  it('animates month by month and restarts from January 2001 at the end', async () => {
+  it('animates month by month and restarts from the first available month', async () => {
     renderWithQuery(<TimeControls />);
     const play = await screen.findByRole('button', { name: 'Play' });
     vi.useFakeTimers();
-    fireEvent.click(play); // latest month is selected -> restart at 2001-01
-    expect(useAppStore.getState().selected).toEqual({ year: 2001, month: 1 });
+    fireEvent.click(play);
+    expect(useAppStore.getState().selected).toEqual({ year: 2000, month: 11 });
     act(() => vi.advanceTimersByTime(STEP_MS * 3));
-    expect(useAppStore.getState().selected).toEqual({ year: 2001, month: 4 });
+    expect(useAppStore.getState().selected).toEqual({ year: 2001, month: 2 });
     fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
     act(() => vi.advanceTimersByTime(STEP_MS * 3));
-    expect(useAppStore.getState().selected).toEqual({ year: 2001, month: 4 });
+    expect(useAppStore.getState().selected).toEqual({ year: 2001, month: 2 });
   });
 
   it('stops at the latest month', async () => {

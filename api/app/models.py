@@ -16,7 +16,9 @@ class AoiRequest(BaseModel):
 
 
 class SeriesRequest(AoiRequest):
-    start: str | None = Field(None, pattern=MONTH, description="First month, default 2001-01")
+    start: str | None = Field(
+        None, pattern=MONTH, description="First month, default first available"
+    )
     end: str | None = Field(None, pattern=MONTH, description="Last month, default latest")
     reference_years: tuple[int, int] | None = Field(
         None, description="Years for the historical median, default REFERENCE_YEARS"

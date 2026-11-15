@@ -3,6 +3,7 @@ data/raw/*
 data/interim/*
 data/processed/*
 data/live/
+data/global/
 !data/**/.gitkeep
 /SNAPSHOT-MANIFEST-*.json
 
@@ -42,3 +43,4 @@ web/playwright-report/
 .DS_Store
 Thumbs.db
 firecal/
+.vercel

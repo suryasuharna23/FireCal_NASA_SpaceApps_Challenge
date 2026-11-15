@@ -1,0 +1,19 @@
+{
+  "rows": 19071898,
+  "data_version": "fdc638723260",
+  "start_date": "2026-08-15",
+  "requested_through": "2026-11-15",
+  "source_rows": {
+    "MODIS_SP": 319573,
+    "MODIS_NRT": 805686,
+    "VIIRS_SNPP_NRT": 5546789,
+    "VIIRS_NOAA20_NRT": 6325723,
+    "VIIRS_NOAA21_NRT": 6074127
+  },
+  "windows": 74,
+  "original_csv_bytes": 1588044656,
+  "points_bytes": 224106556,
+  "hourly_grid_bytes": 9640591,
+  "repository_bundle_bytes": 231462795,
+  "repository_pieces": 221
+}

@@ -65,7 +65,7 @@ def clip_csv(source: Path, target: Path, boundary, boundary_sha: str) -> dict:
                 start, end = selected.acq_date.min(), selected.acq_date.max()
                 first = min(first, start) if first else start
                 last = max(last, end) if last else end
-                selected.to_csv(out, header=False, index=False)
+                selected.to_csv(out, header=False, index=False, lineterminator="\n")
     temporary.replace(target)
     record = {
         "source": source.as_posix(),

@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useT } from '../i18n';
 import {
+  listCountryProvinces,
   listFireRegions,
-  loadIndonesiaBoundaries,
   loadRegionAoi,
+  loadRegionBoundaries,
   regionAtCoordinate,
   regionFeatureAoi,
   type FireRegion,
@@ -14,36 +15,57 @@ import { useAppStore } from '../state/useAppStore';
 /** Quick list of fire regions; choosing one flies the globe there and opens its calendar. */
 export function RegionList() {
   const { t } = useT();
+  const scope = useAppStore((s) => s.scope);
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const regions = useQuery({
-    queryKey: ['fire-regions'],
-    queryFn: listFireRegions,
+    queryKey: ['fire-regions', scope],
+    queryFn: () => listFireRegions(scope),
+    staleTime: 60 * 60 * 1000,
+  });
+  const provincesQuery = useQuery({
+    queryKey: ['country-provinces', expanded],
+    queryFn: () => listCountryProvinces(expanded!),
+    enabled: expanded !== null,
     staleTime: 60 * 60 * 1000,
   });
   const country = (regions.data ?? []).find((region) => region.level === 0);
-  const provinces = (regions.data ?? []).filter((region) => region.level === 1);
-  const visible = provinces.filter((region) =>
-    region.name.toLocaleLowerCase('id').includes(filter.toLocaleLowerCase('id')),
+  const entries = (regions.data ?? []).filter((region) =>
+    scope === 'global' ? region.level === 0 : region.level === 1,
+  );
+  const visible = entries.filter((region) =>
+    region.name
+      .toLocaleLowerCase(scope === 'global' ? 'en' : 'id')
+      .includes(filter.toLocaleLowerCase(scope === 'global' ? 'en' : 'id')),
   );
   const showCountry =
-    country && country.name.toLocaleLowerCase('id').includes(filter.toLocaleLowerCase('id'));
+    scope === 'indonesia' &&
+    country &&
+    country.name.toLocaleLowerCase('id').includes(filter.toLocaleLowerCase('id'));
 
   const choose = async (region: FireRegion) => {
     setLoadingId(region.id);
     setError(null);
     try {
-      setAoi(await loadRegionAoi(region));
+      setAoi(await loadRegionAoi(region, scope));
     } catch (cause) {
       setError((cause as Error).message);
     } finally {
       setLoadingId(null);
     }
+  };
+
+  const select = async (region: FireRegion) => {
+    if (scope === 'global' && region.level === 0 && region.too_large) {
+      setExpanded((current) => (current === region.country ? null : region.country));
+    }
+    await choose(region);
   };
 
   const chooseCoordinate = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -64,7 +86,7 @@ export function RegionList() {
     setLoadingId('coordinate');
     setError(null);
     try {
-      const region = regionAtCoordinate(await loadIndonesiaBoundaries(), lat, lon);
+      const region = regionAtCoordinate(await loadRegionBoundaries(scope), lat, lon);
       if (region) setAoi(regionFeatureAoi(region));
       else setError(t('coord.outside'));
     } catch (cause) {
@@ -129,7 +151,13 @@ export function RegionList() {
         </button>
       )}
       {regions.data && (
-        <p className="muted small">{t('regions.available', { n: provinces.length })}</p>
+        <p className="muted small">
+          {scope === 'global'
+            ? t('regions.availableCountries', { n: entries.length })
+            : t('regions.available', { n: entries.length })}
+          {scope === 'global' &&
+            ' · Other countries use the available 2026 snapshot. Select Indonesia for its full regional history.'}
+        </p>
       )}
       <ul aria-label={t('regions.title')}>
         {visible.map((region) => (
@@ -138,16 +166,45 @@ export function RegionList() {
               type="button"
               className="chip"
               aria-pressed={aoi?.regionId === region.id}
+              aria-expanded={scope === 'global' && expanded === region.country ? 'true' : undefined}
               title={`${region.name}, ${region.country}`}
               disabled={loadingId !== null}
-              onClick={() => void choose(region)}
+              onClick={() => void select(region)}
             >
               {region.name}
-              <span className="chip__meta">{region.country}</span>
+              <span className="chip__meta">
+                {region.too_large && scope === 'global'
+                  ? t('search.tooLarge')
+                  : scope === 'global'
+                    ? region.level === 0
+                      ? t('search.country')
+                      : region.country
+                    : region.country}
+              </span>
             </button>
           </li>
         ))}
+        {scope === 'global' &&
+          expanded !== null &&
+          (provincesQuery.data ?? []).map((region) => (
+            <li key={region.id} className="region-list__province">
+              <button
+                type="button"
+                className="chip"
+                aria-pressed={aoi?.regionId === region.id}
+                title={`${region.name}, ${region.country}`}
+                disabled={loadingId !== null}
+                onClick={() => void choose(region)}
+              >
+                {region.name}
+                <span className="chip__meta">{t('search.province')}</span>
+              </button>
+            </li>
+          ))}
       </ul>
+      {scope === 'global' && expanded !== null && provincesQuery.isFetching && (
+        <p className="muted small">{t('status.loading')}</p>
+      )}
       {regions.isError && (
         <p className="form-error" role="alert">
           {(regions.error as Error).message}

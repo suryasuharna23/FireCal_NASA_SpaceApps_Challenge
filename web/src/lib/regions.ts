@@ -1,16 +1,21 @@
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import { apiGet } from '../api/client';
 import type { Aoi } from './aoi';
+import type { DataScope } from '../state/useAppStore';
 
-/** Provinces available in the current Indonesia snapshot. */
+/** A country or province/states available as an administrative boundary AOI. */
 export interface FireRegion {
   id: string;
   name: string;
   country: string;
   level: number;
+  too_large: boolean;
 }
 
 export const FEATURED_REGION_IDS = ['NE1-IDN-1230', 'NE1-IDN-492', 'NE1-IDN-1931'];
+
+/** Fire-prone worldwide picks for the raw coverage, all within the AOI limit. */
+export const FEATURED_GLOBAL_IDS = ['NE1-BRA-592', 'NE1-AUS-2650', 'NE1-USA-3521'];
 
 const LEGACY_IDS: Record<string, string> = {
   'id-sumsel': 'NE1-IDN-1230',
@@ -30,21 +35,51 @@ export interface RegionFeature extends Feature<Polygon | MultiPolygon> {
   };
 }
 
-/** The API lists Indonesia and every province present in regions.parquet. */
-export async function listFireRegions(): Promise<FireRegion[]> {
-  const response = await apiGet<{ results: RegionFeature['properties'][] }>('/regions', {
-    q: 'Indonesia',
-    limit: 100,
-  });
+/** Indonesia scope lists the snapshot's country and provinces; global lists every country. */
+export async function listFireRegions(scope: DataScope = 'indonesia'): Promise<FireRegion[]> {
+  const response =
+    scope === 'global'
+      ? await apiGet<{ results: RegionFeature['properties'][] }>('/regions', {
+          scope,
+          level: 0,
+          limit: 500,
+        })
+      : await apiGet<{ results: RegionFeature['properties'][] }>('/regions', {
+          q: 'Indonesia',
+          limit: 100,
+        });
   return response.results
-    .filter((region) => !region.too_large)
-    .map(({ id, name, country, level }) => ({
+    .filter((region) => scope === 'global' || !region.too_large)
+    .map(({ id, name, country, level, too_large }) => ({
       id,
       name,
       country,
       level,
+      too_large,
     }))
-    .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name, 'id'));
+    .sort(
+      (a, b) => a.level - b.level || a.name.localeCompare(b.name, scope === 'global' ? 'en' : 'id'),
+    );
+}
+
+/** Provinces/states of one country in the worldwide snapshot, smallest admin level. */
+export async function listCountryProvinces(country: string): Promise<FireRegion[]> {
+  const response = await apiGet<{ results: RegionFeature['properties'][] }>('/regions', {
+    scope: 'global',
+    country,
+    level: 1,
+    limit: 100,
+  });
+  return response.results
+    .filter((region) => !region.too_large)
+    .map(({ id, name, country: c, level, too_large }) => ({
+      id,
+      name,
+      country: c,
+      level,
+      too_large,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'en'));
 }
 
 export function regionFeatureAoi(feature: RegionFeature): Aoi {
@@ -60,8 +95,15 @@ export function regionFeatureAoi(feature: RegionFeature): Aoi {
   };
 }
 
-export async function loadIndonesiaBoundaries(): Promise<RegionFeature[]> {
-  const response = await apiGet<{ features: RegionFeature[] }>('/regions/boundaries');
+/** Map selection targets: Indonesia (+provinces) or every world country at level 0. */
+export async function loadRegionBoundaries(
+  scope: DataScope = 'indonesia',
+  country?: string,
+): Promise<RegionFeature[]> {
+  const response = await apiGet<{ features: RegionFeature[] }>('/regions/boundaries', {
+    scope,
+    ...(country ? { country } : {}),
+  });
   return response.features;
 }
 
@@ -107,9 +149,12 @@ export function regionAtCoordinate(
 }
 
 /** Use the saved administrative boundary, never an approximate selection circle. */
-export async function loadRegionAoi(region: FireRegion | string): Promise<Aoi> {
+export async function loadRegionAoi(
+  region: FireRegion | string,
+  scope: DataScope = 'indonesia',
+): Promise<Aoi> {
   const requestedId = typeof region === 'string' ? region : region.id;
   const id = LEGACY_IDS[requestedId] ?? requestedId;
-  const feature = await apiGet<RegionFeature>(`/regions/${encodeURIComponent(id)}`);
+  const feature = await apiGet<RegionFeature>(`/regions/${encodeURIComponent(id)}`, { scope });
   return regionFeatureAoi(feature);
 }

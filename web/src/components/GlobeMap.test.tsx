@@ -3,7 +3,8 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { cellsToGeoJSON, spinSpeed } from '../lib/globe';
 import { useAppStore } from '../state/useAppStore';
 import { FakeMap, mapCalls } from '../test/mapMocks';
-import { REGION_ROUTES } from '../test/regions';
+import { GLOBAL_REGION_ROUTES, REGION_ROUTES } from '../test/regions';
+import { AOI } from '../test/fixtures';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
 
@@ -23,11 +24,22 @@ const GLOBE = {
     [113.25, -1.75, 20],
     [-60.25, -9.75, 10],
   ],
+  points: [
+    [102.69, -4.71, 1],
+    [113.18, -1.83, 1],
+    [-60.32, -9.68, 1],
+  ],
   data_version: 'abc123',
 };
 
 beforeEach(() => {
-  useAppStore.setState({ aoi: null, selected: null, mode: 'harmonized', mapDisplay: 'points' });
+  useAppStore.setState({
+    scope: 'indonesia',
+    aoi: null,
+    selected: null,
+    mode: 'harmonized',
+    mapDisplay: 'points',
+  });
   mapCalls.fitBounds.length = 0;
   mapCalls.setData.length = 0;
   mapCalls.layout.length = 0;
@@ -95,6 +107,108 @@ describe('GlobeMap', () => {
     expect(screen.getByLabelText('Legend')).toHaveTextContent('Relative hotspot density');
     fireEvent.click(screen.getByRole('button', { name: 'Points' }));
     expect(mapCalls.layout.at(-3)).toEqual(['hotspots-heatmap', 'visibility', 'none']);
+  });
+
+  it('shows worldwide globe cells without requesting unavailable point detail', async () => {
+    useAppStore.setState({ scope: 'global', aoi: AOI, mode: 'raw' });
+    const fetch = mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { ...GLOBE, mode: 'raw', source: 'MODIS+VIIRS' },
+      ...GLOBAL_REGION_ROUTES,
+    });
+    renderWithQuery(<GlobeMap />);
+    expect(
+      await screen.findByText(/detailed detections are unavailable in this deployment/i),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(fetch.mock.calls.some((call) => String(call[0]).includes('/globe?'))).toBe(true),
+    );
+    expect(fetch.mock.calls.some((call) => String(call[0]).includes('/points'))).toBe(false);
+  });
+
+  it('shows all global cells in both display modes and resumes spin after clearing an area', async () => {
+    useAppStore.setState({ scope: 'global', aoi: null, mode: 'raw' });
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { ...GLOBE, mode: 'raw', source: 'MODIS+VIIRS' },
+      ...GLOBAL_REGION_ROUTES,
+    });
+    renderWithQuery(<GlobeMap />);
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some(
+          (data) => (data as { features?: unknown[] }).features?.length === GLOBE.cells.length,
+        ),
+      ).toBe(true),
+    );
+    expect(
+      mapCalls.setData.some((data) =>
+        (data as { features?: { geometry: { coordinates: number[] } }[] }).features?.some(
+          (feature) => feature.geometry.coordinates[0] === 102.69,
+        ),
+      ),
+    ).toBe(true);
+    expect(screen.getByRole('button', { name: 'Stop rotation' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Heatmap' }));
+    expect(mapCalls.layout).toContainEqual(['hotspots-heatmap', 'visibility', 'visible']);
+    fireEvent.click(screen.getByRole('button', { name: 'Points' }));
+    expect(mapCalls.layout).toContainEqual(['hotspots', 'visibility', 'visible']);
+    act(() => useAppStore.getState().setAoi(AOI));
+    expect(screen.getByRole('button', { name: 'Auto-rotate' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    act(() => useAppStore.getState().setAoi(null));
+    expect(screen.getByRole('button', { name: 'Stop rotation' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('uses the measured density grid when an hourly point sample is unavailable', async () => {
+    useAppStore.setState({ scope: 'global', aoi: null, mode: 'raw', mapDisplay: 'points' });
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { ...GLOBE, points: null, mode: 'raw' },
+      ...GLOBAL_REGION_ROUTES,
+    });
+    renderWithQuery(<GlobeMap />);
+    const heatmap = await screen.findByRole('button', { name: 'Heatmap' });
+    await waitFor(() => expect(heatmap).toHaveAttribute('aria-pressed', 'true'));
+    expect(screen.getByRole('button', { name: 'Points' })).toBeDisabled();
   });
 
   it('follows the month selected in the calendar', async () => {

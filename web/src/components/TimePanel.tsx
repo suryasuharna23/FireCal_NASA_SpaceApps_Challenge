@@ -10,6 +10,7 @@ export function TimePanel() {
   const { t } = useT();
   const meta = useMeta().data;
   const store = useAppStore();
+  const aoi = store.aoi;
   const range = useMemo(
     () =>
       meta?.start_month && meta.end_month ? { start: meta.start_month, end: meta.end_month } : null,
@@ -73,6 +74,9 @@ export function TimePanel() {
 
   return (
     <Panel title={t('panel.time')} id="time-panel">
+      <p className="muted small">
+        {aoi?.label ?? 'Every Indonesian region'} · {range.start} to {range.end}
+      </p>
       <form onSubmit={apply} noValidate aria-label={t('panel.time')}>
         <div className="field-row field-row--2">
           <div className="field">

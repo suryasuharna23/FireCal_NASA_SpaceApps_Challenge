@@ -44,19 +44,26 @@ def test_globe_rejects_months_outside_data(client) -> None:
 
 def test_globe_year_sums_months(client) -> None:
     annual = client.get("/globe", params={"year": 2019, "period": "year"}).json()
-    monthly = [client.get("/globe", params={"year": 2019, "month": month}).json()
-               for month in range(1, 13)]
+    monthly = [
+        client.get("/globe", params={"year": 2019, "month": month}).json() for month in range(1, 13)
+    ]
     assert annual["period"] == "year"
     assert annual["total"] == pytest.approx(sum(m["total"] for m in monthly), abs=1)
 
 
 def test_globe_daily_and_hourly_match_acquisition_window(client) -> None:
-    daily = client.get("/globe", params={"year": 2019, "month": 9,
-                                       "day": 15, "period": "day"})
+    daily = client.get("/globe", params={"year": 2019, "month": 9, "day": 15, "period": "day"})
     assert daily.status_code == 200, daily.text
-    hourly = [client.get("/globe", params={"year": 2019, "month": 9,
-                                         "day": 15, "hour": h, "period": "hour"}).json()
-              for h in range(24)]
+    hourly = [
+        client.get(
+            "/globe", params={"year": 2019, "month": 9, "day": 15, "hour": h, "period": "hour"}
+        ).json()
+        for h in range(24)
+    ]
     assert daily.json()["total"] == pytest.approx(sum(h["total"] for h in hourly), abs=1)
-    assert client.get("/globe", params={"year": 2019, "month": 2, "day": 30,
-                                       "period": "day"}).status_code == 422
+    assert (
+        client.get(
+            "/globe", params={"year": 2019, "month": 2, "day": 30, "period": "day"}
+        ).status_code
+        == 422
+    )

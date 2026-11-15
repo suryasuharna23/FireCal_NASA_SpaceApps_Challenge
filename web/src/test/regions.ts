@@ -37,3 +37,64 @@ export const REGION_ROUTES: Record<string, unknown> = {
   '/regions/boundaries': { type: 'FeatureCollection', features: REGION_FEATURES },
   ...Object.fromEntries(REGION_FEATURES.map((feature) => [`/regions/${feature.id}`, feature])),
 };
+
+export const GLOBAL_COUNTRIES = [
+  {
+    id: 'NE0-BRA',
+    name: 'Brazil',
+    country: 'Brazil',
+    level: 0,
+    area_km2: 8_500_000,
+    too_large: true,
+  },
+  {
+    id: 'NE0-PRT',
+    name: 'Portugal',
+    country: 'Portugal',
+    level: 0,
+    area_km2: 92_000,
+    too_large: false,
+  },
+];
+
+export const BRAZIL_PROVINCES = [
+  {
+    id: 'NE1-BRA-592',
+    name: 'Amazonas',
+    country: 'Brazil',
+    level: 1,
+    area_km2: 1_500_000,
+    too_large: false,
+  },
+];
+
+function regionFeature(props: (typeof GLOBAL_COUNTRIES)[number]) {
+  return {
+    type: 'Feature',
+    id: props.id,
+    properties: props,
+    geometry: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [0, 0],
+          [2, 0],
+          [2, 2],
+          [0, 2],
+          [0, 0],
+        ],
+      ],
+    },
+  };
+}
+
+export const GLOBAL_REGION_FEATURES = GLOBAL_COUNTRIES.map(regionFeature);
+
+export const BRAZIL_PROVINCE_FEATURES = BRAZIL_PROVINCES.map(regionFeature);
+
+export const GLOBAL_REGION_ROUTES: Record<string, unknown> = {
+  '/regions': { query: '', results: GLOBAL_COUNTRIES },
+  '/regions/boundaries': { type: 'FeatureCollection', features: GLOBAL_REGION_FEATURES },
+  '/regions/NE0-PRT': GLOBAL_REGION_FEATURES[1],
+  '/regions/NE1-BRA-592': BRAZIL_PROVINCE_FEATURES[0],
+};

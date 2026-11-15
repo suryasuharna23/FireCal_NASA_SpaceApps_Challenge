@@ -50,9 +50,9 @@ def resolve_window(
     end: str | None,
     reference: tuple[int, int] | None,
 ) -> Window:
-    """Apply defaults (2001-01 .. latest month, REFERENCE_YEARS) and validate (FR-W-05/06)."""
+    """Default to the complete available series and validate the requested window."""
     data_start, data_end = parse_ym(meta["start_month"]), parse_ym(meta["end_month"])
-    s = parse_ym(start) if start else max((2001, 1), data_start)
+    s = parse_ym(start) if start else data_start
     e = parse_ym(end) if end else data_end
     available = f"{meta['start_month']} – {meta['end_month']}"
     if s > e:

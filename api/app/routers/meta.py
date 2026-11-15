@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import APIRouter, Depends
 
 from app import __version__
-from app.db import Dataset, get_connection, get_dataset
+from app.db import Dataset, DataUnavailableError, get_connection, get_dataset, get_global_dataset
 from app.settings import get_settings
 
 router = APIRouter(tags=["meta"])
@@ -25,6 +25,20 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
     web app shows a warning. Without processed data ``status`` is ``no_data``.
     """
     settings = get_settings()
+    try:
+        global_ds = get_global_dataset()
+        global_meta = {
+            **global_ds.meta(con),
+            "status": "ok",
+            "points_available": global_ds.exists("points"),
+        }
+        global_status = Path(settings.live_repo_root) / "data/global/status.json"
+        if settings.live_auto_refresh and global_status.is_file():
+            import json
+
+            global_meta["live"] = json.loads(global_status.read_text())
+    except DataUnavailableError as exc:
+        global_meta = {"status": "unavailable", "detail": str(exc)}
     live_status = None
     if settings.live_auto_refresh:
         import json
@@ -41,6 +55,7 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
         "max_aoi_km2": settings.max_aoi_km2,
         "default_reference_years": list(settings.default_reference_years),
         "live": live_status,
+        "global": global_meta,
         "freshness_status": (
             "error"
             if live_status and live_status.get("status") in {"failed", "missing_key"}

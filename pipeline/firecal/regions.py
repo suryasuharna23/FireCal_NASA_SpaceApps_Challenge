@@ -119,3 +119,35 @@ def regions(paths: DataPaths, sources: list[str] | None = None) -> pd.DataFrame:
 
     local = [resolve_source(s, paths.reference) for s in (sources or DEFAULT_SOURCES)]
     return build_regions(local, paths.regions)
+
+
+GLOBAL_REFERENCE = (
+    "data/raw/reference/ne_50m_admin_0_countries.geojson",
+    "data/raw/reference/ne_10m_admin_1_states_provinces.geojson",
+)
+
+
+def build_global_regions(repo: Path, sources: list[str] | None = None) -> pd.DataFrame:
+    """Worldwide region boundaries for the pinned global snapshot directory.
+
+    The output complements the immutable observation bundle, so an existing
+    verified file is reused as-is. Sources are the repository reference files;
+    the Natural Earth download default is the fallback for a fresh checkout.
+    """
+    import json
+
+    import pandas as pd
+
+    from firecal.global_data import CATALOG
+    from firecal.io import resolve_source
+
+    version = json.loads((repo / CATALOG).read_text())["data_version"]
+    out = repo / "data/global/snapshots" / version / "regions.parquet"
+    if out.exists():
+        return pd.read_parquet(out, columns=["id"])
+    chosen = sources
+    if chosen is None:
+        local = [repo / name for name in GLOBAL_REFERENCE]
+        chosen = [str(p) for p in local if p.exists()] or list(DEFAULT_SOURCES)
+    local = [resolve_source(s, repo / "data/raw/reference") for s in chosen]
+    return build_regions(local, out)

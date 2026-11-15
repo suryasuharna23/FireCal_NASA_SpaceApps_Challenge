@@ -18,17 +18,33 @@ export interface ClimatologyLabels {
   months: string[];
   median: string;
   band: string;
-  current: string;
   season: string;
+  year: (year: number, partial: boolean) => string;
   format: (v: number | null) => string;
+}
+
+export interface YearProfile {
+  year: number;
+  values: (number | null)[];
+  partial: boolean;
+}
+
+export interface ClimatologyView {
+  years: YearProfile[];
+  showBand: boolean;
+  showSeason: boolean;
 }
 
 /**
  * Monthly climatology (FR-W-12, FR-W-14): median and P25–P75 band over the reference
- * years, the last year of the range on top, and critical months as shaded bands.
+ * years, up to two chosen years on top, and optional critical months as shaded bands.
  * The band is drawn as a stacked area: an invisible P25 base plus (P75 − P25).
  */
-export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabels): EChartsOption {
+export function climatologyOption(
+  stats: StatsResponse,
+  labels: ClimatologyLabels,
+  view: ClimatologyView,
+): EChartsOption {
   const c = stats.climatology;
   const p25 = c.map((m) => m.p25 ?? 0);
   const width = c.map((m) => Math.max((m.p75 ?? 0) - (m.p25 ?? 0), 0));
@@ -38,9 +54,14 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
   ]);
   return {
     ...baseOption,
+    grid: { ...baseOption.grid, top: view.years.length > 1 ? 56 : 40 },
     legend: {
       ...baseOption.legend,
-      data: [labels.median, labels.band, labels.current],
+      data: [
+        labels.median,
+        ...(view.showBand ? [labels.band] : []),
+        ...view.years.map((y) => labels.year(y.year, y.partial)),
+      ],
     },
     tooltip: {
       ...baseOption.tooltip,
@@ -51,9 +72,13 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
         return [
           `<b>${labels.months[i]}</b>`,
           `${labels.median}: ${f(m.median)}`,
-          `${labels.band}: ${f(m.p25)}–${f(m.p75)}`,
-          `${labels.current}: ${f(m.current)}`,
-          m.critical ? `<span style="color:${THEME.amber}">${labels.season}</span>` : '',
+          view.showBand ? `${labels.band}: ${f(m.p25)}–${f(m.p75)}` : '',
+          ...view.years.map(
+            (year) => `${labels.year(year.year, year.partial)}: ${f(year.values[i] ?? null)}`,
+          ),
+          view.showSeason && m.critical
+            ? `<span style="color:${THEME.amber}">${labels.season}</span>`
+            : '',
         ]
           .filter(Boolean)
           .join('<br/>');
@@ -73,26 +98,30 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
       axisLabel: { color: THEME.text, fontFamily: FONT_MONO },
     },
     series: [
-      {
-        name: 'p25-base',
-        type: 'line',
-        stack: 'band',
-        data: p25,
-        symbol: 'none',
-        lineStyle: { opacity: 0 },
-        tooltip: { show: false },
-        silent: true,
-      },
-      {
-        name: labels.band,
-        type: 'line',
-        stack: 'band',
-        data: width,
-        symbol: 'none',
-        lineStyle: { opacity: 0 },
-        areaStyle: { color: THEME.band },
-        itemStyle: { color: THEME.amber },
-      },
+      ...(view.showBand
+        ? [
+            {
+              name: 'p25-base',
+              type: 'line',
+              stack: 'band',
+              data: p25,
+              symbol: 'none',
+              lineStyle: { opacity: 0 },
+              tooltip: { show: false },
+              silent: true,
+            },
+            {
+              name: labels.band,
+              type: 'line',
+              stack: 'band',
+              data: width,
+              symbol: 'none',
+              lineStyle: { opacity: 0 },
+              areaStyle: { color: THEME.band },
+              itemStyle: { color: THEME.amber },
+            },
+          ]
+        : []),
       {
         name: labels.median,
         type: 'line',
@@ -101,28 +130,35 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
         symbolSize: 6,
         lineStyle: { width: 3, color: THEME.fire },
         itemStyle: { color: THEME.fire },
-        markArea: {
-          silent: true,
-          itemStyle: { color: THEME.critical },
-          label: {
-            color: THEME.amber,
-            fontSize: 11,
-            fontWeight: 600,
-            fontFamily: FONT_BODY,
-            position: 'insideTop',
-          },
-          data: areas,
-        },
+        markArea: view.showSeason
+          ? {
+              silent: true,
+              itemStyle: { color: THEME.critical },
+              label: {
+                color: THEME.amber,
+                fontSize: 11,
+                fontWeight: 600,
+                fontFamily: FONT_BODY,
+                position: 'insideTop',
+              },
+              data: areas,
+            }
+          : undefined,
       },
-      {
-        name: labels.current,
+      ...view.years.map((year, index) => ({
+        name: labels.year(year.year, year.partial),
         type: 'line',
-        data: c.map((m) => m.current),
-        smooth: true,
+        data: year.values,
+        smooth: false,
+        connectNulls: false,
         symbolSize: 6,
-        lineStyle: { width: 2, color: THEME.orbit, type: 'dashed' },
-        itemStyle: { color: THEME.orbit },
-      },
+        lineStyle: {
+          width: 2,
+          color: index === 0 ? THEME.orbit : THEME.fire,
+          type: index === 0 ? 'dashed' : 'solid',
+        },
+        itemStyle: { color: index === 0 ? THEME.orbit : THEME.fire },
+      })),
     ],
   };
 }

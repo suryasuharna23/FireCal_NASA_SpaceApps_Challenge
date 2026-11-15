@@ -1,0 +1,1123 @@
+{
+  "assets": [
+    {
+      "bytes": 231462795,
+      "file": "firecal-global-fdc638723260.zip",
+      "kind": "global",
+      "pieces": [
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0000.chunk",
+          "sha256": "ae3e84a84d7e8ab124c7bdfc1c5881d7a9a413adb9bde3534168f55c43b2ccc1"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0001.chunk",
+          "sha256": "fb3b559a6f41b0f48be8f64275a0b0830947581faf13d05d3393a20f30bf6b5c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0002.chunk",
+          "sha256": "65e0be59ca4d82f845ae8312ae0d64b9d79ea1e52755ae785ebfe13fb84094f9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0003.chunk",
+          "sha256": "e68024667cd8913beed29412424031381e25e0080b7791c5001bac1cde2b0855"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0004.chunk",
+          "sha256": "f4f970ff2e2e8ef604e6793ead95571d6f1aba7a782281b6deae9c97b2f7855c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0005.chunk",
+          "sha256": "1cc3f354c6f679d8550426c4571eedd89314f993ffd6cba8f3596190bfc07b21"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0006.chunk",
+          "sha256": "f6ffe1258b59d15e404e18a058f2c9e4e921c231ebf18ddc099cfc2d6fa8ace1"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0007.chunk",
+          "sha256": "ba94a59cb6e67909c857b394e98b539548372a421f809d04155c45a1574eff52"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0008.chunk",
+          "sha256": "2e1e420dc255128bff9749f7b6fe8922aacb5e15c54ff5ff5760f4fb3208bb2e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0009.chunk",
+          "sha256": "5fb9f15c45bb2803fa1a2647b5d25d3d97d502507bf4cb91726f9ac3a215db99"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0010.chunk",
+          "sha256": "969b7e90c26f7573540bf7b3edde8323800df3e3b22e351f947c7331a27a4b8e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0011.chunk",
+          "sha256": "538f0f47f6c818e9ff66cfa2add4981c72575de8fb78a321d9b5dedc8943349a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0012.chunk",
+          "sha256": "4a55a0ccb33dc08449328078a4cc7d41f1cb5e3cd9c76dfc3d0e841b1d378ab8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0013.chunk",
+          "sha256": "f3e03c76475dfad29e18627b2fc10956e55188e92308f7edd3aa00fe4db980aa"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0014.chunk",
+          "sha256": "a59d0838cb756b10b1a5c661e78da3422f7ff912c8a7439ba880c47de5fe9d2e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0015.chunk",
+          "sha256": "ae0574a2aebeb6dc42d1fc7ff2583ae8ba067fd5eb311e4d3c0081d47bc9f288"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0016.chunk",
+          "sha256": "595ef3e2399626ac90c026397f7afa2980015ae46c2091c80157208d7c1bcc5d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0017.chunk",
+          "sha256": "5c91cdff33ac1d13c19fdbd5462ab0591e90efa003f04e90ad9fd015e4021509"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0018.chunk",
+          "sha256": "c5dbab248b3c3561570d7b608436d133769649e6391bbcf2684ddd54def66282"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0019.chunk",
+          "sha256": "eb4987dfdf5f5a55c9e5b13afe2f5615471b35b323e83e29dd3da4ae4ae32c9f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0020.chunk",
+          "sha256": "0d7c1fa359a4a8146b73098619e7f72dea4184985a99d1398a96501132c0b0a4"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0021.chunk",
+          "sha256": "104a3225a702e486ba545c6b165209a8e2b136e721be2197d24a66f939824b83"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0022.chunk",
+          "sha256": "d1e088d8bddf767edf5fa77d913ba1049f01f0382a20db1f1eaf6b153d0dc5bd"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0023.chunk",
+          "sha256": "6019a6f8a75bafb63f53bacddb5b456e7bf8a90eb0fba2e72adc6318420475e3"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0024.chunk",
+          "sha256": "84764b02dd91cadc4ed5e62b32a8cd5035601a1222e338e46afdca03f637faf3"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0025.chunk",
+          "sha256": "e931457c222ba22482c7c5acab45965b9cf91bd80ea1e790dd096924feddef79"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0026.chunk",
+          "sha256": "37c1fb3985f30117ba8002e712986d63191f19458f9a9b7d0e8005464eba5083"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0027.chunk",
+          "sha256": "171e49d9bf9dd12c044cd32bae80bece314be5a1719d2af403471f5b1d1494a8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0028.chunk",
+          "sha256": "785e493720a4e83475f3187e161cc7248d9f99a659143ec8591be602b8869287"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0029.chunk",
+          "sha256": "f910d7e39a51585c60da3a52328c448ef4d365a86877f7bee58da5fbb2e0d4ec"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0030.chunk",
+          "sha256": "b955d8731650f6c1468c341ab7b8fdff52c6d0bda896e8169b129971cbae0d9a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0031.chunk",
+          "sha256": "2f7516aca641f10b88d614112aa74c1f51dae7b195ac348120f3ec2c396ac9b7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0032.chunk",
+          "sha256": "7404a799f1d7af7bff5e59b122d0797a61eccbac512d034fbc4ef47fcd5af6a8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0033.chunk",
+          "sha256": "5ecadbca6bf90d5de6e59165dce5da0f788f3630b0becd083eb2cf3d32972f7e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0034.chunk",
+          "sha256": "c45685c6d375f33de67732505dd2a76121c931508e48abb4e40851a0ce7cc8ef"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0035.chunk",
+          "sha256": "521ef535255f54d48088911255e4d4faf0d94fb67b9aa6ae3d8168ba21140f99"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0036.chunk",
+          "sha256": "46b53de708b8ca56ddba7b8fa6514bdb7140ed727c2a36065076caf257af556e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0037.chunk",
+          "sha256": "86b4abad50b97ac41af280b99156acb014fe5aa64297c3951232281cd1432aa5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0038.chunk",
+          "sha256": "667ce11da6beee694302886ad2a41df928e995c0793d61c21a645949b4444057"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0039.chunk",
+          "sha256": "afb3f075648fe8981d5cf617793c5ecb97b448888743f0e5f997bb126c936866"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0040.chunk",
+          "sha256": "9d08b269a98e41ac675419290494eeeb11d71327e6cb3eafc5128c6254788ede"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0041.chunk",
+          "sha256": "c1ba9584065224541059366124faf1121b5f737dec633bfe6b53fbd668c1a206"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0042.chunk",
+          "sha256": "46bb5e3e24fa06254ef4c2bdd88dd6ec0cbdca0e03c989a7c6744b399952dccb"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0043.chunk",
+          "sha256": "8c5639a8fda186ea8571f8850b801272b1fefe60a1442e839199deaec3a34eec"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0044.chunk",
+          "sha256": "a0cf5041359b6b233e0bdc909b6a500bedd42549df7ef2396225d4eebe853345"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0045.chunk",
+          "sha256": "0f415b1ec0da68b1fbba987395d4f1fb740c40a7cd81a71d2b9a2cf4ed5249b7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0046.chunk",
+          "sha256": "09040aa2cf8d37d5322c772c239a4825fe37313b24fbbbf23cf94aa9ba8b8cc4"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0047.chunk",
+          "sha256": "f84784bf6341adc0ca036425212667edbffbad9b3e6154e35aac1c02ea8310d1"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0048.chunk",
+          "sha256": "5822a481c66fa50979ef05587a02fa1efd159f97467b690f7a2f1fea6deb8843"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0049.chunk",
+          "sha256": "58c93f4611052519e5ea7e9da02237759c1f99ce0816ef52f2a63d6680ac1cda"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0050.chunk",
+          "sha256": "3bd3db63433f7e39f6603478a57a707948f7b7277853982cc4a4ac444b9b067c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0051.chunk",
+          "sha256": "1193463d14980afe694d9cee23f0dea7a36bfaf8893a044b6b40a324b7acaeab"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0052.chunk",
+          "sha256": "a5dc47b15ceb8f46583c36d296dfc6898209710068814fd3307f7ffbfc472e2f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0053.chunk",
+          "sha256": "505d48de1ea2797280ad85d4ffcc0d8ef3ae0b883fe72bc6c3c9e78e11911611"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0054.chunk",
+          "sha256": "0955038b8694035f23701861fa1616d31d7d8be90c6bbef09164aac801ac8dcb"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0055.chunk",
+          "sha256": "a53f52b564d0d28c009cff309f95a7c95d747d573bf96b5c4da3f64f85b4c5f0"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0056.chunk",
+          "sha256": "bdb965ff3c633816cab318a7296a9cd2bc5f2e0509164e6a29a9ff17df1f0cac"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0057.chunk",
+          "sha256": "70edcd553d4d1191ad9bbc679b5d3668ef67b75051b1fcf2f631f5178de25b62"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0058.chunk",
+          "sha256": "cc092aaa3c2ef24dbbcffb17347753010b189f91f140a313916e8061ff8df6b9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0059.chunk",
+          "sha256": "bc603f03d8809820712cee6af8d7811e8de114212cd9bb88482695c824889a32"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0060.chunk",
+          "sha256": "f370432e7c2f7c19f3daddacd04351e6f5d88e9486bb7323c7dc4c6150bab0e5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0061.chunk",
+          "sha256": "925c6807c092fc1912d5245620d4d8f99e8c46a2391c8448d77125ee4da30f92"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0062.chunk",
+          "sha256": "8449697e1fd986f97074a9216fbd29805d351fab6dc66b6602090314bd19762c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0063.chunk",
+          "sha256": "8c49eff4847938efe8a55e0d8d4bf022ed4f4b9c6e027005305fa9851f4c74d9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0064.chunk",
+          "sha256": "8f498606353a10f8172a1b052a275801ab537c2c1b886764890d870140ce8a13"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0065.chunk",
+          "sha256": "0fe13abd428e86989d476fd3df8dc23e170c267909a74487e72e28e0d9dd76eb"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0066.chunk",
+          "sha256": "3c7f17586960717a07972ff531afc675ed1978b8794d0f32adc53dc718a1fd84"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0067.chunk",
+          "sha256": "17c6da60ba97b642aac754571330163cd2bae06b6527715505514d564a93e91b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0068.chunk",
+          "sha256": "91cc022aafd132987d5ec73541fd869f35f668fada995fd62bd6a66cd69e439d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0069.chunk",
+          "sha256": "bd8658df7ad693dea8d29bb866d1c088f3bb456b514a0a4fba6a4ea5ef89af48"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0070.chunk",
+          "sha256": "cb7835f7392b6f45cf2b1f3579ee3dd56f8c887380c9671ca5a059141bbb8eb0"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0071.chunk",
+          "sha256": "ad79c5b34efb406dbda0d3d8001583e63301246f8cac1aba196391b57eeaec9f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0072.chunk",
+          "sha256": "0eaad3aae3a575b9d726e7b9f1a22a7fece023069eef7896efa18f34fafa4ba5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0073.chunk",
+          "sha256": "f39beca2af18c307cf0d1a3ffbe12f3600d22cc9b461f2d3376324c23aa776a7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0074.chunk",
+          "sha256": "f488acf3e98e7e8b4d1efa105aafa3135a7f57fba7246e24633b81ae09078d00"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0075.chunk",
+          "sha256": "89601f6c9914794cd6fd4aa0d6558a5284a29d7b5f183c6ac1cd770c334281f7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0076.chunk",
+          "sha256": "1f70881194057d610a9cc81869d1a199c76677e8a657003249bc739b03490430"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0077.chunk",
+          "sha256": "755030b08ce8620796e9bca1fd24aa7f5c7269e0b8411645ba2c1d737500e65f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0078.chunk",
+          "sha256": "5d024a469628d9acac1caa0e98ccbec35bbbbc12ab3896f644f89ff0979e9741"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0079.chunk",
+          "sha256": "85c95c85725936256a31475e15fea78d879351678463b41fb2b672f3415f9278"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0080.chunk",
+          "sha256": "5ee5f762095483f41cd883e6fefdbdc2c7e217c3213eab103def7541d44e7f06"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0081.chunk",
+          "sha256": "fe7c88dd359d842703032e317eeaf718aaded4f5af91ada50224a0f2c488fda2"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0082.chunk",
+          "sha256": "525a2217ed8cc9f47341557f279114adb1b10f4783697804616f4e74e532f6aa"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0083.chunk",
+          "sha256": "005e3264dfbb821088aaa9545bbe55f0d94f8c6702124e7d0279edc5146474ce"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0084.chunk",
+          "sha256": "854d62784d033b2191a59d52c4386702f8ce43c0e42c2ae779c4ff07fbdf02bf"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0085.chunk",
+          "sha256": "7b8f4a5fd0ea0dba0d9c5c1aba5577decbeb112613fa3651b2e231ff05619ab1"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0086.chunk",
+          "sha256": "010466eed4c53e02da9228dc7316e23eef103ad5b1c51486570d8c3c8242b99d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0087.chunk",
+          "sha256": "c83ba89760594476d408ff3c628146118f3dbda1175a5a33d4e5cc170a41dbc0"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0088.chunk",
+          "sha256": "8f24c4785bb801c43982f7da153cd6f9e9a1e0d9f52113b28b30f22cd52d1245"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0089.chunk",
+          "sha256": "1d9a75ddf7100b3a3b88fac5a19ca3fe86ab7cc7d90fd190b75fd409143bf825"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0090.chunk",
+          "sha256": "ea8116391bbfbc9fc08e5b8f34dced6baec43ef17d52b0246219394e9d2ed810"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0091.chunk",
+          "sha256": "c606e04b4cbf1ad697e805aa46b49084183cbceccdae09815e31c06dc96fe564"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0092.chunk",
+          "sha256": "bc7aca14a3445f3a6f942d2aebb12a5e6ef0b80a4f78a50ef2ca6de8dc822203"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0093.chunk",
+          "sha256": "d51277ed60fcd4acb4cccb60310e58a3592f0cc3bf2aea55f93987c0c6159156"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0094.chunk",
+          "sha256": "2df61d55cc7b7349fb761b48b00a862a4526f19322fefc917115d99517fc3b43"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0095.chunk",
+          "sha256": "98b05d9020c3e12a1cda08b6371cddee18528ce47a4e885c1b16ddbdf3bb67e7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0096.chunk",
+          "sha256": "6cc8c968c984b774b0053bcd582359950e31b24553ced9f8234aaef056bbcca7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0097.chunk",
+          "sha256": "3b351834071f985e35138271284e56e6d5b3ba8ce20b9dbd2c7220910797d32d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0098.chunk",
+          "sha256": "54aaaf7e667f644b5022e66f0390181ffadb1843f98e7c68244f6871b741c7ad"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0099.chunk",
+          "sha256": "3017caaf528e66aa08251420aa1f0ed0c5794de22dbdbd6f53208015270c6f4b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0100.chunk",
+          "sha256": "29d4373f1426e147ff13077f69b6828fc7bf3c7e9c181e0b74b138bc30365227"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0101.chunk",
+          "sha256": "7f032fe436a4d54fc396a49f70d349a190a685002ccfda4d2ebc12b76cc60cc8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0102.chunk",
+          "sha256": "3d20b37d55a363451ff864a40f3d53c3955cd522108301f26940fb0857357549"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0103.chunk",
+          "sha256": "72e1d92862512f27d9aff1fce5766fd5273bfa212d2d4b8dd0ead6ff6337fffc"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0104.chunk",
+          "sha256": "54d3fbb29ce3cc5e5a45a645f57a70d926cdb70eabf2b6e63d182e617a9ca313"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0105.chunk",
+          "sha256": "a66131304f17375c17585c129190bb8bd999f6dfbae08f65311894ef020bd103"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0106.chunk",
+          "sha256": "dfbbd4d30a43b4ff9d326e0ee16fcca5ffc5a7b68366a9b70c6774868c1c3fa9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0107.chunk",
+          "sha256": "81b9e009eb83349e8e6a8d13c472d55f0bb01be99a98ac37901c114b468fe2f9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0108.chunk",
+          "sha256": "78d0324002bd981ae0655a89ce9805a2d3334d29d7bfbab2852bea937e50151a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0109.chunk",
+          "sha256": "98fae261a87a77e0fbb52f272e8986decc839d74a2d93668732ee16f3ac0ae9e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0110.chunk",
+          "sha256": "c776fe7b307cf7851c5adf542b047087f0b947d8e713dd694ee8718753305bc4"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0111.chunk",
+          "sha256": "a0635b0b411fc5d4fe98addebd06a04cc9c424609667a60dbd2dddd12a97384c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0112.chunk",
+          "sha256": "39e79d6e1087eb07042621c351cbea5f2f2458ecb7155c62a98792cc0462aded"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0113.chunk",
+          "sha256": "ca2a2198aab58181d271bf34e639db3c7741885fdce4f213ee8647e15fd36814"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0114.chunk",
+          "sha256": "673a14a6a97be8915239d645b53eaad8f45719798217a739fc298dfb541de5c9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0115.chunk",
+          "sha256": "a1cdd238bc36f094a6d3ed0d75a074bdc15163996d2aabe0cc39adc0d83a1249"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0116.chunk",
+          "sha256": "2483128d0184047bcbf67bdbdfb3fd102861b72f0a4e7f36bd27489fb478391f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0117.chunk",
+          "sha256": "99fe7dc94ac4c6cc02d8047d9432ee9dafe246f194205c97288895d0b20e69c3"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0118.chunk",
+          "sha256": "b4d922efd57e03c764115b96fcaf69dd9b3f858c322f708a1adb220d60b3f6f5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0119.chunk",
+          "sha256": "b56faf6f9422808799e93429f6918eacbe212fba749e25f9c38ce77a19fdee90"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0120.chunk",
+          "sha256": "3de395fd69aed02545cf2668208c1aa4558b785c2a48836489280d26625c457f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0121.chunk",
+          "sha256": "5abf8830319f9ee6acfcd4786c0c7d7952f02c40e337dd9a05f687dc09960626"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0122.chunk",
+          "sha256": "89c4803b2b153bb2d39c7bf129cd62f48baeb3d2e67b0d955ec2f623945ac2ad"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0123.chunk",
+          "sha256": "998cc3a398d83b39c40eaa82dbaaa8ce1f80e0cb90cea24920bda4b58bc5b9eb"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0124.chunk",
+          "sha256": "88f8158bbfce94c70fade5d3591d272550d193e6311a079750bed5b03b0bf755"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0125.chunk",
+          "sha256": "bd369170663532a0624b364ba5b4ff73b2380d5db9e17ff238df2b4aeee814d8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0126.chunk",
+          "sha256": "d042e6fdbc8387fb24ccd985be954e36d37c7b44520163195c5b45b7d94e306b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0127.chunk",
+          "sha256": "9dc3cb5d47a3e7d5a70e2c15f694d0a21ce37b348638610b6bdbb00de8f56320"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0128.chunk",
+          "sha256": "02e53b032a01eb574ab3e778c7ce0eedddcdb60d78dbcaccc6f9eaaf4b641e13"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0129.chunk",
+          "sha256": "a01f0519e5f43b597ff4da519b42fb70fed0a8e889f827ce140284fb905223d2"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0130.chunk",
+          "sha256": "797af836fe4ce5168164a5dd11bcac80bf140e0ed14b091784f8750df0df40cd"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0131.chunk",
+          "sha256": "f1b350b9051c971d9d070724876bd5e4b1cc7bdc9bb881a7b143191fff1dc5be"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0132.chunk",
+          "sha256": "0af9a18c8df8b933c07aadff3a00bb3ad56c7df65a5805a50d158554b8ef8460"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0133.chunk",
+          "sha256": "4c885f62256b71420c138c0eb413c73665863f24f65c09d883b8a6464eacd6c5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0134.chunk",
+          "sha256": "61d398214a2f9ab8da5bac018137733d47dce56c4d3a08f31d59687c7d9882d6"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0135.chunk",
+          "sha256": "6c2f758a9ef8dfe0d90a88179bf66c9d8433e75326f98305584e447f4fb70cac"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0136.chunk",
+          "sha256": "1b7b0440d0236291214a2f8afcead75e63a226dff05c769a401843adbddfdf1a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0137.chunk",
+          "sha256": "4f5d09e827b2d626466874644ddf02ab038bf5a5b4b57fed4331b54068d22622"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0138.chunk",
+          "sha256": "df7578f5e3395b5ebc6f424a694b49f95457a84852bfdf957bee349a363b5b6b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0139.chunk",
+          "sha256": "4447f0ef81f6ebfceeb157d2e603f9703d79bdaef69f3e16739fdc1d201af0ee"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0140.chunk",
+          "sha256": "1f03722c97e6f85a6bd43c516ff6a9ebb3f7e18a6c23f9cbce7ee1d375a8f962"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0141.chunk",
+          "sha256": "02e326a0626e423e0e72b9fe13679bf940bb2caa20730c831687a0ce74359b2e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0142.chunk",
+          "sha256": "074b99f06afe5d2e16b21ea6f2302108d4262f3beb8941841a9fa8f5af986650"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0143.chunk",
+          "sha256": "9b013f42b2ab00723e68e8570cb3f8622c2ee3dc337178ffe0a2696dc4d749a9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0144.chunk",
+          "sha256": "868adf5f197b995ad50538caae35778182ba2b476911c19925b487dd6d6fa6e8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0145.chunk",
+          "sha256": "761b877ea8d14d5fad308f951d41d33ef4499b2b79896ec7d632657ab402d9bf"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0146.chunk",
+          "sha256": "d975121e1df2db8fb518d60e983018e898fb336241d35ed94d4bbe8038f49b4e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0147.chunk",
+          "sha256": "c9a5adca86658bec043d0339bcf63fede11f76c2f9b13a190e7b8f9220a3f6f8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0148.chunk",
+          "sha256": "ebf86de29c05ae07280929c0733a2cc232c9c9a2d9630873498b362367cb9e0c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0149.chunk",
+          "sha256": "9997c48d2d48300c49efe06589fe53a42f3b4f3460756dcca908ea8606d00f19"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0150.chunk",
+          "sha256": "7836d57a3e313fe6371905adccab6219cb839ed9b12c3a2bb5e8f40b0ace468f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0151.chunk",
+          "sha256": "fb1afec2b552160e90090f693ab82bd39c52e27d80510ec07893046351711088"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0152.chunk",
+          "sha256": "41e9fff6875ebd2ebc1c4bde5929d060c82d2140a24ccbcb357eb49b988b8631"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0153.chunk",
+          "sha256": "9e6719c65fa1a4809e9d86f35b885d1a4b4075175731d7ac9fecdb8b80a4e531"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0154.chunk",
+          "sha256": "9e2c979a8c787730c79358af17ffc1d0401179d6c10e93d62a9cb617d831c887"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0155.chunk",
+          "sha256": "a5210e10a30faab21712bbd2959432e86adb44415dd36102921b9218a094a1ce"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0156.chunk",
+          "sha256": "5b725621f27686cf4b5f841475b430f9c5b1d39b61e31db324709f1add159234"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0157.chunk",
+          "sha256": "2b9f5289675068feca0169c185e06d1992fa18c02247d3735ea540570fd1a6a1"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0158.chunk",
+          "sha256": "52e173997ab2d0cdeafe8bb7de59939a6c2b6c1f48414eada022a540c726f6ac"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0159.chunk",
+          "sha256": "97cdb89fbf64ebded7a769be05b686d20f47a7dcf55fe081b14f1451eecb0a2a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0160.chunk",
+          "sha256": "dcd797d1a199a56f9a5689fb9119b4c50927eeebf682147d34f321e336f73e67"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0161.chunk",
+          "sha256": "2eb3a4ae3ff37bdc37db27ae23f4ad2644dd953f4dee7bd69839b75ba001d3eb"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0162.chunk",
+          "sha256": "a590f79a5363cb302fa6bcc41ff93bc1bd8d0255f29aa95b2c8f2ba47b7d10f6"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0163.chunk",
+          "sha256": "5340445a889abc197cc43da5316e624978b2f4e8faf8e35dad983cf016da41cd"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0164.chunk",
+          "sha256": "408b37602b31713b6a4c386d0a794e30071c1e97706cddca7b237c112b5fe96a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0165.chunk",
+          "sha256": "37085d4f00bd729c9143b090b084667c0805d3f111254e7367112995859aa485"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0166.chunk",
+          "sha256": "25c077ac7e5e7279e80296cdc479a43ba3124fe443220217301855c5b7e6fd2d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0167.chunk",
+          "sha256": "567866de54307f4583507efacf22545ba950b44aac1b64f8e261ea8a4dc73fcf"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0168.chunk",
+          "sha256": "c2abed7056ae6077ee9cb029cabd87e48680debb93083db3c70f59c48730d64c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0169.chunk",
+          "sha256": "9686f4bf5530ab8c6572b51e6a1c051bbd9c3c61214d370d8059d1689c4abe4f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0170.chunk",
+          "sha256": "7a33aab51b4007f51b171954416a25c447c0b6fb3275342ac48c9811ba3fe0dd"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0171.chunk",
+          "sha256": "58c24001b5ad5876fbf58ff950a7e7055a4ffc74a17009c27bd87b57746ab6df"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0172.chunk",
+          "sha256": "49437650647aa7bf3640f560dc46ade5875565dc0a60f5e81fd2600607a60764"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0173.chunk",
+          "sha256": "e174a3a82b2dd8b084e3eaf005c077a5c29754af889582d5aa1de63df5001676"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0174.chunk",
+          "sha256": "003a8de3ce4f2df1096fe5fa692235eab924291a5072122a192d6dfe7731a841"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0175.chunk",
+          "sha256": "d0ee2521b33e31191b5381d2b6ef7e63bb7da7190542cf552b8057c6d9bf6728"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0176.chunk",
+          "sha256": "cf10e469e50635ad66d7163dcb201c367ab00494b57c1cfa66299a64fc5c42ee"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0177.chunk",
+          "sha256": "8a73b5909029db28307726052b77f7603edde18acbfcc0560139c8a28db4d5f4"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0178.chunk",
+          "sha256": "6491664aa0c22c0bf4724c47741e888f41bb323a1933cf23a3489902bc616554"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0179.chunk",
+          "sha256": "107dcf41f31f064d08dd7784dff8b4071f6857050679e448cf86ddeede3cc249"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0180.chunk",
+          "sha256": "3ce19a184c1ee471309bc886400c4cec084e4f6f12decb7e29b4eec6187edfed"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0181.chunk",
+          "sha256": "eb34a98e0412bf0ba0d65b127fb89e98d49df22ac97c3bdef1b8ddfa14197467"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0182.chunk",
+          "sha256": "a14e73dddab4eed7c3a67d5c8ade1a87793edb22ed5b983454598a2868cf9995"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0183.chunk",
+          "sha256": "57783d3542b76ae487dccba8e599267d3c9bcaf69a8a5958676f815f82de1911"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0184.chunk",
+          "sha256": "bb3a35dc94e8499bdfd3291a4d858d50ee741993bbcc5b2e3c92b4f148b1b0d0"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0185.chunk",
+          "sha256": "1290906fc9b5476e25eafecc4055a0b54fb63d489e70490e7aa9eed036959f0b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0186.chunk",
+          "sha256": "00643bb4ab49fbf7709d661ccd1ab4ec4947a278529b71bcc4bbed9a9139501d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0187.chunk",
+          "sha256": "f04c0c33b00cd105d716504f9ba75396c6d5333c6ff76440c16b83970f5e2687"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0188.chunk",
+          "sha256": "8bffcd069346285c47b9d9cb6575710ae281bc79eb2e8e6644fd7c74bf78803d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0189.chunk",
+          "sha256": "d0d0d0df568129727ce29e87a565493d1eb5c31e17825fcea2ce4a30ae35325d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0190.chunk",
+          "sha256": "1665e7ec39373b2c6fb59be77dff4276ff501c98aa17713deaa55a133798bc41"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0191.chunk",
+          "sha256": "dbf6ab4df57f56b5d7658059fc6900bd0510c0fb31b6ef787ae15b290d1d47a9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0192.chunk",
+          "sha256": "850f5cdaee3c041173b101d72c2ae78890fc471cdf20aaf0ff5b760504ed7d7d"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0193.chunk",
+          "sha256": "95301d064970f02d1c04157aa396e895e50b47a457978db8a0fb6bfe17c0e0cc"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0194.chunk",
+          "sha256": "25dfb8407721ef8cbdebb2676087dce872edf41391884624b710aa9fd1d72425"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0195.chunk",
+          "sha256": "f77f8b9e76464fc7c2bda8e25053e1715e9052c4cd276f2bfe8e8fbda7fd70de"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0196.chunk",
+          "sha256": "2d0e49682c45c57c968c7247cf4c588666200464f086d5cfce37b7dc19d004d8"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0197.chunk",
+          "sha256": "614bbeaa88b0bce52fadfe084671582ffb698cbf1d665eac10892d09b6a8b06c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0198.chunk",
+          "sha256": "30f25ff411f3a1747e9df8ddee41288815dcf5e0d2a9bb602dd0c1741a928122"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0199.chunk",
+          "sha256": "f7f4cf5aaf84937a58a6d56c1715798b0154c70a905cb4003d114ce4811b6ce7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0200.chunk",
+          "sha256": "2e087159a19875691ce1f44b447916c4ef914322cb91d4597203c3e0c89f90b0"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0201.chunk",
+          "sha256": "37a6d6d3b598412a4172288df540565c3d83b9c7ba3c4c2cb4c2143a583f0b6c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0202.chunk",
+          "sha256": "4945df5eb4fbb64c1aab535e1058a9b90fccc689a977305abb6ace123bd44a92"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0203.chunk",
+          "sha256": "cb5918ed2ba5cf568293f41ab825c458ee7ea196faed2e5024d4c2cac340c34b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0204.chunk",
+          "sha256": "cbd8612fb35e637b86c2f0363ed791a3796d7f2c1d537ea03e8d0dd5af804406"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0205.chunk",
+          "sha256": "4759e5404c308d618ceff25d4c79cfee78f6a51fab92031dabd24423a0d3215e"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0206.chunk",
+          "sha256": "f5d818cf7f0e21f2fd96f3313c231c31556aa07b47d3a49c3969c83793b5493c"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0207.chunk",
+          "sha256": "433ad1b2b9ed2611f40e75131e7fc31d36d75a826e27270f7dc3d6db6e090d63"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0208.chunk",
+          "sha256": "60690b8ddd69c0f38ac1f7fd02e2ceb1fcae3ee7f49edd397c26b84fa052d6e5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0209.chunk",
+          "sha256": "1ee445f143bd593aede90bc872108d505bfec4833665c36ded1190b70cd9047a"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0210.chunk",
+          "sha256": "d736ef553b8f9d4edcb76aac17d291ceab320bc1423433fd7773b303556821ee"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0211.chunk",
+          "sha256": "0f62c29759e351e586abff08bb30c01c39ac101abb873fd3af1485dc53d233b7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0212.chunk",
+          "sha256": "ebb24f89468b397fca4451178cea18209ee030949fcc670c0a061f91e3a91d34"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0213.chunk",
+          "sha256": "bd86a62a6ee6c26cfb358215e7e0b579856c4385b6d3ac9a3f77f8cf2ec1148b"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0214.chunk",
+          "sha256": "f6007f140355d4e24e43e7a3fec9770b26307964be42acbeb1ed6011f7fbc701"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0215.chunk",
+          "sha256": "8506d17bae6b5cd442a681e35bba3b594fa8d15a335acadf51916a21d41b064f"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0216.chunk",
+          "sha256": "bded9c521d8474d41b638eb99ef9d29dcb7b5e416f333ec3fba58bf585aa1f16"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0217.chunk",
+          "sha256": "e36c160a3eb346ac8800673cc9c33ac1f5eb1911795ddede35915290dee76a35"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0218.chunk",
+          "sha256": "7f7362d8637425a9c73d799a2852ff5853038c807502e21d6f8367bcea71c281"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0219.chunk",
+          "sha256": "066aad985f98869fc5c6916fd137a4a48fc85c9b52731ab8bc20dbe8088792be"
+        },
+        {
+          "bytes": 776075,
+          "path": "datasets/global/recent/firecal-global-fdc638723260.zip.0220.chunk",
+          "sha256": "db21b9a4c48bf1ffddb8d36590fd7c6b707be35c074659257a28989de483528b"
+        }
+      ],
+      "sha256": "8af0ba3cefa98be4e0ca982524b32dbac9f54529ae1d15cd9a40669d733d8dff"
+    }
+  ],
+  "data_version": "fdc638723260",
+  "format": "firecal-global-v1",
+  "processed": "data/global/snapshots/fdc638723260",
+  "requested_through": "2026-11-15",
+  "rows": 19071898,
+  "start_date": "2026-08-15"
+}

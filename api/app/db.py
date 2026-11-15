@@ -151,6 +151,30 @@ def connect(settings: ApiSettings | None = None) -> duckdb.DuckDBPyConnection:
     return con
 
 
+def get_global_dataset() -> Dataset:
+    settings = get_settings()
+    uri = settings.global_data_uri
+    try:
+        if uri.endswith(".json"):
+            pointer = Path(uri)
+            record = json.loads(pointer.read_text())
+            catalog_path = Path(settings.live_repo_root) / "datasets/global/recent/dataset.json"
+            catalog = json.loads(catalog_path.read_text())
+            if record.get("base_data_version") != catalog["data_version"]:
+                raise ValueError("Global dataset is not the pinned real NASA snapshot")
+            uri = (pointer.parent / record["processed"]).resolve().as_posix()
+        ds = _datasets.setdefault(uri, Dataset(uri))
+        if ds.meta().get("format") != "firecal-global-v1":
+            raise ValueError("Unverified global data format")
+        if not ds.exists("globe.parquet"):
+            raise ValueError("Global globe summary is missing")
+        return ds
+    except (OSError, ValueError) as exc:
+        raise DataUnavailableError(
+            "Real global data is unavailable; run 'firecal bootstrap'"
+        ) from exc
+
+
 def get_connection() -> Iterator[duckdb.DuckDBPyConnection]:
     """FastAPI dependency yielding a short-lived DuckDB connection."""
     con = connect()

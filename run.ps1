@@ -57,6 +57,9 @@ try {
     if ($meta.status -ne 'ok' -or $meta.coverage.country -ne 'Indonesia') {
         throw 'The API is running without the expected real Indonesia data.'
     }
+    if (!$meta.PSObject.Properties['global'] -or $meta.global.status -ne 'ok') {
+        throw 'Worldwide data is unavailable. Stop any older FireCal API and run .\run.ps1 again.'
+    }
     Write-Host 'FireCal: http://localhost:5173'
     $updateNote = switch ($meta.live.status) {
         'missing_key' { 'Set FIRMS_MAP_KEY to enable NASA catch-up.' }
@@ -64,6 +67,7 @@ try {
         default { 'NASA catch-up is managed by the backend.' }
     }
     Write-Host "Real observations through $($meta.last_acq_date). $updateNote"
+    Write-Host "Worldwide observations: $($meta.global.start_date) through $($meta.global.last_acq_date). Choose Worldwide under the globe."
     if (!$NoBrowser) { Start-Process 'http://localhost:5173' }
     if (!$owned.Count) { Write-Host 'Both services were already running.'; return }
     Write-Host 'Keep this terminal open. Press Ctrl+C to stop the services started here.'

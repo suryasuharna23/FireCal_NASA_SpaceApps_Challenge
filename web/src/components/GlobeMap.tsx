@@ -25,7 +25,7 @@ import { monthNames } from '../lib/months';
 import { frameFor } from '../lib/playback';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
-import { loadIndonesiaBoundaries, regionFeatureAoi } from '../lib/regions';
+import { loadRegionBoundaries, regionFeatureAoi } from '../lib/regions';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
@@ -73,8 +73,11 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       typeof window.matchMedia !== 'function' || !window.matchMedia('(max-width: 600px)').matches,
   );
   const aoi = useAppStore((s) => s.aoi);
+  const previousAoi = useRef(aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const mode = useAppStore((s) => s.mode);
+  const scope = useAppStore((s) => s.scope);
+  const previousScope = useRef(scope);
   const meta = useMeta().data;
   const month = useGlobeMonth();
   const playbackPeriod = useAppStore((s) => s.playbackPeriod);
@@ -82,7 +85,10 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const playbackHour = useAppStore((s) => s.playbackHour);
   const frame = month ? frameFor(month, playbackPeriod, playbackDay, playbackHour) : null;
   const globe = useGlobe(meta?.status === 'ok' ? frame : null, mode);
-  const points = usePoints(aoi ? frame : null);
+  const hasObservedGlobalPoints = scope !== 'global' || Boolean(globe.data?.points?.length);
+  const pointsAvailable = scope !== 'global' || meta?.global?.points_available !== false;
+  const canInspectAoi = aoi && aoi.areaKm2 <= (meta?.max_aoi_km2 ?? Infinity);
+  const points = usePoints(canInspectAoi && pointsAvailable ? frame : null);
   const pointsColor = useAppStore((s) => s.pointsColor);
   const setPointsColor = useAppStore((s) => s.setPointsColor);
   const mapDisplay = useAppStore((s) => s.mapDisplay);
@@ -119,8 +125,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       });
     });
 
-    map.on('load', () => {
+    map.on('style.load', () => {
       map.addSource('hotspots', { type: 'geojson', data: EMPTY });
+      map.addSource('hotspots-density', { type: 'geojson', data: EMPTY });
       map.addLayer({
         id: 'hotspots-glow',
         type: 'circle',
@@ -148,7 +155,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       map.addLayer({
         id: 'hotspots-heatmap',
         type: 'heatmap',
-        source: 'hotspots',
+        source: 'hotspots-density',
         layout: { visibility: 'none' },
         paint: {
           'heatmap-weight': ['max', 0.05, ['get', 't']],
@@ -287,9 +294,10 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const map = mapRef.current;
     if (!map || !ready) return;
     let cancelled = false;
-    void loadIndonesiaBoundaries()
+    void loadRegionBoundaries(scope)
       .then((features) => {
         if (cancelled) return;
+        regionAoisRef.current.clear();
         for (const feature of features) {
           regionAoisRef.current.set(feature.id, regionFeatureAoi(feature));
         }
@@ -302,7 +310,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [ready]);
+  }, [ready, scope]);
 
   // --- idle auto-rotation ----------------------------------------------------------------
   useEffect(() => {
@@ -327,12 +335,44 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   // --- hotspot layer ---------------------------------------------------------------------
   useEffect(() => {
     const map = mapRef.current;
+    if (!map || !ready) return;
+    if (previousScope.current !== scope || globe.error) {
+      (map.getSource('hotspots') as GeoJSONSource | undefined)?.setData(EMPTY);
+      (map.getSource('hotspots-density') as GeoJSONSource | undefined)?.setData(EMPTY);
+      (map.getSource('points') as GeoJSONSource | undefined)?.setData(EMPTY);
+      hasGlobeDataRef.current = false;
+    }
+    previousScope.current = scope;
+  }, [scope, globe.error, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
     if (!map || !ready || !globe.data) return;
     const source = map.getSource('hotspots') as GeoJSONSource | undefined;
-    const data = cellsToGeoJSON(globe.data.cells, globe.data.max);
+    const densitySource = map.getSource('hotspots-density') as GeoJSONSource | undefined;
+    const density = cellsToGeoJSON(globe.data.cells, globe.data.max);
+    const data =
+      scope === 'global'
+        ? globe.data.points?.length
+          ? cellsToGeoJSON(globe.data.points, 1)
+          : EMPTY
+        : density;
+    map.setPaintProperty(
+      'hotspots',
+      'circle-color',
+      scope === 'global' && globe.data.points?.length
+        ? '#ff7a3d'
+        : (intensityColorExpression() as never),
+    );
+    map.setPaintProperty(
+      'hotspots',
+      'circle-radius',
+      radiusExpression(scope === 'global' ? 0.45 : 1) as never,
+    );
     if (!hasGlobeDataRef.current) {
       hasGlobeDataRef.current = true;
       source?.setData(data);
+      densitySource?.setData(density);
       return;
     }
     map.setPaintProperty('hotspots', 'circle-opacity', 0);
@@ -341,6 +381,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     let restore: number | undefined;
     const swap = window.setTimeout(() => {
       source?.setData(data);
+      densitySource?.setData(density);
       restore = window.setTimeout(() => {
         map.setPaintProperty('hotspots', 'circle-opacity', detailedRef.current ? 0.25 : 0.95);
         map.setPaintProperty('hotspots-glow', 'circle-opacity', detailedRef.current ? 0.1 : 0.35);
@@ -351,7 +392,13 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       window.clearTimeout(swap);
       window.clearTimeout(restore);
     };
-  }, [globe.data, ready]);
+  }, [globe.data, ready, scope]);
+
+  useEffect(() => {
+    if (scope === 'global' && globe.data && !hasObservedGlobalPoints && mapDisplay === 'points') {
+      setMapDisplay('heatmap');
+    }
+  }, [scope, globe.data, hasObservedGlobalPoints, mapDisplay, setMapDisplay]);
 
   // --- raw points of the selected month (FR-W-15) ------------------------------------------
   useEffect(() => {
@@ -377,7 +424,11 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     if (!map || !ready) return;
     const heatmap = mapDisplay === 'heatmap';
     const detail = Boolean(aoi && points.data);
-    map.setLayoutProperty('hotspots-glow', 'visibility', heatmap ? 'none' : 'visible');
+    map.setLayoutProperty(
+      'hotspots-glow',
+      'visibility',
+      heatmap || scope === 'global' ? 'none' : 'visible',
+    );
     map.setLayoutProperty('hotspots', 'visibility', heatmap ? 'none' : 'visible');
     map.setLayoutProperty(
       'hotspots-heatmap',
@@ -386,12 +437,14 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     );
     map.setLayoutProperty('points', 'visibility', heatmap ? 'none' : 'visible');
     map.setLayoutProperty('points-heatmap', 'visibility', heatmap && detail ? 'visible' : 'none');
-  }, [mapDisplay, aoi, points.data, ready]);
+  }, [mapDisplay, aoi, points.data, ready, scope]);
 
   // --- Selected administrative boundary and framing ---------------------------------------
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
+    const cleared = previousAoi.current !== null && aoi === null;
+    previousAoi.current = aoi;
     const source = map.getSource('aoi-shadow') as GeoJSONSource | undefined;
     source?.setData(aoi ? outsideAoiMask(aoi.geometry) : EMPTY);
     (map.getSource('aoi-outline') as GeoJSONSource | undefined)?.setData(
@@ -407,6 +460,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         ],
         { padding: 40, maxZoom: 8, duration: 1200 },
       );
+    } else if (cleared) {
+      map.flyTo({ zoom: 1.9, duration: 1400 });
+      setSpinning(!prefersReducedMotion());
     }
   }, [aoi, ready]);
 
@@ -451,7 +507,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         <div className="globe__hud globe__hud--top">
           <span className="globe__month">{monthLabel}</span>
           <span className="globe__chip">
-            {t(mode === 'raw' ? 'globe.raw' : 'globe.harmonized')}
+            {scope === 'global'
+              ? 'NASA detection counts'
+              : t(mode === 'raw' ? 'globe.raw' : 'globe.harmonized')}
             {globe.data ? ` · ${globe.data.source}` : ''}
           </span>
           {globe.data?.provisional && (
@@ -466,6 +524,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
                 type="button"
                 className="btn btn--small"
                 aria-pressed={mapDisplay === display}
+                disabled={display === 'points' && !hasObservedGlobalPoints && Boolean(globe.data)}
                 onClick={() => setMapDisplay(display)}
               >
                 {t(display === 'points' ? 'map.displayPoints' : 'map.displayHeatmap')}
@@ -482,19 +541,33 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
               {t('globe.legend')}
               {aoi && points.data ? ` · ${formatCount(points.data.count, lang)}` : ''}
             </summary>
-            <div
-              className="legend__bar"
-              style={{ background: gradient(countColor) }}
-            />
-            <div className="legend__ticks">
-              <span>0</span>
-              <span>
-                {mapDisplay === 'heatmap'
-                  ? t('map.highDensity')
-                  : formatCount(globe.data?.max ?? 0, lang)}
-              </span>
-            </div>
-            <small>{t(mapDisplay === 'heatmap' ? 'map.relativeDensity' : 'globe.unit')}</small>
+            {scope === 'global' && mapDisplay === 'points' ? (
+              <small>
+                {formatCount(globe.data?.points?.length ?? 0, lang)} observed locations shown. One
+                real detection sampled per occupied grid cell; the full detection count is in
+                Heatmap.
+              </small>
+            ) : (
+              <>
+                <div
+                  className="legend__bar"
+                  style={{
+                    background: gradient(countColor),
+                  }}
+                />
+                <div className="legend__ticks">
+                  <span>0</span>
+                  <span>
+                    {mapDisplay === 'heatmap'
+                      ? t('map.highDensity')
+                      : formatCount(globe.data?.max ?? 0, lang)}
+                  </span>
+                </div>
+                <small>
+                  {mapDisplay === 'heatmap' ? t('map.relativeDensity') : t('globe.unit')}
+                </small>
+              </>
+            )}
             {mapDisplay === 'heatmap' && <small>{t('map.heatmapHint')}</small>}
             {aoi && points.data && mapDisplay === 'points' && (
               <div className="points-legend">
@@ -560,12 +633,36 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         {globe.isFetching && <div className="globe__loading" aria-hidden="true" />}
       </div>
       <TimeControls />
+      {scope === 'global' && (
+        <p className="hint">
+          Worldwide NASA observations · {meta?.global?.start_date} to {meta?.global?.last_acq_date}.{' '}
+          Earlier worldwide years are not installed, so they are unavailable rather than zero. MODIS
+          and all three VIIRS platforms. Counts are satellite detections; several satellites may see
+          the same fire.
+          {meta?.global?.lagging_sources?.map((s) => (
+            <span key={s.source}>
+              {' '}
+              {s.source.replace('VIIRS_', '').replace('_NRT', '')} available through{' '}
+              {s.available_through}.
+            </span>
+          ))}
+        </p>
+      )}
       <p id="globe-help" className="hint">
-        {t('globe.help')}
+        {scope === 'global'
+          ? pointsAvailable
+            ? 'Drag to rotate and scroll to zoom. Use Area to inspect detections anywhere in the world.'
+            : 'Drag to rotate and scroll to zoom. Select a country to focus the globe; detailed detections are unavailable in this deployment.'
+          : t('globe.help')}
       </p>
       {globe.error && (
         <p className="form-error" role="alert">
           {(globe.error as Error).message}
+        </p>
+      )}
+      {points.error && (
+        <p className="form-error" role="alert">
+          {(points.error as Error).message}
         </p>
       )}
       {children}

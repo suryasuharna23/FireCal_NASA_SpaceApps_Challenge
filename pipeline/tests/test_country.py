@@ -21,6 +21,7 @@ def test_country_filter_keeps_attributes_and_reports_excluded_pixels(tmp_path):
         row = next(csv.DictReader(handle))
     assert row["acq_time"] == "0015" and row["version"] == "61.03"
     assert source.read_bytes() == original
+    assert b"\r" not in target.read_bytes()  # consistent header/body endings on Windows too
     assert clip_csv(source, target, shapely.box(100, -5, 110, 0), "boundary-v1") == record
     with pytest.raises(ValueError, match="cache changed"):
         clip_csv(source, target, shapely.box(100, -5, 110, 0), "different-boundary")

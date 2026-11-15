@@ -314,8 +314,15 @@ def bootstrap(
     import json
 
     from firecal.bundles import install_snapshot
+    from firecal.global_data import install_global
 
-    typer.echo(json.dumps(install_snapshot(Path.cwd(), processed_only=processed_only), indent=2))
+    result = install_snapshot(Path.cwd(), processed_only=processed_only)
+    global_catalog = install_global(Path.cwd())
+    result["global"] = {
+        key: global_catalog[key]
+        for key in ("data_version", "rows", "start_date", "requested_through")
+    }
+    typer.echo(json.dumps(result, indent=2))
 
 
 @app.command("live-update")
@@ -341,18 +348,36 @@ def serve(host: str = "127.0.0.1", port: int = 8000, refresh_seconds: int = 3600
     import uvicorn
 
     from firecal.bundles import install_snapshot
+    from firecal.global_data import install_global
     from firecal.live import seed_pointer
 
     if refresh_seconds < 60:
         raise typer.BadParameter("Refresh interval must be at least 60 seconds")
     root = Path.cwd().resolve()
     install_snapshot(root)
+    install_global(root)
     seed_pointer(root, root / "data/live")
     os.environ["DATA_URI"] = str(root / "data/live/current.json")
+    os.environ["GLOBAL_DATA_URI"] = str(root / "data/global/current.json")
     os.environ["LIVE_AUTO_REFRESH"] = "true"
     os.environ["LIVE_REFRESH_SECONDS"] = str(refresh_seconds)
     os.environ["LIVE_REPO_ROOT"] = str(root)
     uvicorn.run("app.main:app", host=host, port=port)
+
+
+@app.command("global-update")
+def global_update() -> None:
+    """Update the worldwide three-month window from real NASA SP/NRT observations."""
+    import json
+
+    from firecal.global_data import install_global
+    from firecal.global_live import refresh_global
+
+    root = Path.cwd().resolve()
+    install_global(root)
+    settings = get_settings()
+    with FirmsClient(settings.firms_map_key, allow_mirror=False, timeout=120) as client:
+        typer.echo(json.dumps(refresh_global(root, client), indent=2))
 
 
 if __name__ == "__main__":

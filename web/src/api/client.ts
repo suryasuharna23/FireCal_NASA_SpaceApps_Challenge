@@ -45,6 +45,21 @@ export async function apiPost<T>(path: string, body: unknown, signal?: AbortSign
 }
 
 export interface Meta {
+  global?: {
+    status: 'ok' | 'unavailable';
+    points_available?: boolean;
+    detail?: string;
+    data_version?: string;
+    start_date?: string;
+    requested_through?: string;
+    start_month?: string;
+    end_month?: string;
+    last_acq_date?: string;
+    rows?: number;
+    provisional?: boolean;
+    lagging_sources?: { source: string; available_through: string }[];
+    live?: Meta['live'];
+  };
   api_version: string;
   status: 'ok' | 'no_data';
   detail?: string;

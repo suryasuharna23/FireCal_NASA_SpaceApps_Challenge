@@ -9,7 +9,7 @@ from app import __version__
 from app.aoi import AoiError
 from app.db import DataUnavailableError
 from app.live_refresh import live_lifespan
-from app.routers import calendar, export, globe, meta, points, regions, stats
+from app.routers import calendar, export, globe, insights, meta, points, regions, stats
 from app.series import RangeError
 from app.settings import get_settings
 
@@ -60,7 +60,7 @@ def create_app() -> FastAPI:
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
-    for module in (calendar, stats, points, export, globe, regions, meta):
+    for module in (calendar, stats, insights, points, export, globe, regions, meta):
         application.include_router(module.router)
     return application
 

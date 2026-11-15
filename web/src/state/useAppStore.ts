@@ -8,6 +8,7 @@ export type ColorScale = 'linear' | 'log';
 export type CalendarView = 'count' | 'anomaly';
 export type MapDisplay = 'points' | 'heatmap';
 export type PlaybackPeriod = 'year' | 'month' | 'day' | 'hour';
+export type DataScope = 'indonesia' | 'global';
 
 export interface YearMonth {
   year: number;
@@ -15,8 +16,10 @@ export interface YearMonth {
 }
 
 interface AppState {
+  scope: DataScope;
+  setScope: (scope: DataScope) => void;
   aoi: Aoi | null;
-  /** Inclusive range as YYYY-MM; null = API default (2001-01 .. latest). */
+  /** Inclusive range as YYYY-MM; null = full available API range. */
   start: string | null;
   end: string | null;
   referenceYears: [number, number] | null;
@@ -44,6 +47,16 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>()((set) => ({
+  scope: 'indonesia',
+  setScope: (scope) =>
+    set((state) => ({
+      scope,
+      aoi: state.scope === scope ? state.aoi : null,
+      selected: null,
+      playbackDay: 1,
+      playbackHour: 0,
+      mode: scope === 'global' ? 'raw' : 'harmonized',
+    })),
   aoi: null,
   start: null,
   end: null,
@@ -57,7 +70,19 @@ export const useAppStore = create<AppState>()((set) => ({
   calendarView: 'count',
   pointsColor: 'sensor',
   mapDisplay: 'points',
-  setAoi: (aoi) => set({ aoi }),
+  setAoi: (aoi) =>
+    set((state) =>
+      state.scope === 'global' && /^NE[01]-IDN(?:-|$)/.test(aoi?.regionId ?? '')
+        ? {
+            scope: 'indonesia',
+            aoi,
+            selected: null,
+            playbackDay: 1,
+            playbackHour: 0,
+            mode: 'harmonized',
+          }
+        : { aoi },
+    ),
   setRange: (start, end) => set({ start, end }),
   setReferenceYears: (referenceYears) => set({ referenceYears }),
   setSelected: (selected) => set({ selected }),

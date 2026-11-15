@@ -14,14 +14,24 @@ describe('climatology chart', () => {
   });
 
   it('builds a P25-P75 band, median, current year and a fire-season area', () => {
-    const option = climatologyOption(statsFixture(), {
-      months: MONTHS,
-      median: 'Median',
-      band: 'P25–P75',
-      current: '2021',
-      season: 'Fire season',
-      format: (v) => String(v),
-    }) as unknown as { series: Series[]; tooltip: { formatter: (p: unknown) => string } };
+    const option = climatologyOption(
+      statsFixture(),
+      {
+        months: MONTHS,
+        median: 'Median',
+        band: 'P25–P75',
+        season: 'Fire season',
+        year: (year) => String(year),
+        format: (v) => String(v),
+      },
+      {
+        years: [
+          { year: 2021, values: statsFixture().climatology.map((m) => m.current), partial: false },
+        ],
+        showBand: true,
+        showSeason: true,
+      },
+    ) as unknown as { series: Series[]; tooltip: { formatter: (p: unknown) => string } };
     const [base, band, median, current] = option.series;
     expect(base!.data[8]).toBe(150); // P25 in September
     expect(band!.data[8]).toBe(110); // P75 - P25
@@ -34,5 +44,35 @@ describe('climatology chart', () => {
     expect(tip).toContain('Median: 200');
     expect(tip).toContain('P25–P75: 150–260');
     expect(tip).toContain('Fire season');
+  });
+
+  it('shows two chosen years and hides optional reference layers', () => {
+    const values = Array(12).fill(10);
+    const option = climatologyOption(
+      statsFixture(),
+      {
+        months: MONTHS,
+        median: 'Median',
+        band: 'P25–P75',
+        season: 'Fire season',
+        year: (year, partial) => `${year}${partial ? ' (partial)' : ''}`,
+        format: (v) => String(v),
+      },
+      {
+        years: [
+          { year: 2020, values, partial: false },
+          { year: 2019, values, partial: true },
+        ],
+        showBand: false,
+        showSeason: false,
+      },
+    ) as unknown as { series: Series[]; tooltip: { formatter: (p: unknown) => string } };
+    expect(option.series.map((series) => series.name)).toEqual([
+      'Median',
+      '2020',
+      '2019 (partial)',
+    ]);
+    expect(option.series[0]?.markArea).toBeUndefined();
+    expect(option.tooltip.formatter([{ dataIndex: 8 }])).toContain('2019 (partial): 10');
   });
 });
