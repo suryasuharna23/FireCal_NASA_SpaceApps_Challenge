@@ -3,12 +3,15 @@ import { formatKm2 } from '../lib/aoi';
 import { useAppStore } from '../state/useAppStore';
 import { Panel } from './Panel';
 import { RegionList } from './RegionList';
+import { CircleForm } from './CircleForm';
+import { GeoJsonUpload } from './GeoJsonUpload';
 
 /** Choose any province boundary present in the current Indonesia dataset. */
 export function AoiPanel() {
   const { t, lang } = useT();
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
+  const scope = useAppStore((s) => s.scope);
 
   return (
     <Panel
@@ -29,10 +32,21 @@ export function AoiPanel() {
             <span className="muted"> · {formatKm2(aoi.areaKm2, lang)}</span>
           </>
         ) : (
-          <span className="muted">{t('aoiTabs.none')}</span>
+          <span className="muted">
+            {scope === 'global'
+              ? 'Choose a location anywhere in the world, or upload its boundary.'
+              : t('aoiTabs.none')}
+          </span>
         )}
       </p>
-      <RegionList />
+      {scope === 'global' ? (
+        <>
+          <CircleForm />
+          <GeoJsonUpload />
+        </>
+      ) : (
+        <RegionList />
+      )}
     </Panel>
   );
 }

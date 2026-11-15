@@ -53,6 +53,8 @@ def live_lifespan(settings):
             def loop():
                 while not stop.is_set():
                     refresh_once(settings)
+                    if not stop.is_set():
+                        refresh_global_once(settings)
                     if stop.wait(settings.live_refresh_seconds):
                         break
 
@@ -67,3 +69,31 @@ def live_lifespan(settings):
                 worker.join(timeout=1)
 
     return lifespan
+
+
+def refresh_global_once(settings):
+    from firecal.global_data import CATALOG
+    from firecal.global_live import refresh_global
+
+    root = Path(settings.live_repo_root).resolve()
+    if not (root / CATALOG).exists():
+        return
+    status = root / "data/global/status.json"
+    secret = settings.firms_map_key.get_secret_value()
+    if not secret or secret == "your_map_key_here":
+        atomic_json(status, {"status": "missing_key", "detail": "NASA access key is missing."})
+        return
+    try:
+        with FirmsClient(secret, allow_mirror=False, timeout=120) as client:
+            refresh_global(root, client)
+    except Exception as exc:
+        atomic_json(
+            status,
+            {
+                "status": "failed",
+                "checked_at": datetime.now(UTC).isoformat(),
+                "error": type(exc).__name__,
+                "detail": "Worldwide NASA update failed; freshness is unverified.",
+            },
+        )
+        log.error("Global NASA refresh FAILED (%s)", type(exc).__name__)

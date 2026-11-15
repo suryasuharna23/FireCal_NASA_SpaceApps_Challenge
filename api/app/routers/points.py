@@ -1,6 +1,5 @@
-from typing import Any
 from datetime import date
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
@@ -9,7 +8,7 @@ from fastapi import APIRouter, Depends
 from pydantic import Field
 
 from app.aoi import Aoi, Grid
-from app.db import Dataset, get_connection, get_dataset
+from app.db import Dataset, DataUnavailableError, get_connection, get_dataset, get_global_dataset
 from app.models import AoiRequest
 from app.series import RangeError, parse_ym
 from app.settings import get_settings
@@ -23,6 +22,7 @@ POINT_COLUMNS = (
 
 
 class PointsRequest(AoiRequest):
+    scope: Literal["indonesia", "global"] = "indonesia"
     year: int
     month: int = Field(..., ge=1, le=12)
     period: Literal["month", "day", "hour"] = "month"
@@ -34,8 +34,14 @@ class PointsRequest(AoiRequest):
 
 
 def aoi_points(
-    con, ds: Dataset, aoi: Aoi, year: int, month: int, columns: str = POINT_COLUMNS,
-    day: int | None = None, hour: int | None = None,
+    con,
+    ds: Dataset,
+    aoi: Aoi,
+    year: int,
+    month: int,
+    columns: str = POINT_COLUMNS,
+    day: int | None = None,
+    hour: int | None = None,
 ) -> pd.DataFrame:
     """Raw points of one month inside the AOI polygon."""
     minx, miny, maxx, maxy = aoi.geometry.bounds
@@ -49,11 +55,16 @@ def aoi_points(
     try:
         df = con.execute(
             f"""SELECT {columns} FROM {ds.points_year(year)}
-                WHERE month = ? AND longitude BETWEEN ? AND ? AND latitude BETWEEN ? AND ? {filters}""",
+                WHERE month = ? AND longitude BETWEEN ? AND ?
+                  AND latitude BETWEEN ? AND ? {filters}""",
             args,
         ).df()
     except Exception as exc:  # missing partition -> no detections that year
         if "No files found" in str(exc):
+            if ds.meta(con).get("format") == "firecal-global-v1":
+                raise DataUnavailableError(
+                    "Global observation files are missing; reinstall the data"
+                ) from exc
             return pd.DataFrame(columns=[c.strip() for c in columns.split(",")])
         raise
     shapely.prepare(aoi.geometry)
@@ -81,6 +92,11 @@ def post_points(
     grid cells (``aggregated: true``) with per-sensor counts and summed FRP.
     """
     settings = get_settings()
+    if req.scope == "global":
+        from app.global_view import validate_global_period
+
+        ds = get_global_dataset()
+        validate_global_period(ds.meta(con), req.year, req.month, req.period, req.day, req.hour)
     meta = ds.meta(con)
     aoi = Aoi.from_geojson(req.aoi, settings.max_aoi_km2)
     if not parse_ym(meta["start_month"]) <= (req.year, req.month) <= parse_ym(meta["end_month"]):
@@ -99,9 +115,15 @@ def post_points(
         if req.period == "hour" and req.hour is None:
             raise RangeError("Hour is required for hourly view")
     limit = min(req.limit or settings.max_points, settings.max_points)
-    df = aoi_points(con, ds, aoi, req.year, req.month,
-                    day=req.day if req.period != "month" else None,
-                    hour=req.hour if req.period == "hour" else None)
+    df = aoi_points(
+        con,
+        ds,
+        aoi,
+        req.year,
+        req.month,
+        day=req.day if req.period != "month" else None,
+        hour=req.hour if req.period == "hour" else None,
+    )
     base = {
         "type": "FeatureCollection",
         "year": req.year,
@@ -111,6 +133,8 @@ def post_points(
         "hour": req.hour if req.period == "hour" else None,
         "count": len(df),
         "attribution": "NASA FIRMS",
+        "scope": req.scope,
+        "data_version": meta["data_version"],
     }
     if len(df) <= limit:
         features = [

@@ -6,12 +6,22 @@ import { AoiPanel } from './AoiPanel';
 import { EmptyState } from './EmptyState';
 
 beforeEach(() => {
-  useAppStore.setState({ aoi: null });
+  useAppStore.setState({ aoi: null, scope: 'indonesia' });
   mockFetch({ '/meta': META_OK, ...REGION_ROUTES });
 });
 afterEach(() => vi.unstubAllGlobals());
 
 describe('AoiPanel', () => {
+  it('lets the global view inspect a location outside Indonesia', async () => {
+    useAppStore.setState({ scope: 'global' });
+    renderWithQuery(<AoiPanel />);
+    fireEvent.change(screen.getByLabelText('Latitude'), { target: { value: '-12' } });
+    fireEvent.change(screen.getByLabelText('Longitude'), { target: { value: '17' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Use circle' }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.circle?.lon).toBe(17));
+    expect(useAppStore.getState().aoi?.circle?.lat).toBe(-12);
+  });
+
   it('offers all saved provinces and highlights the chosen boundary', async () => {
     renderWithQuery(<AoiPanel />);
     await waitFor(() => expect(screen.getAllByRole('button')).toHaveLength(34));

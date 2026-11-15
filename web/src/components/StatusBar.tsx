@@ -1,5 +1,6 @@
 import { useMeta } from '../api/client';
 import { useT } from '../i18n';
+import { useAppStore } from '../state/useAppStore';
 
 function formatDate(iso: string | null | undefined, lang: string) {
   if (!iso) return '–';
@@ -17,6 +18,7 @@ function formatDate(iso: string | null | undefined, lang: string) {
 export function StatusBar() {
   const { t, lang } = useT();
   const { data, error, isError, isLoading } = useMeta();
+  const scope = useAppStore((s) => s.scope);
 
   if (isLoading) return <div className="status">{t('status.loading')}</div>;
   if (isError || !data)
@@ -32,6 +34,45 @@ export function StatusBar() {
         {t('status.noData')}
       </div>
     );
+
+  if (scope === 'global') {
+    const worldwide = data.global;
+    const live = worldwide?.live;
+    const failed = live?.status === 'failed' || live?.status === 'missing_key';
+    return (
+      <div
+        className={failed || worldwide?.status !== 'ok' ? 'status status--error' : 'status'}
+        role={failed || worldwide?.status !== 'ok' ? 'alert' : 'status'}
+      >
+        {worldwide?.status === 'ok' ? (
+          <>
+            <span>
+              Worldwide NASA detections · {worldwide.start_date} to{' '}
+              <strong>{worldwide.last_acq_date}</strong>
+            </span>
+            <span className="status__muted">Version {worldwide.data_version}</span>
+            {worldwide.provisional && (
+              <span className="badge badge--warn">Provisional NASA observations</span>
+            )}
+            {live?.status === 'updating' && <span>Checking newer worldwide observations…</span>}
+            {failed && (
+              <strong>
+                GLOBAL UPDATE UNAVAILABLE · {live?.detail} Showing saved real observations.
+              </strong>
+            )}
+            {live?.checked_at && (
+              <span className="status__muted">
+                NASA check attempted {new Date(live.checked_at).toLocaleString(lang)}
+              </span>
+            )}
+            {!live && <span>Saved snapshot · updated through the date shown.</span>}
+          </>
+        ) : (
+          <strong>{worldwide?.detail ?? 'Real global observations are unavailable.'}</strong>
+        )}
+      </div>
+    );
+  }
 
   const updateFailed = data.live?.status === 'failed' || data.live?.status === 'missing_key';
   return (

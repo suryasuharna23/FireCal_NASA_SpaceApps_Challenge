@@ -8,6 +8,7 @@ export type ColorScale = 'linear' | 'log';
 export type CalendarView = 'count' | 'anomaly';
 export type MapDisplay = 'points' | 'heatmap';
 export type PlaybackPeriod = 'year' | 'month' | 'day' | 'hour';
+export type DataScope = 'indonesia' | 'global';
 
 export interface YearMonth {
   year: number;
@@ -15,6 +16,8 @@ export interface YearMonth {
 }
 
 interface AppState {
+  scope: DataScope;
+  setScope: (scope: DataScope) => void;
   aoi: Aoi | null;
   /** Inclusive range as YYYY-MM; null = API default (2001-01 .. latest). */
   start: string | null;
@@ -44,6 +47,15 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>()((set) => ({
+  scope: 'indonesia',
+  setScope: (scope) =>
+    set({
+      scope,
+      selected: null,
+      playbackDay: 1,
+      playbackHour: 0,
+      mode: scope === 'global' ? 'raw' : 'harmonized',
+    }),
   aoi: null,
   start: null,
   end: null,

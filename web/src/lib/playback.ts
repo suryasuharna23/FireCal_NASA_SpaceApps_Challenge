@@ -6,7 +6,12 @@ export interface PlaybackFrame extends YearMonth {
   hour?: number;
 }
 
-export function frameFor(ym: YearMonth, period: PlaybackPeriod, day: number, hour: number): PlaybackFrame {
+export function frameFor(
+  ym: YearMonth,
+  period: PlaybackPeriod,
+  day: number,
+  hour: number,
+): PlaybackFrame {
   const maxDay = new Date(Date.UTC(ym.year, ym.month, 0)).getUTCDate();
   return {
     ...ym,
@@ -26,9 +31,13 @@ export function nextFrame(frame: PlaybackFrame): PlaybackFrame {
   if (frame.period === 'month') date.setUTCMonth(date.getUTCMonth() + 1);
   if (frame.period === 'day') date.setUTCDate(date.getUTCDate() + 1);
   if (frame.period === 'hour') date.setUTCHours(date.getUTCHours() + 1);
-  return { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1,
-    period: frame.period, ...(frame.day !== undefined ? { day: date.getUTCDate() } : {}),
-    ...(frame.hour !== undefined ? { hour: date.getUTCHours() } : {}) };
+  return {
+    year: date.getUTCFullYear(),
+    month: date.getUTCMonth() + 1,
+    period: frame.period,
+    ...(frame.day !== undefined ? { day: date.getUTCDate() } : {}),
+    ...(frame.hour !== undefined ? { hour: date.getUTCHours() } : {}),
+  };
 }
 
 export function frameKey(frame: PlaybackFrame): number {

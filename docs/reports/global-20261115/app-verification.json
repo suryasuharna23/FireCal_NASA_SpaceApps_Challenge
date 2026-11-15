@@ -1,0 +1,82 @@
+{
+  "global_data_version": "4ba58bbda51d",
+  "rows": 19072129,
+  "global_live_status": {
+    "status": "updated",
+    "checked_at": "2026-11-15T12:46:54.872773+00:00",
+    "requested_through": "2026-11-15",
+    "data_version": "4ba58bbda51d",
+    "lagging_sources": [
+      {
+        "source": "VIIRS_SNPP_NRT",
+        "available_through": "2026-11-02"
+      }
+    ]
+  },
+  "indonesia_data_version": "ca48ece3928c",
+  "indonesia_start_month": "2000-11",
+  "checks": [
+    {
+      "view": "month",
+      "month": 8,
+      "expected": 5526535,
+      "api_total": 5526535,
+      "display_resolution": 2.0,
+      "cells": 3261
+    },
+    {
+      "view": "month",
+      "month": 9,
+      "expected": 6413910,
+      "api_total": 6413910,
+      "display_resolution": 2.0,
+      "cells": 3544
+    },
+    {
+      "view": "month",
+      "month": 10,
+      "expected": 5369024,
+      "api_total": 5369024,
+      "display_resolution": 2.0,
+      "cells": 3348
+    },
+    {
+      "view": "month",
+      "month": 11,
+      "expected": 1762660,
+      "api_total": 1762660,
+      "display_resolution": 2.0,
+      "cells": 2870
+    },
+    {
+      "view": "day",
+      "expected": 31713,
+      "api_total": 31713
+    },
+    {
+      "view": "hour",
+      "expected": 1985,
+      "api_total": 1985
+    },
+    {
+      "view": "foreign area",
+      "region": "South America",
+      "expected": 1,
+      "api_total": 1
+    },
+    {
+      "view": "foreign area",
+      "region": "Africa",
+      "expected": 177,
+      "api_total": 177
+    },
+    {
+      "view": "foreign area",
+      "region": "Australia",
+      "expected": 9,
+      "api_total": 9
+    }
+  ],
+  "unsupported_global_harmonization": 422,
+  "unavailable_global_month": 422
+}
