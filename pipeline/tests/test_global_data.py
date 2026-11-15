@@ -246,3 +246,58 @@ def test_empty_standard_response_removes_superseded_nrt_instead_of_falling_back(
     assert updated["rows"] == 3
     assert updated["provisional"] is False
     assert "Terra" not in {p["satellite"] for p in updated["platforms"]}
+
+
+def test_nrt_is_refetched_when_observations_change_within_the_same_utc_day(global_inputs, tmp_path):
+    from firecal.firms import KeyStatus
+    from firecal.global_live import refresh_global
+    from firecal.live import atomic_json, resolve_pointer
+
+    repo = tmp_path / "repo"
+    base = repo / "data/global/snapshots/base"
+    meta = build_global(global_inputs, base)
+    write_json(repo / "datasets/global/recent/dataset.json", {"data_version": meta["data_version"]})
+    pointer = repo / "data/global/current.json"
+    atomic_json(
+        pointer,
+        {
+            "format": "firecal-live-v1",
+            "processed": "snapshots/base",
+            "base_data_version": meta["data_version"],
+        },
+    )
+
+    class ChangingNASA:
+        calls = 0
+        revision = 1
+
+        def availability(self):
+            return [
+                {**r, "max_date": "2026-08-15" if r["data_id"].endswith("_SP") else "2026-08-16"}
+                for r in availability()
+            ]
+
+        def key_status(self):
+            return KeyStatus(5000, 0, "10 minutes")
+
+        def area_csv(self, source, bbox, days, start):
+            assert source.endswith("_NRT") and start == "2026-08-16" and days == 1
+            self.calls += 1
+            sat = {
+                "MODIS_NRT": "T",
+                "VIIRS_SNPP_NRT": "N",
+                "VIIRS_NOAA20_NRT": "1",
+                "VIIRS_NOAA21_NRT": "2",
+            }[source]
+            header = "latitude,longitude,acq_date,acq_time,satellite,version,confidence,frp\n"
+            return header + "".join(
+                f"40,-8,{start},{1300 + i},{sat},6.1NRT,n,5\n" for i in range(self.revision)
+            )
+
+    provider = ChangingNASA()
+    refresh_global(repo, provider, target=date(2026, 8, 16))
+    assert json.loads((resolve_pointer(pointer) / "meta.json").read_text())["rows"] == 8
+    provider.revision = 2
+    refresh_global(repo, provider, target=date(2026, 8, 16))
+    assert provider.calls == 8
+    assert json.loads((resolve_pointer(pointer) / "meta.json").read_text())["rows"] == 12

@@ -50,7 +50,11 @@ def _refresh_global(repo: Path, client, *, target: date | None = None) -> dict:
         plan = catchup_plan(watermarks, client.availability(), target)
         if plan["unavailable_gaps"]:
             raise ValueError("NASA cannot fill every missing global source date")
-        manifest = download_windows(client, plan["windows"], WORLD, root / "acquisition")
+        run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
+        run_root = root / "runs" / run_id
+        # NRT responses can change within a UTC day. A new refresh must re-fetch
+        # its overlap even when its source/date filenames match the previous run.
+        manifest = download_windows(client, plan["windows"], WORLD, run_root / "responses")
         verify_receipts(manifest, plan["windows"], WORLD)
         covered, queries = [], []
         for receipt, window in zip(manifest["records"], plan["windows"], strict=True):
@@ -85,12 +89,7 @@ def _refresh_global(repo: Path, client, *, target: date | None = None) -> dict:
                 sort_keys=True,
             ).encode()
         ).hexdigest()[:12]
-        output = (
-            root
-            / "runs"
-            / (datetime.now(UTC).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8])
-            / "processed"
-        )
+        output = run_root / "processed"
         output.mkdir(parents=True)
         with duckdb.connect() as con:
             con.execute("SET threads TO 4")
