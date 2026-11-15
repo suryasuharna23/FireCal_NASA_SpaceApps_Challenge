@@ -52,7 +52,7 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
           `${labels.median}: ${f(m.median)}`,
           `${labels.band}: ${f(m.p25)}–${f(m.p75)}`,
           `${labels.current}: ${f(m.current)}`,
-          m.critical ? `<span style="color:#ffb08a">${labels.season}</span>` : '',
+          m.critical ? `<span style="color:${THEME.amber}">${labels.season}</span>` : '',
         ]
           .filter(Boolean)
           .join('<br/>');
@@ -103,7 +103,7 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
         markArea: {
           silent: true,
           itemStyle: { color: THEME.critical },
-          label: { color: '#ffb08a', fontSize: 11, position: 'insideTop' },
+          label: { color: THEME.amber, fontSize: 11, position: 'insideTop' },
           data: areas,
         },
       },

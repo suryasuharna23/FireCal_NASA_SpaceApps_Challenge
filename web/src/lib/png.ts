@@ -5,10 +5,10 @@ import { FONT_BODY, FONT_DISPLAY, FONT_MONO, fontsReady } from './fonts';
 export const EXPORT_SCALE = 2;
 export const ATTRIBUTION = 'Data: NASA FIRMS (MODIS & VIIRS 375 m) · FireCal';
 
-const BG = '#0b1022';
-const FG = '#e8edff';
+const BG = '#090a15';
+const FG = '#ffffff';
 const MUTED = '#9aa6c8';
-const ZERO = '#18213f';
+const ZERO = '#12162b';
 const PAD = 20;
 const HEADER = 58;
 const FOOTER = 30;
