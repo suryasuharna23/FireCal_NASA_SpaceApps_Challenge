@@ -110,6 +110,19 @@ accuracy. The original November 14 audit remains reproducible at its own version
 
 ## Operator checks
 
+### No simulated-data fallback
+
+The normal launcher, bootstrap and live updater never generate synthetic fire
+observations. Live startup and API requests reject data whose origin does not
+match the pinned real snapshot. Missing data return HTTP 503 and a visible error.
+Missing keys and failed refreshes produce red accessible alerts, an explicit API
+freshness error, and failure logs without credentials. Previously saved real
+observations may remain available, explicitly labeled as not verified current.
+An attempted check is not labeled a successful NASA check.
+
+Synthetic generators and mocked responses are for explicitly invoked development
+tests only; they are not a production fallback.
+
 ```powershell
 uv run firecal live-update --plan-only
 uv run firecal live-update
