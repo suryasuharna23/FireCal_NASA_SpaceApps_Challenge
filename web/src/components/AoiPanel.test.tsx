@@ -14,12 +14,12 @@ afterEach(() => vi.unstubAllGlobals());
 describe('AoiPanel', () => {
   it('offers all saved provinces and highlights the chosen boundary', async () => {
     renderWithQuery(<AoiPanel />);
-    await waitFor(() => expect(screen.getAllByRole('button')).toHaveLength(34));
+    await waitFor(() => expect(screen.getAllByRole('button', { pressed: false })).toHaveLength(34));
     expect(screen.getByText('33 provinces available')).toBeVisible();
     expect(screen.queryByRole('tab')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Polygon' })).toBeNull();
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Riau' } });
-    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.getAllByRole('button', { pressed: false })).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: /Riau/ }));
     await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
     expect(screen.getByText('Riau, Indonesia')).toBeVisible();

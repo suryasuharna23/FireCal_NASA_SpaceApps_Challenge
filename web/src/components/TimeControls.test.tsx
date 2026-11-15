@@ -4,7 +4,13 @@ import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { STEP_MS, TimeControls } from './TimeControls';
 
 beforeEach(() => {
-  useAppStore.setState({ selected: null, mode: 'harmonized', playbackPeriod: 'month', playbackDay: 1, playbackHour: 0 });
+  useAppStore.setState({
+    selected: null,
+    mode: 'harmonized',
+    playbackPeriod: 'month',
+    playbackDay: 1,
+    playbackHour: 0,
+  });
   mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0 } });
 });
 afterEach(() => {

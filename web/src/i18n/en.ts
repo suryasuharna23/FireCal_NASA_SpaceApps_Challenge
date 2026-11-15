@@ -1,6 +1,5 @@
 /** All interface text. The interface is English-only. */
 export const messages = {
-  'app.tagline': 'Harmonized MODIS–VIIRS fire activity calendar, 2000–present',
   'nav.app': 'Calendar',
   'nav.methodology': 'Methodology',
   'region.view': 'Globe and area map',
@@ -9,6 +8,11 @@ export const messages = {
   'panel.globe': 'Hotspot globe & area',
   'panel.map': 'Area map (AOI)',
   'panel.aoi': 'Area',
+  'coord.latitude': 'Latitude',
+  'coord.longitude': 'Longitude',
+  'coord.select': 'Find region',
+  'coord.invalid': 'Enter a valid latitude and longitude.',
+  'coord.outside': 'No Indonesian region contains these coordinates.',
   'panel.time': 'Time',
   'panel.kpi': 'Summary',
   'panel.calendar': 'Year × month calendar',

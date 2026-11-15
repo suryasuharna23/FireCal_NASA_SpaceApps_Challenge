@@ -6,13 +6,13 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 
-from firecal.firms import FirmsClient
-from firecal.live import atomic_json, refresh
-
 log = logging.getLogger(__name__)
 
 
 def refresh_once(settings):
+    from firecal.firms import FirmsClient
+    from firecal.live import atomic_json, refresh
+
     root = Path(settings.live_repo_root).resolve()
     secret = settings.firms_map_key.get_secret_value()
     if not secret or secret == "your_map_key_here":

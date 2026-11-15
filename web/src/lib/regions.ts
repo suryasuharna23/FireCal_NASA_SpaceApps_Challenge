@@ -65,6 +65,47 @@ export async function loadIndonesiaBoundaries(): Promise<RegionFeature[]> {
   return response.features;
 }
 
+function inRing(lon: number, lat: number, ring: number[][]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const a = ring[i]!;
+    const b = ring[j]!;
+    if (
+      a[1]! > lat !== b[1]! > lat &&
+      lon < ((b[0]! - a[0]!) * (lat - a[1]!)) / (b[1]! - a[1]!) + a[0]!
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function inPolygon(lon: number, lat: number, rings: number[][][]): boolean {
+  return Boolean(
+    rings[0] &&
+    inRing(lon, lat, rings[0]) &&
+    !rings.slice(1).some((hole) => inRing(lon, lat, hole)),
+  );
+}
+
+/** Find the province containing a coordinate, falling back to the country. */
+export function regionAtCoordinate(
+  features: RegionFeature[],
+  lat: number,
+  lon: number,
+): RegionFeature | null {
+  return (
+    [...features]
+      .sort((a, b) => b.properties.level - a.properties.level)
+      .find((feature) => {
+        const geometry = feature.geometry;
+        return geometry.type === 'Polygon'
+          ? inPolygon(lon, lat, geometry.coordinates)
+          : geometry.coordinates.some((polygon) => inPolygon(lon, lat, polygon));
+      }) ?? null
+  );
+}
+
 /** Use the saved administrative boundary, never an approximate selection circle. */
 export async function loadRegionAoi(region: FireRegion | string): Promise<Aoi> {
   const requestedId = typeof region === 'string' ? region : region.id;

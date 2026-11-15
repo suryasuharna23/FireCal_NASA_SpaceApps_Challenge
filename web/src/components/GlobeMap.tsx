@@ -406,8 +406,11 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     mapRef.current?.flyTo({ zoom: 1.9, duration: 1400 });
   };
 
-  const monthLabel = month ? playbackPeriod === 'year' ? `${month.year}`
-    : `${playbackPeriod === 'day' || playbackPeriod === 'hour' ? `${frame?.day} ` : ''}${monthNames(lang, 'long')[month.month - 1]} ${month.year}${playbackPeriod === 'hour' ? `, ${String(frame?.hour).padStart(2, '0')}:00 UTC` : ''}` : '';
+  const monthLabel = month
+    ? playbackPeriod === 'year'
+      ? `${month.year}`
+      : `${playbackPeriod === 'day' || playbackPeriod === 'hour' ? `${frame?.day} ` : ''}${monthNames(lang, 'long')[month.month - 1]} ${month.year}${playbackPeriod === 'hour' ? `, ${String(frame?.hour).padStart(2, '0')}:00 UTC` : ''}`
+    : '';
 
   return (
     <Panel title={t('panel.globe')} className="panel--globe">
