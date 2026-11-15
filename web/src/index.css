@@ -164,17 +164,20 @@ h3 {
 
 .app__header {
   position: sticky;
-  top: 0;
+  top: 12px;
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px 20px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(6, 9, 20, 0.72);
-  backdrop-filter: blur(12px);
+  margin: 12px 20px 0;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: rgba(10, 16, 31, 0.86);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px);
 }
 
 .brand {
@@ -185,37 +188,13 @@ h3 {
 
 .brand h1 {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #fff, #ffd2b8 60%, var(--accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  line-height: 0;
 }
 
-.brand p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
-/* A small planet with a fiery limb and an orbit ring. */
-.brand__mark {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #ffd08a, #ff7a3d 45%, #9c1f0e 80%, #3b0b05);
-  box-shadow: 0 0 18px rgba(255, 122, 61, 0.55);
-}
-
-.brand__mark::after {
-  content: '';
-  position: absolute;
-  inset: 9px -7px;
-  border: 1.5px solid rgba(94, 231, 255, 0.75);
-  border-radius: 50%;
-  transform: rotate(-20deg);
+.brand__logo {
+  display: block;
+  width: 164px;
+  height: auto;
 }
 
 .tabs {
@@ -959,6 +938,27 @@ h3 {
   margin-top: 12px;
 }
 
+.region-list__coordinates {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.region-list__coordinates label {
+  flex: 1 1 90px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.region-list__coordinates input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+}
+
 .region-list__title {
   margin: 0 0 6px;
   font-size: 0.72rem;
@@ -1436,16 +1436,14 @@ h3 {
 /* ---------- phones: compact chrome so the globe and results get the space ---------- */
 @media (max-width: 600px) {
   .app__header {
-    padding: 10px 12px;
+    top: 10px;
+    margin: 10px 12px 0;
+    padding: 7px 10px;
     gap: 8px;
   }
 
-  .brand p {
-    display: none;
-  }
-
-  .brand h1 {
-    font-size: var(--text-lg);
+  .brand__logo {
+    width: 132px;
   }
 
   .tabs__tab {

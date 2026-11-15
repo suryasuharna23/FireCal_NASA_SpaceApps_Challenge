@@ -33,10 +33,10 @@ export default function App() {
       </a>
       <header className="app__header">
         <div className="brand">
-          <span className="brand__mark" aria-hidden="true" />
           <div>
-            <h1>FireCal</h1>
-            <p>{t('app.tagline')}</p>
+            <h1>
+              <img className="brand__logo" src="/logo/firecal-logo.svg" alt="FireCal" />
+            </h1>
           </div>
         </div>
         <nav className="tabs" aria-label="FireCal">

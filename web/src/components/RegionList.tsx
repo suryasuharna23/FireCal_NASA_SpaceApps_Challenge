@@ -5,6 +5,9 @@ import {
   listCountryProvinces,
   listFireRegions,
   loadRegionAoi,
+  loadRegionBoundaries,
+  regionAtCoordinate,
+  regionFeatureAoi,
   type FireRegion,
 } from '../lib/regions';
 import { useAppStore } from '../state/useAppStore';
@@ -19,6 +22,8 @@ export function RegionList() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
   const regions = useQuery({
     queryKey: ['fire-regions', scope],
     queryFn: () => listFireRegions(scope),
@@ -64,8 +69,67 @@ export function RegionList() {
     await choose(region);
   };
 
+  const chooseCoordinate = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const lat = Number(latitude);
+    const lon = Number(longitude);
+    if (
+      !latitude.trim() ||
+      !longitude.trim() ||
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lon) ||
+      Math.abs(lat) > 90 ||
+      Math.abs(lon) > 180
+    ) {
+      setError(t('coord.invalid'));
+      return;
+    }
+    setLoadingId('coordinate');
+    setError(null);
+    try {
+      const region = regionAtCoordinate(await loadRegionBoundaries(scope), lat, lon);
+      if (region) setAoi(regionFeatureAoi(region));
+      else setError(t('coord.outside'));
+    } catch (cause) {
+      setError((cause as Error).message);
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
   return (
     <div className="region-list">
+      <form className="region-list__coordinates" onSubmit={(event) => void chooseCoordinate(event)}>
+        <label>
+          {t('coord.latitude')}
+          <input
+            type="number"
+            min={-90}
+            max={90}
+            step="any"
+            required
+            value={latitude}
+            onChange={(event) => setLatitude(event.target.value)}
+            placeholder="-6.2"
+          />
+        </label>
+        <label>
+          {t('coord.longitude')}
+          <input
+            type="number"
+            min={-180}
+            max={180}
+            step="any"
+            required
+            value={longitude}
+            onChange={(event) => setLongitude(event.target.value)}
+            placeholder="106.8"
+          />
+        </label>
+        <button type="submit" className="btn btn--small" disabled={loadingId !== null}>
+          {t('coord.select')}
+        </button>
+      </form>
       <label className="region-list__filter">
         <span className="sr-only">{t('search.label')}</span>
         <input

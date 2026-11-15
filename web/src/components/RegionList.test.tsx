@@ -54,6 +54,31 @@ describe('RegionList', () => {
     await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE0-IDN'));
     expect(useAppStore.getState().aoi?.label).toBe('Indonesia');
   });
+
+  it('finds the province containing entered coordinates', async () => {
+    renderWithQuery(<RegionList />);
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Latitude' }), {
+      target: { value: '1' },
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Longitude' }), {
+      target: { value: '102' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Find region' }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
+  });
+
+  it('does not invent a region outside the saved boundaries', async () => {
+    renderWithQuery(<RegionList />);
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Latitude' }), {
+      target: { value: '40' },
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Longitude' }), {
+      target: { value: '10' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Find region' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('No Indonesian region');
+    expect(useAppStore.getState().aoi).toBeNull();
+  });
 });
 
 describe('RegionList worldwide coverage', () => {
