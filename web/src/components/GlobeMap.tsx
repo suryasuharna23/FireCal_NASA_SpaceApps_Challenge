@@ -169,14 +169,18 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
             ['heatmap-density'],
             0,
             'rgba(0, 0, 0, 0)',
-            0.1,
-            '#37236b',
+            0.15,
+            '#4a2612',
             0.35,
-            '#a12b83',
-            0.65,
-            '#ed6925',
+            '#8a380a',
+            0.55,
+            '#e04006',
+            0.75,
+            '#ff6b1a',
+            0.9,
+            '#ff9f1c',
             1,
-            '#f7e225',
+            '#ffd23f',
           ],
         },
       });
@@ -213,14 +217,18 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
             ['heatmap-density'],
             0,
             'rgba(0, 0, 0, 0)',
-            0.1,
-            '#37236b',
+            0.15,
+            '#4a2612',
             0.35,
-            '#a12b83',
-            0.65,
-            '#ed6925',
+            '#8a380a',
+            0.55,
+            '#e04006',
+            0.75,
+            '#ff6b1a',
+            0.9,
+            '#ff9f1c',
             1,
-            '#f7e225',
+            '#ffd23f',
           ],
         },
       });
@@ -544,10 +552,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
                 <div
                   className="legend__bar"
                   style={{
-                    background:
-                      mapDisplay === 'heatmap'
-                        ? 'linear-gradient(90deg, #37236b, #a12b83, #ed6925, #f7e225)'
-                        : gradient(countColor),
+                    background: gradient(countColor),
                   }}
                 />
                 <div className="legend__ticks">

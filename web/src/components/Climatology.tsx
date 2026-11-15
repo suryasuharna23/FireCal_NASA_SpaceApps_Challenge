@@ -185,7 +185,7 @@ export function Climatology() {
             ariaLabel={`${showSeason ? `${t('clim.aria', { months: season })} ` : ''}${t('clim.chartYears', { years: profiles.map((profile) => profile.year).join(', ') })}`}
             onReady={png.onReady}
           />
-          <p className="muted small">
+          <p className="clim-note muted small">
             {t('clim.referenceHint', {
               start: data.reference_years[0],
               end: data.reference_years[1],

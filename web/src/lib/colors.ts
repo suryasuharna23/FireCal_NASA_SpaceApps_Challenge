@@ -1,15 +1,28 @@
-import { interpolateInferno, interpolateRdBu, scaleSequential, scaleSequentialLog } from 'd3';
+import { interpolateRdBu, interpolateRgb, scaleLinear, scaleSequential, scaleSequentialLog } from 'd3';
 import type { ColorScale } from '../state/useAppStore';
 
 /**
- * Sequential palette for counts: inferno (perceptually uniform, ordered in lightness and
- * readable with deuteranopia/protanopia, NFR-04). The darkest 15 % is skipped so low
- * values stay visible on the dark space background; zero gets a neutral tone so
- * "no fire" is distinguishable from "a little fire".
+ * Sequential Solar Flare palette for fire detections & heatmap intensity:
+ * Sourced directly from FireCal Design Tokens (design-system/tokens.json):
+ * - Zero: #12162B (Zero cell / no thermal anomaly)
+ * - Low:  #4A2612 (1 - 50 detections)
+ * - Mid:  #8A380A (50 - 200 detections)
+ * - Ember: #E04006 (Thermal peak)
+ * - Orange: #FF6B1A (High outbreak / Primary CTA)
+ * - Amber: #FF9F1C (Warm flame)
+ * - Peak: #FFD23F (500+ detections / Solar glow peak)
+ *
+ * Ordered in lightness and verified for accessibility under protanopia & deuteranopia (NFR-04).
  */
 export const ZERO_COLOR = 'var(--zero-cell)';
 
-export const countColor = (t: number) => interpolateInferno(0.15 + 0.85 * t);
+const FIRE_PALETTE = ['#4A2612', '#8A380A', '#E04006', '#FF6B1A', '#FF9F1C', '#FFD23F'];
+const fireScale = scaleLinear<string>()
+  .domain([0, 0.2, 0.4, 0.65, 0.85, 1])
+  .range(FIRE_PALETTE)
+  .interpolate(interpolateRgb);
+
+export const countColor = (t: number) => fireScale(Math.max(0, Math.min(1, t)));
 
 export function countScale(max: number, scale: ColorScale) {
   const top = Math.max(max, 1);

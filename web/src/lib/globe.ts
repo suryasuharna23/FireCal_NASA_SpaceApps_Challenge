@@ -17,12 +17,12 @@ export function cellsToGeoJSON(
   };
 }
 
-/** MapLibre colour ramp matching the calendar's inferno palette. */
+/** MapLibre colour ramp matching the calendar's solar flare heatmap palette. */
 export function intensityColorExpression(): unknown[] {
   const stops: (number | string)[] = [];
   for (let i = 0; i <= 6; i++) {
     const t = i / 6;
-    stops.push(t, countColor(0.25 + 0.75 * t));
+    stops.push(t, countColor(t));
   }
   return ['interpolate', ['linear'], ['get', 't'], ...stops];
 }

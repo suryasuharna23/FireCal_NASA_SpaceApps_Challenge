@@ -42,4 +42,5 @@ web/playwright-report/
 .idea/
 .DS_Store
 Thumbs.db
+firecal/
 .vercel

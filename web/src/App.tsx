@@ -10,9 +10,9 @@ import { GlobeMap } from './components/GlobeMap';
 import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
 import { AoiPanel } from './components/AoiPanel';
-import { EmptyState } from './components/EmptyState';
 import { Methodology } from './components/Methodology';
 import { ShareButton } from './components/ShareButton';
+import { EmptyState } from './components/EmptyState';
 import { useT } from './i18n';
 import { useAppStore } from './state/useAppStore';
 import { useUrlSync } from './state/useUrlSync';
@@ -46,38 +46,53 @@ export default function App() {
       </a>
       <header className="app__header">
         <div className="brand">
+          <img
+            src="/firecal-logomark.svg"
+            alt="FireCal Logo"
+            className="brand__logo-img"
+            width={38}
+            height={48}
+          />
           <div>
-            <h1>
-              <img className="brand__logo" src="/logo/firecal-logo.svg" alt="FireCal" />
-            </h1>
+            <h1>FireCal</h1>
           </div>
         </div>
-        <nav className="tabs" aria-label="FireCal">
+        <nav className="pill-navbar tabs" aria-label="FireCal">
           {(['app', 'methodology'] as const).map((p) => (
             <button
               key={p}
               type="button"
-              className="tabs__tab"
+              className={`pill-navbar__tab tabs__tab ${page === p ? 'pill-navbar__tab--active' : ''}`}
               aria-current={page === p ? 'page' : undefined}
               onClick={() => setPage(p)}
             >
               {t(p === 'app' ? 'nav.app' : 'nav.methodology')}
             </button>
           ))}
-          <ShareButton />
         </nav>
       </header>
       <StatusBar />
 
       {page === 'app' ? (
         <main id="main" className={scope === 'global' ? 'layout layout--global' : 'layout'}>
-          <section className="layout__view" aria-label={t('region.view')}>
-            <GlobeMap />
-          </section>
-          <section className="layout__side" aria-label={t('region.controls')}>
-            <AoiPanel />
-            {scope === 'indonesia' && <TimePanel />}
-          </section>
+          <div className="layout__top">
+            <section className="layout__view-wrapper" aria-label={t('region.view')}>
+              <div className="view-header">
+                <h2 className="view-header__title">{t('app.hotspotTitle')}</h2>
+                <div className="view-header__action">
+                  <ShareButton />
+                </div>
+              </div>
+              <div className="layout__view">
+                <GlobeMap />
+              </div>
+              <ExportPanel />
+            </section>
+            <section className="layout__side" aria-label={t('region.controls')}>
+              <AoiPanel />
+              {scope === 'indonesia' && <TimePanel />}
+            </section>
+          </div>
           {scope === 'indonesia' && (
             <section className="layout__results" aria-label={t('region.results')}>
               {aoi ? (
@@ -92,7 +107,6 @@ export default function App() {
                   <div className="results__charts">
                     <Climatology />
                     <AnnualTotals />
-                    <ExportPanel />
                   </div>
                 </>
               ) : (
@@ -109,7 +123,21 @@ export default function App() {
         </main>
       )}
 
-      <footer className="app__footer">{t('footer.attribution')}</footer>
+      <footer className="app__footer">
+        <div className="footer__simple">
+          <div className="footer__brand">
+            <img src="/firecal-logomark.svg" alt="FireCal" width={20} height={26} />
+            <span className="footer__name">FireCal</span>
+            <span className="footer__dot">·</span>
+            <span className="footer__note">NASA Space Apps Challenge</span>
+          </div>
+          <div className="footer__attr">
+            <span>{t('footer.attribution')}</span>
+            <span className="footer__dot">·</span>
+            <span>Harmonized Wildfire Analytics</span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
