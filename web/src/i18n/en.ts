@@ -121,6 +121,7 @@ export const messages = {
     'Drag to rotate and scroll to zoom. Choose a fire region to highlight its boundary and open its calendar.',
   'regions.title': 'Fire regions',
   'regions.available': '{n} provinces available',
+  'regions.availableCountries': '{n} countries available',
   'regions.country': 'Country',
   'regions.clicked': 'Area around {lat}, {lon}',
   'timectl.label': 'Time controls',

@@ -5,6 +5,7 @@ import { STEP_MS, TimeControls } from './TimeControls';
 
 beforeEach(() => {
   useAppStore.setState({
+    scope: 'indonesia',
     selected: null,
     mode: 'harmonized',
     playbackPeriod: 'month',
@@ -19,6 +20,37 @@ afterEach(() => {
 });
 
 describe('TimeControls', () => {
+  it('switches to the real global window and prevents unavailable corrections and dates', async () => {
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_date: '2026-08-15',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          last_acq_date: '2026-11-15',
+        },
+      },
+      '/globe': { cells: [], max: 0 },
+    });
+    renderWithQuery(<TimeControls />);
+    const coverage = await screen.findByRole('combobox', { name: 'Data coverage' });
+    fireEvent.change(coverage, { target: { value: 'global' } });
+    expect(useAppStore.getState().scope).toBe('global');
+    expect(useAppStore.getState().mode).toBe('raw');
+    expect(screen.getByRole('button', { name: 'Harmonized' })).toBeDisabled();
+    expect(screen.getByRole('slider', { name: 'Year' })).toHaveAttribute('min', '2026');
+    fireEvent.change(screen.getByRole('combobox', { name: 'Month' }), { target: { value: '8' } });
+    fireEvent.change(screen.getByRole('combobox', { name: 'Playback interval' }), {
+      target: { value: 'day' },
+    });
+    expect(useAppStore.getState().playbackDay).toBe(15);
+    expect(screen.getByRole('combobox', { name: 'Day' }).querySelector('option')?.value).toBe('15');
+    fireEvent.change(coverage, { target: { value: 'indonesia' } });
+    expect(screen.getByRole('button', { name: 'Harmonized' })).toBeEnabled();
+  });
+
   it('moves the shared month with the year slider and month picker', async () => {
     renderWithQuery(<TimeControls />);
     const slider = await screen.findByRole('slider', { name: 'Year' });

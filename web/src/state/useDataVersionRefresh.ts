@@ -7,7 +7,7 @@ export function useDataVersionRefresh() {
   const meta = useMeta().data;
   // Empty new months or revised point details can change without a new grid hash.
   const version = meta?.data_version
-    ? `${meta.data_version}|${meta.end_month ?? ''}|${meta.last_updated ?? ''}`
+    ? `${meta.data_version}|${meta.end_month ?? ''}|${meta.last_updated ?? ''}|${meta.global?.data_version ?? ''}`
     : null;
   const previous = useRef<string | null | undefined>(undefined);
   const queries = useQueryClient();

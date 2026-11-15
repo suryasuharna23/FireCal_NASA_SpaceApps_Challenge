@@ -118,6 +118,9 @@ def main():
             meta = json.load(response)
         if meta.get("status") != "ok" or (meta.get("coverage") or {}).get("country") != "Indonesia":
             raise RuntimeError("The API is not serving the expected real Indonesia data")
+        worldwide = meta.get("global") or {}
+        if worldwide.get("status") != "ok":
+            raise RuntimeError("Worldwide data is unavailable; stop an older FireCal API and retry")
         print("FireCal: http://localhost:5173", flush=True)
         live_status = (meta.get("live") or {}).get("status")
         if live_status == "missing_key":
@@ -127,6 +130,10 @@ def main():
         else:
             update_note = "NASA catch-up is managed by the backend."
         print(f"Real observations through {meta.get('last_acq_date')}. {update_note}")
+        print(
+            f"Worldwide: {worldwide['start_date']} through {worldwide['last_acq_date']}. "
+            "Choose Worldwide under the globe."
+        )
         if not args.no_browser:
             webbrowser.open("http://localhost:5173", new=2)
         if not children:

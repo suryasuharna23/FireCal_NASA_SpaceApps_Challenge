@@ -18,7 +18,10 @@ const toYm = (n: number) => {
 
 export function TimeControls() {
   const { t, lang } = useT();
-  const meta = useMeta().data;
+  const allMeta = useMeta().data;
+  const scope = useAppStore((s) => s.scope);
+  const setScope = useAppStore((s) => s.setScope);
+  const meta = scope === 'global' ? allMeta?.global : allMeta;
   const month = useGlobeMonth();
   const setSelected = useAppStore((s) => s.setSelected);
   const mode = useAppStore((s) => s.mode);
@@ -36,6 +39,7 @@ export function TimeControls() {
     : null;
   const last = meta?.end_month ? ymToNumber(meta.end_month) : null;
   const lastAcq = meta?.last_acq_date ?? null;
+  const firstDate = scope === 'global' ? allMeta?.global?.start_date : null;
 
   useEffect(() => {
     if (!playing || first === null || last === null) return;
@@ -76,12 +80,16 @@ export function TimeControls() {
       ) {
         const warm = future;
         void queryClient.prefetchQuery({
-          queryKey: ['/globe', warm, state.mode],
-          queryFn: () => apiGet('/globe', { ...warm, mode: state.mode }),
+          queryKey: ['/globe', warm, state.mode, state.scope],
+          queryFn: () => apiGet('/globe', { ...warm, mode: state.mode, scope: state.scope }),
           staleTime: 30 * 60 * 1000,
         });
         if (k === 1 && state.aoi && warm.period !== 'year') {
-          const body = { aoi: state.aoi.geometry, ...warm };
+          const body = {
+            aoi: state.aoi.geometry,
+            ...warm,
+            ...(state.scope === 'global' ? { scope: state.scope } : {}),
+          };
           void queryClient.prefetchQuery({
             queryKey: ['/points', body],
             queryFn: () => apiPost('/points', body),
@@ -91,9 +99,29 @@ export function TimeControls() {
       }
     }, STEP_MS);
     return () => window.clearInterval(id);
-  }, [playing, first, last, lastAcq, queryClient]);
+  }, [playing, first, last, lastAcq, queryClient, scope]);
 
-  if (!month || first === null || last === null) return null;
+  useEffect(() => {
+    setPlaying(false);
+  }, [scope]);
+
+  const coverageSelector = (
+    <label>
+      <span className="sr-only">Data coverage</span>
+      <select
+        aria-label="Data coverage"
+        value={scope}
+        onChange={(e) => setScope(e.target.value as 'indonesia' | 'global')}
+      >
+        <option value="indonesia">Indonesia · history</option>
+        <option value="global" disabled={allMeta?.global?.status !== 'ok'}>
+          Worldwide · last 3 months
+        </option>
+      </select>
+    </label>
+  );
+  if (!month || first === null || last === null)
+    return <div className="time-controls">{coverageSelector}</div>;
   const names = monthNames(lang, 'long');
   const current = month.year * 12 + month.month - 1;
   const firstYear = toYm(first).year;
@@ -101,6 +129,7 @@ export function TimeControls() {
   const maxDay = new Date(Date.UTC(month.year, month.month, 0)).getUTCDate();
   const latest = lastAcq ? new Date(`${lastAcq}T00:00:00Z`) : null;
   const dayLimit = latest && current === last ? Math.min(maxDay, latest.getUTCDate()) : maxDay;
+  const dayStart = firstDate && current === first ? Number(firstDate.slice(-2)) : 1;
   const selectedFrame = frameFor(month, period, day, hour);
   const lastFrame =
     period === 'year' || period === 'month'
@@ -115,19 +144,21 @@ export function TimeControls() {
         : frameFor(toYm(last), period, 31, 23);
   const go = (n: number) => {
     setSelected(toYm(Math.min(Math.max(n, first), last)));
-    setDay(1);
+    setDay(
+      firstDate && Math.min(Math.max(n, first), last) === first ? Number(firstDate.slice(-2)) : 1,
+    );
     setHour(0);
   };
   const changePeriod = (next: PlaybackPeriod) => {
     setPlaying(false);
     setPeriod(next);
-    setDay(current === last && latest ? latest.getUTCDate() : 1);
+    setDay(current === last && latest ? latest.getUTCDate() : dayStart);
     setHour(0);
   };
   const togglePlay = () => {
     if (!playing && frameKey(selectedFrame) >= frameKey(lastFrame)) {
       if (period === 'year' || period === 'month') go(first);
-      else if (period === 'day') setDay(1);
+      else if (period === 'day') setDay(dayStart);
       else setHour(0);
     }
     setPlaying((p) => !p);
@@ -139,6 +170,7 @@ export function TimeControls() {
 
   return (
     <div className="time-controls" role="group" aria-label={t('timectl.label')}>
+      {coverageSelector}
       <button
         type="button"
         className="btn btn--primary btn--small time-controls__play"
@@ -204,15 +236,15 @@ export function TimeControls() {
         <label className="time-controls__day">
           <span className="sr-only">{t('timectl.day')}</span>
           <select
-            value={Math.min(day, dayLimit)}
+            value={Math.max(dayStart, Math.min(day, dayLimit))}
             onChange={(e) => {
               setDay(Number(e.target.value));
               setHour(0);
             }}
           >
-            {Array.from({ length: dayLimit }, (_, i) => (
-              <option key={i} value={i + 1}>
-                {i + 1}
+            {Array.from({ length: dayLimit - dayStart + 1 }, (_, i) => (
+              <option key={i} value={i + dayStart}>
+                {i + dayStart}
               </option>
             ))}
           </select>
@@ -236,10 +268,13 @@ export function TimeControls() {
             key={m}
             type="button"
             className="btn btn--small"
+            disabled={scope === 'global' && m === 'harmonized'}
             aria-pressed={mode === m}
             onClick={() => setMode(m)}
           >
-            {t(m === 'raw' ? 'globe.raw' : 'globe.harmonized')}
+            {scope === 'global' && m === 'raw'
+              ? 'NASA detection counts'
+              : t(m === 'raw' ? 'globe.raw' : 'globe.harmonized')}
           </button>
         ))}
       </div>

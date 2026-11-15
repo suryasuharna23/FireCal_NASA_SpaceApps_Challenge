@@ -65,7 +65,9 @@ def test_unexpected_refresh_failure_is_persisted_and_logged_without_credentials(
     def fail(*args, **kwargs):
         raise RuntimeError("must-not-leak-this-secret")
 
-    monkeypatch.setattr("app.live_refresh.refresh", fail)
+    # refresh_once imports firecal.live.refresh inside the function, so patch the
+    # source module attribute; the local import picks it up at call time.
+    monkeypatch.setattr("firecal.live.refresh", fail)
     with caplog.at_level(logging.ERROR):
         refresh_once(ApiSettings(firms_map_key="test-only", live_repo_root=str(tmp_path)))
     text = (tmp_path / "data/live/status.json").read_text()

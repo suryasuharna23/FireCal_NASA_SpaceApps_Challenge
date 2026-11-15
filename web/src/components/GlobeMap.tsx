@@ -25,7 +25,7 @@ import { monthNames } from '../lib/months';
 import { frameFor } from '../lib/playback';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
-import { loadIndonesiaBoundaries, regionFeatureAoi } from '../lib/regions';
+import { loadRegionBoundaries, regionFeatureAoi } from '../lib/regions';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
@@ -75,6 +75,8 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const mode = useAppStore((s) => s.mode);
+  const scope = useAppStore((s) => s.scope);
+  const previousScope = useRef(scope);
   const meta = useMeta().data;
   const month = useGlobeMonth();
   const playbackPeriod = useAppStore((s) => s.playbackPeriod);
@@ -119,7 +121,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       });
     });
 
-    map.on('load', () => {
+    map.on('style.load', () => {
       map.addSource('hotspots', { type: 'geojson', data: EMPTY });
       map.addLayer({
         id: 'hotspots-glow',
@@ -279,9 +281,10 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const map = mapRef.current;
     if (!map || !ready) return;
     let cancelled = false;
-    void loadIndonesiaBoundaries()
+    void loadRegionBoundaries(scope)
       .then((features) => {
         if (cancelled) return;
+        regionAoisRef.current.clear();
         for (const feature of features) {
           regionAoisRef.current.set(feature.id, regionFeatureAoi(feature));
         }
@@ -294,7 +297,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [ready]);
+  }, [ready, scope]);
 
   // --- idle auto-rotation ----------------------------------------------------------------
   useEffect(() => {
@@ -317,6 +320,17 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   }, [ready, spinning]);
 
   // --- hotspot layer ---------------------------------------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    if (previousScope.current !== scope || globe.error) {
+      (map.getSource('hotspots') as GeoJSONSource | undefined)?.setData(EMPTY);
+      (map.getSource('points') as GeoJSONSource | undefined)?.setData(EMPTY);
+      hasGlobeDataRef.current = false;
+    }
+    previousScope.current = scope;
+  }, [scope, globe.error, ready]);
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready || !globe.data) return;
@@ -443,7 +457,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         <div className="globe__hud globe__hud--top">
           <span className="globe__month">{monthLabel}</span>
           <span className="globe__chip">
-            {t(mode === 'raw' ? 'globe.raw' : 'globe.harmonized')}
+            {scope === 'global'
+              ? 'NASA detection counts'
+              : t(mode === 'raw' ? 'globe.raw' : 'globe.harmonized')}
             {globe.data ? ` · ${globe.data.source}` : ''}
           </span>
           {globe.data?.provisional && (
@@ -491,7 +507,13 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
                   : formatCount(globe.data?.max ?? 0, lang)}
               </span>
             </div>
-            <small>{t(mapDisplay === 'heatmap' ? 'map.relativeDensity' : 'globe.unit')}</small>
+            <small>
+              {mapDisplay === 'heatmap'
+                ? t('map.relativeDensity')
+                : scope === 'global'
+                  ? `Detections per ${globe.data?.res ?? 0.5}° cell · selected ${playbackPeriod}`
+                  : t('globe.unit')}
+            </small>
             {mapDisplay === 'heatmap' && <small>{t('map.heatmapHint')}</small>}
             {aoi && points.data && mapDisplay === 'points' && (
               <div className="points-legend">
@@ -557,12 +579,33 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         {globe.isFetching && <div className="globe__loading" aria-hidden="true" />}
       </div>
       <TimeControls />
+      {scope === 'global' && (
+        <p className="hint">
+          Worldwide NASA observations · {meta?.global?.start_date} to {meta?.global?.last_acq_date}.{' '}
+          MODIS and all three VIIRS platforms. Counts are satellite detections; several satellites
+          may see the same fire.
+          {meta?.global?.lagging_sources?.map((s) => (
+            <span key={s.source}>
+              {' '}
+              {s.source.replace('VIIRS_', '').replace('_NRT', '')} available through{' '}
+              {s.available_through}.
+            </span>
+          ))}
+        </p>
+      )}
       <p id="globe-help" className="hint">
-        {t('globe.help')}
+        {scope === 'global'
+          ? 'Drag to rotate and scroll to zoom. Use Area to inspect detections anywhere in the world.'
+          : t('globe.help')}
       </p>
       {globe.error && (
         <p className="form-error" role="alert">
           {(globe.error as Error).message}
+        </p>
+      )}
+      {points.error && (
+        <p className="form-error" role="alert">
+          {(points.error as Error).message}
         </p>
       )}
       {children}

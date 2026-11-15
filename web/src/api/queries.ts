@@ -114,8 +114,12 @@ export interface PointsResponse {
 
 /** Raw detections of one month inside the AOI, or grid cells above 50,000 (FR-W-15). */
 export function usePoints(ym: PlaybackFrame | null) {
+  const scope = useAppStore((s) => s.scope);
   const aoi = useAppStore((s) => s.aoi);
-  const body = aoi && ym && ym.period !== 'year' ? { aoi: aoi.geometry, ...ym } : null;
+  const body =
+    aoi && ym && ym.period !== 'year'
+      ? { aoi: aoi.geometry, ...ym, ...(scope === 'global' ? { scope } : {}) }
+      : null;
   return useQuery({
     queryKey: ['/points', body],
     queryFn: ({ signal }) => apiPost<PointsResponse>('/points', body, signal),
@@ -130,7 +134,7 @@ export interface GlobeResponse {
   period?: string;
   mode: 'harmonized' | 'raw';
   res: number;
-  source: 'MODIS' | 'VIIRS';
+  source: 'MODIS' | 'VIIRS' | 'MODIS+VIIRS';
   provisional: boolean;
   count: number;
   total: number;
@@ -143,11 +147,11 @@ export interface GlobeResponse {
 
 /** World hotspot cells for one month (FR-W-23). */
 export function useGlobe(ym: PlaybackFrame | null, mode: 'harmonized' | 'raw') {
+  const scope = useAppStore((s) => s.scope);
   return useQuery({
-    queryKey: ['/globe', ym, mode],
-    queryFn: () => apiGet<GlobeResponse>('/globe', { ...ym!, mode }),
+    queryKey: ['/globe', ym, mode, scope],
+    queryFn: () => apiGet<GlobeResponse>('/globe', { ...ym!, mode, scope }),
     enabled: ym !== null,
-    placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,
   });
 }

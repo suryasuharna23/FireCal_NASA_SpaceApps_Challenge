@@ -6,7 +6,7 @@ FireCal is a web app that shows a monthly calendar of fire hotspot activity from
 
 The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireCal.pdf`](docs/FRD-Tickets-FireCal.pdf) (in Indonesian, the original project brief).
 
-## Start with the real Indonesia data
+## Start with real Indonesia and worldwide data
 
 **One command:** Windows PowerShell: `.\run.ps1`; Linux/macOS: `./run.sh`.
 Run from the repository folder. Headless Linux/macOS: `./run.sh --no-browser`.
@@ -55,6 +55,14 @@ uv run firecal live-update
 
 The frozen audit snapshot stays unchanged. New observations are published in
 separate complete versions under `data/live/`. See [the live-data guide](docs/LIVE-DATA.md).
+
+The repository also includes **worldwide MODIS and all three VIIRS products for
+15 August–15 November 2026**. Under the globe, select **Worldwide · last 3 months**
+to explore monthly, daily and hourly detections. These are raw observed counts;
+historical calendars and sensor corrections belong to the Indonesia view.
+Both datasets install automatically and check NASA for newer observations when
+the server runs with a key. Global availability, satellite delays and failures are
+shown separately. See [the worldwide data guide](docs/GLOBAL-DATA.md).
 
 ## System architecture
 

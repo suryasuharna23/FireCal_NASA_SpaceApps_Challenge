@@ -3,6 +3,7 @@ import type {
   CalendarView,
   ColorScale,
   MapDisplay,
+  DataScope,
   ViewMode,
   YearMonth,
 } from '../state/useAppStore';
@@ -11,6 +12,7 @@ import { circleAoi } from './circle';
 
 /** The part of the app state that is shareable through the URL (FR-W-19, US-08). */
 export interface ShareState {
+  scope?: DataScope;
   aoi: Aoi | null;
   start: string | null;
   end: string | null;
@@ -60,6 +62,7 @@ export function decodeGeometry(text: string): Polygon | MultiPolygon | null {
 /** State -> query string. Defaults are omitted to keep links short. */
 export function encodeState(s: ShareState): URLSearchParams {
   const p = new URLSearchParams();
+  if (s.scope === 'global') p.set('scope', 'global');
   const a = s.aoi;
   if (a) {
     if (a.kind === 'region' && a.regionId) {
@@ -88,6 +91,10 @@ export function encodeState(s: ShareState): URLSearchParams {
 /** Query string -> state; invalid values are ignored rather than breaking the app. */
 export function decodeState(p: URLSearchParams): Partial<ShareState> {
   const out: Partial<ShareState> = {};
+  if (p.get('scope') === 'global') {
+    out.scope = 'global';
+    out.mode = 'raw';
+  }
   const label = p.get('label') ?? undefined;
   if (p.get('circle')) {
     const [lat, lon, r] = p.get('circle')!.split(',').map(Number);

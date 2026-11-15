@@ -42,13 +42,17 @@ def test_points_outside_range_rejected(client, box) -> None:
 
 def test_points_daily_and_hourly_are_filtered(client, box) -> None:
     area = box(100, -4, 108, 4)
-    daily = client.post("/points", json={"aoi": area, "year": 2019, "month": 9,
-                                         "day": 15, "period": "day"})
+    daily = client.post(
+        "/points", json={"aoi": area, "year": 2019, "month": 9, "day": 15, "period": "day"}
+    )
     assert daily.status_code == 200, daily.text
-    hourly = client.post("/points", json={"aoi": area, "year": 2019, "month": 9,
-                                          "day": 15, "hour": 12, "period": "hour"})
+    hourly = client.post(
+        "/points",
+        json={"aoi": area, "year": 2019, "month": 9, "day": 15, "hour": 12, "period": "hour"},
+    )
     assert hourly.status_code == 200, hourly.text
     assert hourly.json()["count"] <= daily.json()["count"]
     if not daily.json()["aggregated"]:
-        assert all(f["properties"]["time"].startswith("2019-09-15")
-                   for f in daily.json()["features"])
+        assert all(
+            f["properties"]["time"].startswith("2019-09-15") for f in daily.json()["features"]
+        )
