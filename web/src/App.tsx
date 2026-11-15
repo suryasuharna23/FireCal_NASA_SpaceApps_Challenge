@@ -95,6 +95,13 @@ export default function App() {
                   The historical calendar and comparisons with earlier years are available in the
                   Indonesia view. No global historical comparison or sensor correction is available.
                 </p>
+                <button
+                  type="button"
+                  className="btn btn--primary btn--small"
+                  onClick={() => setScope('indonesia')}
+                >
+                  Indonesia history · {meta?.start_month} to {meta?.end_month}
+                </button>
               </div>
             ) : aoi ? (
               <>

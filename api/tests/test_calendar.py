@@ -5,11 +5,20 @@ import pytest
 import shapely
 
 from app.aoi import Aoi, AoiError, Grid, parse_geometry
+from app.series import resolve_window
 
 
 def _box(west, south, east, north) -> dict:
     ring = [[west, south], [east, south], [east, north], [west, north], [west, south]]
     return {"type": "Polygon", "coordinates": [ring]}
+
+
+def test_default_window_starts_at_first_available_month() -> None:
+    window = resolve_window(
+        {"start_month": "2000-11", "end_month": "2026-11"}, None, None, None
+    )
+    assert window.start == (2000, 11)
+    assert window.end == (2026, 11)
 
 
 def test_calendar_returns_full_year_month_matrix(client, box) -> None:

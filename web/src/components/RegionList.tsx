@@ -155,6 +155,8 @@ export function RegionList() {
           {scope === 'global'
             ? t('regions.availableCountries', { n: entries.length })
             : t('regions.available', { n: entries.length })}
+          {scope === 'global' &&
+            ' · Other countries use the available 2026 snapshot. Select Indonesia for its full regional history.'}
         </p>
       )}
       <ul aria-label={t('regions.title')}>

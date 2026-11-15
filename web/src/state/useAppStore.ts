@@ -19,7 +19,7 @@ interface AppState {
   scope: DataScope;
   setScope: (scope: DataScope) => void;
   aoi: Aoi | null;
-  /** Inclusive range as YYYY-MM; null = API default (2001-01 .. latest). */
+  /** Inclusive range as YYYY-MM; null = full available API range. */
   start: string | null;
   end: string | null;
   referenceYears: [number, number] | null;
@@ -70,7 +70,19 @@ export const useAppStore = create<AppState>()((set) => ({
   calendarView: 'count',
   pointsColor: 'sensor',
   mapDisplay: 'points',
-  setAoi: (aoi) => set({ aoi }),
+  setAoi: (aoi) =>
+    set((state) =>
+      state.scope === 'global' && /^NE[01]-IDN(?:-|$)/.test(aoi?.regionId ?? '')
+        ? {
+            scope: 'indonesia',
+            aoi,
+            selected: null,
+            playbackDay: 1,
+            playbackHour: 0,
+            mode: 'harmonized',
+          }
+        : { aoi },
+    ),
   setRange: (start, end) => set({ start, end }),
   setReferenceYears: (referenceYears) => set({ referenceYears }),
   setSelected: (selected) => set({ selected }),

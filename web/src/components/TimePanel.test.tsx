@@ -13,8 +13,8 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('time rules', () => {
-  it('defaults to 2001-01 .. latest month and 2003-2022', () => {
-    expect(defaults(RANGE)).toEqual({ start: '2001-01', end: '2026-11', reference: [2003, 2022] });
+  it('defaults to the full available range and 2003-2022 reference years', () => {
+    expect(defaults(RANGE)).toEqual({ start: '2000-11', end: '2026-11', reference: [2003, 2022] });
     expect(defaults({ start: '2011-01', end: '2020-12' })).toEqual({
       start: '2011-01',
       end: '2020-12',
@@ -38,7 +38,7 @@ describe('TimePanel', () => {
   it('shows defaults and applies a valid range and reference years', async () => {
     renderWithQuery(<TimePanel />);
     const start = await screen.findByLabelText('Start month');
-    expect(start).toHaveValue('2001-01');
+    expect(start).toHaveValue('2000-11');
     expect(screen.getByLabelText('End month')).toHaveValue('2026-11');
 
     fireEvent.change(start, { target: { value: '2010-01' } });

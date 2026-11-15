@@ -9,8 +9,6 @@ import { useAppStore, type PlaybackPeriod, type ViewMode } from '../state/useApp
 import { useGlobeMonth } from '../state/useGlobeMonth';
 
 export const STEP_MS = 900;
-export const ANIMATION_START = '2001-01';
-
 const toYm = (n: number) => {
   const [year, month] = numberToYm(n).split('-').map(Number);
   return { year: year!, month: month! };
@@ -34,9 +32,7 @@ export function TimeControls() {
   const setHour = useAppStore((s) => s.setPlaybackHour);
   const queryClient = useQueryClient();
   const [playing, setPlaying] = useState(false);
-  const first = meta?.start_month
-    ? Math.max(ymToNumber(meta.start_month), ymToNumber(ANIMATION_START))
-    : null;
+  const first = meta?.start_month ? ymToNumber(meta.start_month) : null;
   const last = meta?.end_month ? ymToNumber(meta.end_month) : null;
   const lastAcq = meta?.last_acq_date ?? null;
   const firstDate = scope === 'global' ? allMeta?.global?.start_date : null;
@@ -226,8 +222,12 @@ export function TimeControls() {
           onChange={(e) => go(Number(e.target.value) * 12 + month.month - 1)}
         />
         <span className="time-controls__ticks" aria-hidden="true">
-          <span>{firstYear}</span>
-          <span>{lastYear}</span>
+          <span>
+            {firstYear === lastYear ? `${names[toYm(first).month - 1]} ${firstYear}` : firstYear}
+          </span>
+          <span>
+            {firstYear === lastYear ? `${names[toYm(last).month - 1]} ${lastYear}` : lastYear}
+          </span>
         </span>
       </label>
       {period !== 'year' && (

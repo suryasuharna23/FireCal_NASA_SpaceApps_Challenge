@@ -1,6 +1,5 @@
 import type { MessageKey } from '../i18n';
 
-export const DEFAULT_START = '2001-01';
 export const DEFAULT_REFERENCE: [number, number] = [2003, 2022];
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -20,14 +19,13 @@ export interface DataRange {
   end: string; // latest month
 }
 
-/** Defaults from the FRD: 2001-01 .. latest month, reference 2003-2022 (FR-W-05/06). */
+/** Default to the complete available series, with the established reference period. */
 export function defaults(range: DataRange, reference?: [number, number]) {
-  const start = ymToNumber(DEFAULT_START) < ymToNumber(range.start) ? range.start : DEFAULT_START;
   const [r0, r1] = reference ?? DEFAULT_REFERENCE;
   const first = Number(range.start.slice(0, 4));
   const last = Number(range.end.slice(0, 4));
   return {
-    start,
+    start: range.start,
     end: range.end,
     reference: [Math.max(r0, first), Math.min(r1, last)] as [number, number],
   };
