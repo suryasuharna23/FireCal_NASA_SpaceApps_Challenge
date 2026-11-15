@@ -3,7 +3,13 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { listFireRegions, loadRegionAoi } from '../lib/regions';
 import { useAppStore } from '../state/useAppStore';
 import { FakeMap, mapCalls } from '../test/mapMocks';
-import { REGION_ROUTES } from '../test/regions';
+import {
+  BRAZIL_PROVINCE_FEATURES,
+  BRAZIL_PROVINCES,
+  GLOBAL_COUNTRIES,
+  GLOBAL_REGION_FEATURES,
+  REGION_ROUTES,
+} from '../test/regions';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
 import { RegionList } from './RegionList';
@@ -47,6 +53,65 @@ describe('RegionList', () => {
     fireEvent.click(await screen.findByRole('button', { name: /IndonesiaCountry/ }));
     await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE0-IDN'));
     expect(useAppStore.getState().aoi?.label).toBe('Indonesia');
+  });
+});
+
+describe('RegionList worldwide coverage', () => {
+  beforeEach(() => {
+    useAppStore.setState({ scope: 'global', aoi: null, selected: null, mode: 'raw' });
+  });
+
+  const stubWorldwide = () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = new URL(typeof input === 'string' ? input : input.toString());
+      let body: unknown;
+      if (url.pathname === '/meta') body = META_OK;
+      else if (url.pathname === '/globe') body = { cells: [], max: 0 };
+      else if (url.searchParams.get('country') === 'Brazil') body = { results: BRAZIL_PROVINCES };
+      else if (url.pathname === '/regions') body = { results: GLOBAL_COUNTRIES };
+      else if (url.pathname === '/regions/NE0-PRT') body = GLOBAL_REGION_FEATURES[1];
+      else if (url.pathname === '/regions/boundaries')
+        body = { type: 'FeatureCollection', features: GLOBAL_REGION_FEATURES };
+      else if (url.pathname === '/regions/NE1-BRA-592') body = BRAZIL_PROVINCE_FEATURES[0];
+      else return new Response('{"detail":"not found"}', { status: 404 });
+      return new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    return fetchMock;
+  };
+
+  it('lists countries and expands the provinces of a large one', async () => {
+    stubWorldwide();
+    renderWithQuery(<RegionList />);
+    const brazil = await screen.findByRole('button', { name: /BrazilToo large to analyse/ });
+    expect(screen.queryByRole('button', { name: /Amazonas/ })).toBeNull();
+    fireEvent.click(brazil);
+    fireEvent.click(await screen.findByRole('button', { name: /AmazonasProvince \/ state/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-BRA-592'));
+    expect(useAppStore.getState().aoi?.label).toBe('Amazonas, Brazil');
+  });
+
+  it('uses a small country boundary directly as the area', async () => {
+    stubWorldwide();
+    renderWithQuery(<RegionList />);
+    fireEvent.click(await screen.findByRole('button', { name: /PortugalCountry/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE0-PRT'));
+    expect(useAppStore.getState().aoi?.label).toBe('Portugal');
+  });
+
+  it('maps every world country as a globe selection target', async () => {
+    stubWorldwide();
+    renderWithQuery(<GlobeMap />);
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some(
+          (data) => (data as { features?: unknown[] }).features?.length === GLOBAL_COUNTRIES.length,
+        ),
+      ).toBe(true),
+    );
   });
 });
 

@@ -6,7 +6,13 @@ from pathlib import Path
 
 from firecal.config import get_settings
 from firecal.firms import FirmsClient
-from firecal.global_data import acquire_global, build_global, package_global, three_months_before
+from firecal.global_data import (
+    acquire_global,
+    build_global,
+    package_global,
+    package_global_regions,
+    three_months_before,
+)
 
 
 def main():
@@ -24,6 +30,7 @@ def main():
     meta = build_global(acquisition, output)
     if args.package:
         package_global(root, output)
+        package_global_regions(root, output)
     print(f"Verified {meta['rows']:,} real global detections; version {meta['data_version']}")
 
 

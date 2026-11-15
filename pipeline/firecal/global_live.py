@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import uuid
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -14,12 +15,32 @@ import pandas as pd
 
 from firecal.acquire import download_windows, verify_receipts
 from firecal.bundles import digest
-from firecal.global_data import CATALOG, WORLD, global_products, three_months_before
+from firecal.global_data import (
+    CATALOG,
+    REGIONS_CATALOG,
+    WORLD,
+    global_products,
+    three_months_before,
+)
 from firecal.grid import GridSpec
 from firecal.ingest import normalize_sql, read_csv_sql
 from firecal.io import write_json
 from firecal.live import PLATFORMS, atomic_json, catchup_plan, resolve_pointer, update_lock
 from firecal.schema import cast_sql
+
+
+def _carry_regions(repo: Path, catalog: dict, output: Path) -> None:
+    """Every live run inherits the pinned worldwide region boundaries."""
+    regions_catalog = repo / REGIONS_CATALOG
+    if regions_catalog.is_file():
+        pinned = repo / json.loads(regions_catalog.read_text())["processed"]
+    elif "processed" in catalog:
+        pinned = repo / catalog["processed"]
+    else:
+        return
+    source = pinned / "regions.parquet"
+    if source.is_file():
+        shutil.copyfile(source, output / "regions.parquet")
 
 
 def _refresh_global(repo: Path, client, *, target: date | None = None) -> dict:
@@ -91,6 +112,7 @@ def _refresh_global(repo: Path, client, *, target: date | None = None) -> dict:
         ).hexdigest()[:12]
         output = run_root / "processed"
         output.mkdir(parents=True)
+        _carry_regions(repo, catalog, output)
         with duckdb.connect() as con:
             con.execute("SET threads TO 4")
             old_points = (current / "points/**/*.parquet").as_posix()

@@ -41,6 +41,7 @@ export function AoiPanel() {
       </p>
       {scope === 'global' ? (
         <>
+          <RegionList />
           <CircleForm />
           <GeoJsonUpload />
         </>

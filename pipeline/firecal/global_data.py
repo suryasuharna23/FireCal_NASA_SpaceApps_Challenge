@@ -24,6 +24,7 @@ from firecal.schema import cast_sql
 WORLD = (-180.0, -90.0, 180.0, 90.0)
 PLATFORMS = ("MODIS", "VIIRS_SNPP", "VIIRS_NOAA20", "VIIRS_NOAA21")
 CATALOG = Path("datasets/global/recent/dataset.json")
+REGIONS_CATALOG = Path("datasets/global/regions/dataset.json")
 
 
 def three_months_before(target: date) -> date:
@@ -276,6 +277,65 @@ def package_global(repo: Path, processed: Path) -> dict:
     return catalog
 
 
+def package_global_regions(repo: Path, processed: Path | None = None) -> dict:
+    """Pin the worldwide region boundaries as checksum-verified normal-Git pieces.
+
+    The observations bundle stays immutable; boundaries are a separate pinned
+    asset installed into the same snapshot directory with the same verification.
+    """
+    from firecal.regions import build_global_regions
+
+    version = json.loads((repo / CATALOG).read_text())["data_version"]
+    if processed is None:
+        build_global_regions(repo)
+        processed = repo / "data/global/snapshots" / version
+    source = processed / "regions.parquet"
+    if not source.is_file():
+        raise FileNotFoundError("Global regions.parquet is missing; build it first")
+    folder = repo / "datasets/global/regions"
+    folder.mkdir(parents=True, exist_ok=True)
+    if (repo / REGIONS_CATALOG).exists():
+        raise FileExistsError("Preserve the existing pinned global regions catalog")
+    entry = Path("data/global/snapshots") / version / "regions.parquet"
+    manifest = {
+        "data_version": version,
+        "kind": "global-regions",
+        "files": [
+            {"path": entry.as_posix(), "bytes": source.stat().st_size, "sha256": digest(source)}
+        ],
+    }
+    archive = repo / "data/interim/share" / f"firecal-global-regions-{version}.zip"
+    archive.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=1) as z:
+        z.write(source, entry.as_posix())
+        z.writestr(
+            f"SNAPSHOT-MANIFEST-global-regions-{version}.json", json.dumps(manifest, indent=2)
+        )
+    pieces = []
+    with archive.open("rb") as stream:
+        while block := stream.read(1024 * 1024):
+            p = folder / f"{archive.name}.{len(pieces):04d}.chunk"
+            p.write_bytes(block)
+            pieces.append(
+                {"path": p.relative_to(repo).as_posix(), "bytes": len(block), "sha256": digest(p)}
+            )
+    asset = {
+        "kind": "global-regions",
+        "file": archive.name,
+        "bytes": archive.stat().st_size,
+        "sha256": digest(archive),
+        "pieces": pieces,
+    }
+    catalog = {
+        "format": "firecal-global-regions-v1",
+        "data_version": version,
+        "processed": entry.parent.as_posix(),
+        "assets": [asset],
+    }
+    write_json(repo / REGIONS_CATALOG, catalog)
+    return catalog
+
+
 def install_global(repo: Path) -> dict:
     """Verify included pieces and install the pinned worldwide snapshot."""
     from firecal.live import atomic_json
@@ -285,6 +345,15 @@ def install_global(repo: Path) -> dict:
         raise ValueError("Global dataset catalog is missing; sync the complete repository")
     catalog = json.loads(catalog_path.read_text())
     for asset in catalog["assets"]:
+        archive = download_asset(asset, repo / "data/interim/share", repo)
+        install_archive(archive, repo, catalog["data_version"])
+    regions_path = repo / REGIONS_CATALOG
+    if not regions_path.is_file():
+        raise ValueError("Global regions catalog is missing; sync the complete repository")
+    regions = json.loads(regions_path.read_text())
+    if regions["data_version"] != catalog["data_version"]:
+        raise ValueError("Global regions catalog does not match the observations catalog")
+    for asset in regions["assets"]:
         archive = download_asset(asset, repo / "data/interim/share", repo)
         install_archive(archive, repo, catalog["data_version"])
     root = repo / "data/global"

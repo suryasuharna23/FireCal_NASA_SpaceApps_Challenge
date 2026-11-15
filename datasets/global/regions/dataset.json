@@ -1,0 +1,55 @@
+{
+  "assets": [
+    {
+      "bytes": 8131260,
+      "file": "firecal-global-regions-fdc638723260.zip",
+      "kind": "global-regions",
+      "pieces": [
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0000.chunk",
+          "sha256": "febee73970c0f7d1203d4b4e11ff6483935c743bc8d408ab974f5e73eaefc6c9"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0001.chunk",
+          "sha256": "aec8d45927da861b941b05b9f6545765b22ac19111d6623636adbe98e0af3b72"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0002.chunk",
+          "sha256": "c8b582bb9c42488c611bdf674bd7b2c2d13241cddf67e158f6d5f33a88952fa7"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0003.chunk",
+          "sha256": "b3a1f5fea51847b52bbef43ca71ddeb1f11db7c426cbc7e554917af1a3440992"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0004.chunk",
+          "sha256": "b8d135418522cae90ca7432d688a07ade248a4bc6ba5494163d2168597e717dc"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0005.chunk",
+          "sha256": "ad3e7a6e8fe425c9eabd7001aabd894188afd8ee1032ea9de26f2e207f774ed5"
+        },
+        {
+          "bytes": 1048576,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0006.chunk",
+          "sha256": "ec3db49903a170dd11589dfbf3884f5b0e6908153a9803398fa116e59e9e1236"
+        },
+        {
+          "bytes": 791228,
+          "path": "datasets/global/regions/firecal-global-regions-fdc638723260.zip.0007.chunk",
+          "sha256": "049890cebfe4e7ca0bf5d0046f78834101a8153636a304a03f15ca8102848501"
+        }
+      ],
+      "sha256": "5990859f389decdf98f6e5e96e1cfc2361416a0da94789936551286beac69870"
+    }
+  ],
+  "data_version": "fdc638723260",
+  "format": "firecal-global-regions-v1",
+  "processed": "data/global/snapshots/fdc638723260"
+}

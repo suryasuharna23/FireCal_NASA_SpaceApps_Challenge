@@ -49,7 +49,8 @@ points, independently of this globe display resolution.
 ## Installation and updates
 
 `uv run firecal bootstrap` verifies and installs both the existing Indonesia release
-and the worldwide release. The worldwide bundle contains normalized observation
+and the worldwide release, including the pinned worldwide region boundaries in
+`datasets/global/regions`. The worldwide bundle contains normalized observation
 points, hourly summaries, metadata, source request receipts and original response
 checksums. Original NASA CSV downloads remain in the acquisition workspace; they
 are not an additional committed copy of the same observations.
@@ -84,7 +85,19 @@ GET /meta
 GET /globe?scope=global&mode=raw&year=2026&month=11
 GET /globe?scope=global&mode=raw&year=2026&month=11&period=hour&day=15&hour=6
 POST /points  {"scope":"global", "year":2026, "month":11, "aoi": <GeoJSON geometry>}
+GET /regions?scope=global&q=Brazil
+GET /regions?scope=global&country=Brazil&level=1
+GET /regions/boundaries?scope=global
+GET /regions/boundaries?scope=global&country=Brazil
+GET /regions/NE1-BRA-592?scope=global
 ```
+
+`scope` selects which snapshot backs the region endpoints: `indonesia` (default)
+searches the Indonesia snapshot, `global` searches every Natural Earth country
+and admin-1 province in the worldwide snapshot. `/regions/boundaries` returns all
+countries at level 0 for the global scope, or one country's provinces when
+`country` is given, keeping payloads bounded. Too-large regions are still listed
+but flagged `too_large` and cannot become an AOI.
 
 `/meta.global` reports its own dates, version, platform coverage, provisional status,
 limitations and update status. Unsupported global harmonization or dates outside

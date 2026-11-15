@@ -127,6 +127,55 @@ def test_corrupt_raw_response_stops_publication(global_inputs, tmp_path):
         build_global(global_inputs, tmp_path / "processed")
 
 
+def test_global_regions_build_package_and_reinstall(tmp_path):
+    import json
+
+    import shapely
+
+    from firecal.bundles import download_asset, install_archive
+    from firecal.global_data import REGIONS_CATALOG, package_global_regions
+    from firecal.regions import build_global_regions
+
+    repo = tmp_path / "repo"
+    processed = repo / "data/global/snapshots/testversion"
+    processed.mkdir(parents=True)
+    (repo / "datasets/global/recent").mkdir(parents=True)
+    (repo / "datasets/global/recent/dataset.json").write_text(
+        json.dumps({"data_version": "testversion"})
+    )
+    src = tmp_path / "src.geojson"
+    src.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"ADM0_A3": "TST", "NAME": "Testland"},
+                        "geometry": shapely.geometry.mapping(shapely.box(0, 0, 2, 2)),
+                    }
+                ],
+            }
+        )
+    )
+    df = build_global_regions(repo, sources=[str(src)])
+    assert list(df["id"]) == ["NE0-TST"]
+    assert (processed / "regions.parquet").exists()
+
+    # The pinned snapshot directory is never silently rebuilt.
+    df = build_global_regions(repo, sources=[str(src)])
+    assert list(df["id"]) == ["NE0-TST"]
+
+    catalog = package_global_regions(repo, processed)
+    assert catalog["data_version"] == "testversion"
+    assert (repo / REGIONS_CATALOG).exists()
+    archive = download_asset(catalog["assets"][0], repo / "data/interim/share", repo)
+    fresh = tmp_path / "fresh"
+    fresh.mkdir()
+    assert install_archive(archive, fresh, "testversion") == 2  # parquet + manifest
+    assert (fresh / "data/global/snapshots/testversion/regions.parquet").exists()
+
+
 def test_global_refresh_replaces_covered_dates_and_failed_refresh_preserves_pointer(
     global_inputs, tmp_path
 ):
@@ -148,6 +197,13 @@ def test_global_refresh_replaces_covered_dates_and_failed_refresh_preserves_poin
             "base_data_version": meta["data_version"],
         },
     )
+    # The pinned snapshot carries worldwide boundaries; a live run inherits them.
+    (repo / "datasets/global/regions").mkdir(parents=True)
+    write_json(
+        repo / "datasets/global/regions/dataset.json",
+        {"data_version": meta["data_version"], "processed": "data/global/snapshots/base"},
+    )
+    (base / "regions.parquet").write_bytes(b"regions")
 
     class Client:
         def availability(self):
@@ -175,6 +231,7 @@ def test_global_refresh_replaces_covered_dates_and_failed_refresh_preserves_poin
     updated = json.loads((current / "meta.json").read_text())
     assert updated["rows"] == 8
     assert updated["start_date"] == "2026-08-15"
+    assert (current / "regions.parquet").read_bytes() == b"regions"
     refresh_global(repo, Client(), target=date(2026, 8, 16))
     assert json.loads((resolve_pointer(pointer) / "meta.json").read_text())["rows"] == 8
     previous = pointer.read_bytes()

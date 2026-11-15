@@ -25,7 +25,7 @@ import { monthNames } from '../lib/months';
 import { frameFor } from '../lib/playback';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
-import { loadIndonesiaBoundaries, regionFeatureAoi } from '../lib/regions';
+import { loadRegionBoundaries, regionFeatureAoi } from '../lib/regions';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
@@ -281,9 +281,10 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const map = mapRef.current;
     if (!map || !ready) return;
     let cancelled = false;
-    void loadIndonesiaBoundaries()
+    void loadRegionBoundaries(scope)
       .then((features) => {
         if (cancelled) return;
+        regionAoisRef.current.clear();
         for (const feature of features) {
           regionAoisRef.current.set(feature.id, regionFeatureAoi(feature));
         }
@@ -296,7 +297,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [ready]);
+  }, [ready, scope]);
 
   // --- idle auto-rotation ----------------------------------------------------------------
   useEffect(() => {
