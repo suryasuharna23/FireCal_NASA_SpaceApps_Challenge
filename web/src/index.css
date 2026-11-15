@@ -172,9 +172,9 @@ h3 {
   justify-content: space-between;
   gap: 12px;
   margin: 12px 20px 0;
-  padding: 8px 14px;
+  padding: 6px 14px;
   border: 1px solid var(--border-strong);
-  border-radius: 18px;
+  border-radius: 999px;
   background: rgba(10, 16, 31, 0.86);
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(16px);
@@ -193,7 +193,7 @@ h3 {
 
 .brand__logo {
   display: block;
-  width: 164px;
+  width: 120px;
   height: auto;
 }
 
@@ -363,6 +363,35 @@ h3 {
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+}
+
+.ai-insight__content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ai-insight__content > div {
+  min-width: 0;
+}
+.ai-insight__content button {
+  flex: 0 0 auto;
+}
+.ai-insight__text {
+  line-height: 1.65;
+  max-width: 78ch;
+}
+.ai-insight__note {
+  font-size: 0.78rem;
+  opacity: 0.7;
+  margin: 12px 0 0;
+}
+
+@media (max-width: 640px) {
+  .ai-insight__content {
+    flex-direction: column;
+  }
 }
 
 .layout {
@@ -1438,12 +1467,12 @@ h3 {
   .app__header {
     top: 10px;
     margin: 10px 12px 0;
-    padding: 7px 10px;
+    padding: 6px 10px;
     gap: 8px;
   }
 
   .brand__logo {
-    width: 132px;
+    width: 104px;
   }
 
   .tabs__tab {

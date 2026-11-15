@@ -4,6 +4,7 @@ import { ExportPanel } from './components/ExportPanel';
 import { Calendar } from './components/Calendar';
 import { Climatology } from './components/Climatology';
 import { Kpi } from './components/Kpi';
+import { AiInsight } from './components/AiInsight';
 import { GlobeMap } from './components/GlobeMap';
 import { StatusBar } from './components/StatusBar';
 import { TimePanel } from './components/TimePanel';
@@ -69,6 +70,7 @@ export default function App() {
               <>
                 <div className="results__summary">
                   <Kpi />
+                  <AiInsight />
                 </div>
                 <div className="results__calendar">
                   <Calendar />
