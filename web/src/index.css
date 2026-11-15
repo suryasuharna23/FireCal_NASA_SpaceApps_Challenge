@@ -321,6 +321,12 @@ h3 {
   grid-area: results;
 }
 
+.layout--global {
+  grid-template-areas:
+    'view'
+    'side';
+}
+
 .layout__view,
 .layout__side,
 .layout__results {
@@ -437,6 +443,10 @@ h3 {
 
   .layout__results {
     gap: 20px;
+  }
+
+  .layout--global {
+    grid-template-areas: 'view side';
   }
 }
 

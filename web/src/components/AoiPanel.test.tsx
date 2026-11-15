@@ -38,6 +38,20 @@ describe('AoiPanel', () => {
     expect(screen.getByText('Riau, Indonesia')).toBeVisible();
     fireEvent.click(screen.getByRole('button', { name: 'Clear area' }));
     expect(useAppStore.getState().aoi).toBeNull();
+    expect(useAppStore.getState().scope).toBe('global');
+  });
+
+  it('shows Indonesian regions after choosing Indonesia and returns worldwide on clear', async () => {
+    useAppStore.setState({ scope: 'global' });
+    renderWithQuery(<AoiPanel />);
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Indonesia' } });
+    fireEvent.click(await screen.findByRole('button', { name: /IndonesiaCountry/ }));
+    await waitFor(() => expect(useAppStore.getState().scope).toBe('indonesia'));
+    expect(await screen.findByText('33 provinces available')).toBeVisible();
+    expect(screen.getByRole('button', { name: /Riau/ })).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear area' }));
+    expect(useAppStore.getState().scope).toBe('global');
+    expect(useAppStore.getState().aoi).toBeNull();
   });
 });
 

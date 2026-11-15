@@ -26,7 +26,7 @@ describe('Kpi', () => {
     expect(card).toHaveTextContent('18 vs median 15');
     expect(card).toHaveTextContent('P70');
     expect(card).toHaveClass('kpi--hot');
-    expect(card).toHaveTextContent('NRT data not final');
+    expect(card).toHaveTextContent('Provisional');
 
     expect(screen.getByText('3,900')).toBeInTheDocument();
     expect(screen.getByText('September')).toBeInTheDocument();

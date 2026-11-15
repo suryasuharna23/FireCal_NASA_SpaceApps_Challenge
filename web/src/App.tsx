@@ -27,7 +27,6 @@ export default function App() {
   const scope = useAppStore((s) => s.scope);
   const setScope = useAppStore((s) => s.setScope);
   const meta = useMeta().data;
-  const globalPointsAvailable = meta?.global?.points_available !== false;
   const initialScopeChecked = useRef(false);
   useUrlSync();
   useDataVersionRefresh();
@@ -71,7 +70,7 @@ export default function App() {
       <StatusBar />
 
       {page === 'app' ? (
-        <main id="main" className="layout">
+        <main id="main" className={scope === 'global' ? 'layout layout--global' : 'layout'}>
           <section className="layout__view" aria-label={t('region.view')}>
             <GlobeMap />
           </section>
@@ -79,51 +78,30 @@ export default function App() {
             <AoiPanel />
             {scope === 'indonesia' && <TimePanel />}
           </section>
-          <section className="layout__results" aria-label={t('region.results')}>
-            {scope === 'global' ? (
-              <div className="results__summary">
-                <h2>Worldwide observations · last three months</h2>
-                <p>
-                  Explore monthly, daily, or hourly detections on the globe.
-                  {aoi && ` Selected area: ${aoi.label}.`}
-                  {globalPointsAvailable && ' Select an area to inspect its points.'}
-                </p>
-                {!globalPointsAvailable && (
-                  <p>Detailed detection points are unavailable in this deployment.</p>
-                )}
-                <p>
-                  The historical calendar and comparisons with earlier years are available in the
-                  Indonesia view. No global historical comparison or sensor correction is available.
-                </p>
-                <button
-                  type="button"
-                  className="btn btn--primary btn--small"
-                  onClick={() => setScope('indonesia')}
-                >
-                  Indonesia history · {meta?.start_month} to {meta?.end_month}
-                </button>
-              </div>
-            ) : aoi ? (
-              <>
+          {scope === 'indonesia' && (
+            <section className="layout__results" aria-label={t('region.results')}>
+              {aoi ? (
+                <>
+                  <div className="results__summary">
+                    <Kpi />
+                    <AiInsight />
+                  </div>
+                  <div className="results__calendar">
+                    <Calendar />
+                  </div>
+                  <div className="results__charts">
+                    <Climatology />
+                    <AnnualTotals />
+                    <ExportPanel />
+                  </div>
+                </>
+              ) : (
                 <div className="results__summary">
-                  <Kpi />
-                  <AiInsight />
+                  <EmptyState />
                 </div>
-                <div className="results__calendar">
-                  <Calendar />
-                </div>
-                <div className="results__charts">
-                  <Climatology />
-                  <AnnualTotals />
-                  <ExportPanel />
-                </div>
-              </>
-            ) : (
-              <div className="results__summary">
-                <EmptyState />
-              </div>
-            )}
-          </section>
+              )}
+            </section>
+          )}
         </main>
       ) : (
         <main id="main" className="page">
