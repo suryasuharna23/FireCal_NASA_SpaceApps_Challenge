@@ -8,7 +8,8 @@ The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireC
 
 ## Start with the real Indonesia data
 
-**One command on Windows:** run `.\run.ps1` from the repository folder.
+**One command:** Windows PowerShell: `.\run.ps1`; Linux/macOS: `./run.sh`.
+Run from the repository folder. Headless Linux/macOS: `./run.sh --no-browser`.
 It installs missing project dependencies, starts the real-data API with automatic
 NASA catch-up, starts the website, and opens it. Keep the terminal open; Ctrl+C
 stops the services it started. Git, uv and Node.js must already be installed.
