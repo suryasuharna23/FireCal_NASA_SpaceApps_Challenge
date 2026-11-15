@@ -46,7 +46,7 @@ import { Panel } from './Panel';
 
 const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/dark';
 const EMPTY = { type: 'FeatureCollection' as const, features: [] };
-const DRAW_COLOR = '#ff7a3d';
+const DRAW_COLOR = '#ff6b1a';
 type Tool = 'polygon' | 'rectangle' | 'select' | 'static';
 
 /**
