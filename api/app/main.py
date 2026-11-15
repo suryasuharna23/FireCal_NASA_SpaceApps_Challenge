@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from app import __version__
 from app.aoi import AoiError
 from app.db import DataUnavailableError
+from app.live_refresh import live_lifespan
 from app.routers import calendar, export, globe, meta, points, regions, stats
 from app.series import RangeError
 from app.settings import get_settings
@@ -19,6 +20,7 @@ def create_app() -> FastAPI:
         title="FireCal API",
         version=__version__,
         description="Harmonized MODIS-VIIRS fire activity calendar. Data: NASA FIRMS.",
+        lifespan=live_lifespan(settings),
     )
     application.add_middleware(GZipMiddleware, minimum_size=1024)
     application.add_middleware(

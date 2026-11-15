@@ -1,0 +1,33 @@
+{
+  "data_version": "593ae2d95fdf",
+  "baseline_rows_reproduced": 102,
+  "jan_oct_modis": 122778.0,
+  "jan_oct_prediction": 107797.04060836566,
+  "jan_oct_net_shortfall": 14980.959391634336,
+  "aug_sep_fraction_of_net_shortfall": 0.9147382395242857,
+  "eligible_provinces": 27,
+  "baseline_eligible_passes": 8,
+  "exposure": {
+    "data_version": "593ae2d95fdf",
+    "retrieval": {
+      "url": "https://firms.modaps.eosdis.nasa.gov/api/missing_data/?action=fetch_data",
+      "retrieved_at": "2026-11-14T15:35:40.686549+00:00",
+      "http_status": 200,
+      "sha256": "60ab8a4d35394d116378ba11747f6a4286d7303c9a8a77b8ec7ac01757f1b3e1"
+    },
+    "nasa_table_records": 178,
+    "inventory_rows": 1590,
+    "snapshot_2026_missing_day_flags": 46,
+    "flags_with_retained_detections": 31,
+    "detections_on_flagged_days": 2889,
+    "exposure_fraction_estimated": false,
+    "model_or_serving_changed": false,
+    "limitations": [
+      "Database missing-day flags do not distinguish partial granules from complete outages.",
+      "No flag does not establish full observation coverage; source-mode scope matters.",
+      "Retained counts and request successes do not measure valid observation opportunities.",
+      "The retrieved table is current evidence, not a historical snapshot of gap knowledge."
+    ]
+  },
+  "frozen_inputs_rechecked": true
+}

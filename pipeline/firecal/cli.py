@@ -7,10 +7,14 @@ import typer
 
 from firecal import __version__
 from firecal.config import get_settings
-from firecal.firms import FirmsClient, FirmsError, mask_key
+from firecal.firms import FirmsClient, FirmsError
 from firecal.io import resolve_source
 
-app = typer.Typer(help="FireCal data pipeline.", no_args_is_help=True)
+app = typer.Typer(
+    help="FireCal data pipeline.",
+    no_args_is_help=True,
+    pretty_exceptions_show_locals=False,
+)
 
 
 @app.callback()
@@ -36,7 +40,7 @@ def check_key() -> None:
         typer.secho(str(exc), fg=typer.colors.RED, err=True)
         raise typer.Exit(code=1) from exc
     typer.secho(
-        f"MAP_KEY {mask_key(settings.firms_map_key)} OK: "
+        "MAP_KEY OK: "
         f"{status.remaining}/{status.transaction_limit} transactions left "
         f"per {status.transaction_interval}.",
         fg=typer.colors.GREEN,
@@ -98,6 +102,21 @@ def ingest() -> None:
             f"{r.sensor}: {len(r.files)} files, {sum(r.written_rows.values()):,} rows, "
             f"{len(r.written_rows)} years, {r.duplicates:,} duplicates removed [{status}]"
         )
+
+
+@app.command("download-archive")
+def download_archive_cmd(
+    country: str = typer.Option("Indonesia", help="Exact country name in the NASA catalog."),
+    start: int = typer.Option(2000, help="First archive year."),
+    end: int = typer.Option(2025, help="Last published archive year to download."),
+    workers: int = typer.Option(4, min=1, max=8, help="Concurrent downloads."),
+    reuse_catalog: bool = typer.Option(False, help="Resume using the latest saved NASA catalog."),
+) -> None:
+    """Download public annual FIRMS country archives and verify their provenance."""
+    from firecal.archive import download_archive
+
+    report = download_archive(get_settings().paths, country, start, end, workers, reuse_catalog)
+    typer.echo(f"Verified {len(report['files'])} files, {report['rows']:,} rows for {country}.")
 
 
 @app.command()
@@ -285,6 +304,55 @@ def run() -> None:
     grid()
     harmonize(reuse_coefficients=False)
     validate()
+
+
+@app.command()
+def bootstrap(
+    processed_only: bool = typer.Option(False, help="Install only processed data."),
+) -> None:
+    """Assemble and verify the Indonesia dataset included in the repository."""
+    import json
+
+    from firecal.bundles import install_snapshot
+
+    typer.echo(json.dumps(install_snapshot(Path.cwd(), processed_only=processed_only), indent=2))
+
+
+@app.command("live-update")
+def live_update(
+    plan_only: bool = typer.Option(False, help="Show available catch-up requests only."),
+) -> None:
+    """Catch up every missing date to NASA's latest UTC availability."""
+    import json
+
+    from firecal.live import refresh
+
+    settings = get_settings()
+    with FirmsClient(settings.firms_map_key, settings.firms_api_base, allow_mirror=False) as client:
+        result = refresh(Path.cwd(), client, plan_only=plan_only)
+    typer.echo(json.dumps(result, indent=2))
+
+
+@app.command()
+def serve(host: str = "127.0.0.1", port: int = 8000, refresh_seconds: int = 3600) -> None:
+    """Install repository data and serve it with hourly NASA catch-up in the background."""
+    import os
+
+    import uvicorn
+
+    from firecal.bundles import install_snapshot
+    from firecal.live import seed_pointer
+
+    if refresh_seconds < 60:
+        raise typer.BadParameter("Refresh interval must be at least 60 seconds")
+    root = Path.cwd().resolve()
+    install_snapshot(root)
+    seed_pointer(root, root / "data/live")
+    os.environ["DATA_URI"] = str(root / "data/live/current.json")
+    os.environ["LIVE_AUTO_REFRESH"] = "true"
+    os.environ["LIVE_REFRESH_SECONDS"] = str(refresh_seconds)
+    os.environ["LIVE_REPO_ROOT"] = str(root)
+    uvicorn.run("app.main:app", host=host, port=port)
 
 
 if __name__ == "__main__":

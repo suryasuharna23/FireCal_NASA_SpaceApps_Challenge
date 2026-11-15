@@ -16,24 +16,29 @@ function formatDate(iso: string | null | undefined, lang: string) {
 /** Data freshness, NRT status and API/FIRMS warnings (FR-W-22, NFR-07). */
 export function StatusBar() {
   const { t, lang } = useT();
-  const { data, isError, isLoading } = useMeta();
+  const { data, error, isError, isLoading } = useMeta();
 
   if (isLoading) return <div className="status">{t('status.loading')}</div>;
   if (isError || !data)
     return (
       <div className="status status--error" role="alert">
-        {t('status.apiDown')}
+        Real NASA data could not be loaded.{' '}
+        {error instanceof Error ? error.message : t('status.apiDown')}
       </div>
     );
   if (data.status === 'no_data')
     return (
-      <div className="status status--warn" role="status">
+      <div className="status status--error" role="alert">
         {t('status.noData')}
       </div>
     );
 
+  const updateFailed = data.live?.status === 'failed' || data.live?.status === 'missing_key';
   return (
-    <div className="status" role="status">
+    <div
+      className={updateFailed ? 'status status--error' : 'status'}
+      role={updateFailed ? 'alert' : 'status'}
+    >
       <span>
         {t('status.updated')} <strong>{formatDate(data.last_updated, lang)}</strong>
       </span>
@@ -51,6 +56,31 @@ export function StatusBar() {
       {data.nrt && !data.nrt.ok && (
         <span className="badge badge--error">{t('status.firmsFailed')}</span>
       )}
+      {data.live?.checked_at && (
+        <span className="status__muted">
+          {data.live.status === 'updated' || data.live.status === 'up_to_date'
+            ? 'NASA checked '
+            : 'NASA check attempted '}
+          {new Date(data.live.checked_at).toLocaleString(lang)}
+        </span>
+      )}
+      {data.live?.status === 'updating' && <span>Checking newer NASA observations…</span>}
+      {data.live?.status === 'missing_key' && (
+        <strong>
+          LIVE UPDATES UNAVAILABLE · NASA access key is missing. Showing saved real observations.
+        </strong>
+      )}
+      {data.live?.status === 'failed' && (
+        <strong>
+          NASA UPDATE FAILED · Showing last real observations. These are not verified as current.
+        </strong>
+      )}
+      {data.live?.lagging_sources?.map((source) => (
+        <span className="badge badge--warn" key={source.source}>
+          {source.source.replace('VIIRS_', '').replace('_NRT', '')} available through{' '}
+          {source.available_through}
+        </span>
+      ))}
     </div>
   );
 }

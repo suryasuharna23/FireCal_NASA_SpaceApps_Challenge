@@ -22,11 +22,10 @@ def test_health(empty_client) -> None:
     assert response.json() == {"status": "ok"}
 
 
-def test_meta_without_data_reports_no_data(empty_client) -> None:
+def test_meta_without_real_data_fails_loudly(empty_client) -> None:
     response = empty_client.get("/meta")
-    assert response.status_code == 200
-    assert response.json()["status"] == "no_data"
-    assert "NASA FIRMS" in response.json()["attribution"]
+    assert response.status_code == 503
+    assert "Processed data not found" in response.json()["detail"]
 
 
 def test_data_endpoints_without_data_return_503(empty_client) -> None:

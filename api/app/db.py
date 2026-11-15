@@ -100,8 +100,34 @@ _datasets: dict[str, Dataset] = {}
 
 
 def get_dataset() -> Dataset:
-    uri = get_settings().data_uri
+    settings = get_settings()
+    uri = settings.data_uri
+    if "://" not in uri and uri.endswith(".json"):
+        from firecal.live import resolve_pointer
+
+        try:
+            uri = resolve_pointer(Path(uri)).as_posix()
+            if settings.live_auto_refresh:
+                from firecal.bundles import CATALOG
+
+                expected = json.loads((Path(settings.live_repo_root) / CATALOG).read_text())[
+                    "data_version"
+                ]
+                meta = json.loads((Path(uri) / "meta.json").read_text())
+                origin = meta.get("live_update", {}).get(
+                    "base_data_version", meta.get("data_version")
+                )
+                if origin != expected:
+                    raise DataUnavailableError(
+                        "Unverified dataset rejected; real NASA data required"
+                    )
+        except (ValueError, OSError) as exc:
+            raise DataUnavailableError(
+                "Live dataset is unavailable; run 'firecal bootstrap'"
+            ) from exc
     if uri not in _datasets:
+        if len(_datasets) >= 8:
+            _datasets.pop(next(iter(_datasets)))
         _datasets[uri] = Dataset(uri)
     return _datasets[uri]
 

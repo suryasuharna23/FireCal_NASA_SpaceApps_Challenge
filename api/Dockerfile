@@ -15,6 +15,7 @@ COPY api/app api/app
 RUN uv sync --frozen --no-dev --package firecal-api --no-editable
 
 WORKDIR /app
+COPY datasets /app/datasets
 RUN useradd --create-home firecal
 USER firecal
 

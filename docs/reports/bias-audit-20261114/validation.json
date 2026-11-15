@@ -1,0 +1,12 @@
+{
+  "python_suite": {
+    "passed": 153,
+    "failed": 0,
+    "errors": 0,
+    "warning": "Existing Starlette/HTTPX deprecation"
+  },
+  "ruff_lint": "passed",
+  "ruff_format": "passed",
+  "live_api_checks": "three pilot regions passed",
+  "real_data_baseline_rows_reproduced": 102
+}

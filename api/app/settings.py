@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,13 +13,16 @@ class ApiSettings(BaseSettings):
     data_uri: str = "./data/processed"
     max_aoi_km2: float = 1_000_000
     reference_years: str = "2003:2022"
-    cors_origins: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     s3_endpoint: str = ""
     s3_access_key_id: str = ""
     s3_secret_access_key: SecretStr = SecretStr("")
     cache_ttl_seconds: int = 900
     max_points: int = 50_000
     log_level: str = "info"
+    live_auto_refresh: bool = False
+    live_refresh_seconds: int = Field(3600, ge=60)
+    live_repo_root: str = "."
 
     @property
     def cors_origin_list(self) -> list[str]:

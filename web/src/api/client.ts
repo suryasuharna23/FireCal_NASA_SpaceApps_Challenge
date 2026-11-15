@@ -52,6 +52,13 @@ export interface Meta {
   max_aoi_km2: number;
   default_reference_years: [number, number];
   data_version: string | null;
+  live?: {
+    status: 'waiting' | 'updating' | 'updated' | 'up_to_date' | 'failed' | 'missing_key';
+    checked_at?: string;
+    requested_through?: string;
+    lagging_sources?: { source: string; available_through: string }[];
+    detail?: string;
+  } | null;
   last_updated?: string;
   last_acq_date?: string | null;
   start_month?: string;
@@ -59,6 +66,14 @@ export interface Meta {
   transition_month?: string;
   calibration_period?: string;
   grid_res_deg?: number;
+  dataset_status?: string | null;
+  source_versions?: Record<string, string[]> | null;
+  coverage?: {
+    country: string;
+    satellites: string[];
+    includes_nrt: boolean;
+    region_fallback: string;
+  } | null;
   nrt?: {
     provisional: boolean;
     since: string | null;
@@ -82,5 +97,6 @@ export function useMeta() {
     queryKey: ['meta'],
     queryFn: () => apiGet<Meta>('/meta'),
     staleTime: 5 * 60 * 1000,
+    refetchInterval: 60 * 1000,
   });
 }

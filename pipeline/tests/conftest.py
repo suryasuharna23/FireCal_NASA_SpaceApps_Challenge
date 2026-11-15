@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 import pytest
@@ -28,5 +29,12 @@ def paths(tmp_path: Path, synthetic_raw: Path) -> DataPaths:
     """Fresh data/ tree whose raw/ folder points at the shared synthetic archive."""
     root = tmp_path / "data"
     root.mkdir()
-    (root / "raw").symlink_to(synthetic_raw, target_is_directory=True)
+    try:
+        (root / "raw").symlink_to(synthetic_raw, target_is_directory=True)
+    except OSError as exc:
+        if getattr(exc, "winerror", None) != 1314:
+            raise
+        # Windows without Developer Mode/admin cannot create directory symlinks.
+        # Keep the same input fixture using a private copy, without changing OS policy.
+        shutil.copytree(synthetic_raw, root / "raw")
     return DataPaths(root).ensure()

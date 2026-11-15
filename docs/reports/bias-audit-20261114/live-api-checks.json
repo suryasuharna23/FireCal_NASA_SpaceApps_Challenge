@@ -1,0 +1,24 @@
+{
+  "data_version": "593ae2d95fdf",
+  "checks": [
+    {
+      "province": "Riau",
+      "months": 11,
+      "points_october": 188,
+      "checks": "passed"
+    },
+    {
+      "province": "Sumatera Selatan",
+      "months": 11,
+      "points_october": 64973,
+      "checks": "passed"
+    },
+    {
+      "province": "Kalimantan Tengah",
+      "months": 11,
+      "points_october": 203231,
+      "checks": "passed"
+    }
+  ],
+  "snapshot_reports_modified": false
+}

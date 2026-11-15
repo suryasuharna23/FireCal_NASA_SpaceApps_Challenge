@@ -52,7 +52,7 @@ AVAILABILITY: dict[str, str] = {
     "Aqua": "2002-07-01",
     "S-NPP": "2012-01-01",
     "NOAA-20": "2018-04-01",
-    "NOAA-21": "2024-01-01",
+    "NOAA-21": "2023-03-01",
 }
 
 #: Columns that identify a sensor in a FIRMS CSV header.
@@ -130,7 +130,8 @@ def normalize_sql(sensor: str, source_sql: str, columns: Iterable[str]) -> str:
             {col("instrument", "upper(trim(instrument))")} AS instrument,
             {col("version", "trim(version)")} AS version,
             {col("type", "TRY_CAST(type AS INTEGER)", "INTEGER")} AS type,
-            CASE WHEN upper({col("version", "version")}) LIKE '%NRT%' THEN 'NRT' ELSE 'SP' END
+            CASE WHEN regexp_matches(upper({col("version", "version")}), '(NRT|URT|RT)')
+                 THEN 'NRT' ELSE 'SP' END
                 AS source,
             CAST(year(CAST(acq_date AS DATE)) AS INTEGER) AS year,
             CAST(month(CAST(acq_date AS DATE)) AS INTEGER) AS month

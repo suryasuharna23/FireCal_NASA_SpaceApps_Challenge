@@ -14,6 +14,7 @@ import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
 import { useAppStore } from './state/useAppStore';
 import { useUrlSync } from './state/useUrlSync';
+import { useDataVersionRefresh } from './state/useDataVersionRefresh';
 
 type Page = 'app' | 'methodology';
 
@@ -22,6 +23,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('app');
   const aoi = useAppStore((s) => s.aoi);
   useUrlSync();
+  useDataVersionRefresh();
 
   return (
     <div className="app">

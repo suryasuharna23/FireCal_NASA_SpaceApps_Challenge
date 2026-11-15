@@ -1,0 +1,1438 @@
+{
+  "data_version": "593ae2d95fdf",
+  "country": "Indonesia",
+  "snapshot_end": "2026-11-14",
+  "retained_points": 7716551,
+  "bbox": [
+    94,
+    -12,
+    142,
+    7
+  ],
+  "processed": "data/interim/indonesia-extended-20261114/processed",
+  "acquisition": "data/interim/api-acquisition",
+  "assets": [
+    {
+      "kind": "processed",
+      "file": "firecal-indonesia-593ae2d95fdf-processed.zip",
+      "bytes": 106674802,
+      "sha256": "3aa2f6678bf2413f48f75fd346eb7eadd5101fbd619afa6526bc4b9d0a835174",
+      "pieces": [
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.001.chunk",
+          "bytes": 1048576,
+          "sha256": "1e0ed4dc4068b4f8a145ccbe7cb2c088043c518c37b4b3f9f5446912bbc680fc"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.002.chunk",
+          "bytes": 1048576,
+          "sha256": "ae9bddfa39d4bc8760dc14f09a8f89af4a9229c577a18b1606a86e24c896306d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.003.chunk",
+          "bytes": 1048576,
+          "sha256": "c7332de61a8495e201b435298a10076413132f1173e92249aa8b3e9f33aaea12"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.004.chunk",
+          "bytes": 1048576,
+          "sha256": "7ff84602dc7f822e599d7226675c5d6832eab57734daee320c0f176b4b8f0678"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.005.chunk",
+          "bytes": 1048576,
+          "sha256": "708a2d5f4aaa588d6c66fece5f153dcd6d7577aa320594df2e6d744a7ee3cbe5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.006.chunk",
+          "bytes": 1048576,
+          "sha256": "af24b18f17f0596458ac4e1395a7004b824a017d7c2c6b47ef30b64a5269996e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.007.chunk",
+          "bytes": 1048576,
+          "sha256": "ff49c734d78ce8126b150b7d2d4abc1109a771a3cf8c90ee862ce85e26556f0e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.008.chunk",
+          "bytes": 1048576,
+          "sha256": "9e4d5591a0bc4a1c3c7f1b871fb1adfe2bf7de12833a4642be2f329a0bee36dd"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.009.chunk",
+          "bytes": 1048576,
+          "sha256": "5f3c0f8dbf477a87d5e2c53b019670980af19165f74cee1e6b7c7714aecdc7e8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.010.chunk",
+          "bytes": 1048576,
+          "sha256": "93f123bd2e643ecede185ea596c2012c9b7054aad075f531669e019d4a8d8e71"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.011.chunk",
+          "bytes": 1048576,
+          "sha256": "8ff89487bd549940bf042aa493e20e259a124665cc6dad6fca9ee7ab79800367"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.012.chunk",
+          "bytes": 1048576,
+          "sha256": "2146346fe4beb8f848ce62c8f5c8fbe3ffb4c20bb7857f2f03928b234fa453ad"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.013.chunk",
+          "bytes": 1048576,
+          "sha256": "ac889fc6dc3f75ca6337b065d9b202f827a8bc7c6dd043723ba6036a9cb12e24"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.014.chunk",
+          "bytes": 1048576,
+          "sha256": "cbb27f8ccc719da38c60d1bcd8366bec296defb9abdab3231665b1dbf16cfd4f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.015.chunk",
+          "bytes": 1048576,
+          "sha256": "490862075aeeec44349c4671b63a5748f099a8cf497c4a50fb9ad14bf9d8429c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.016.chunk",
+          "bytes": 1048576,
+          "sha256": "bd655b1f878302cf81261ec4e15ba4d1fb7038a1309ff0ddebc3e46c92d83f2f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.017.chunk",
+          "bytes": 1048576,
+          "sha256": "bfda1ba607ce8701f971ad62e1942cd08c542bbf1f8110eaa59eb25b89cec071"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.018.chunk",
+          "bytes": 1048576,
+          "sha256": "e333f63b68f24f59e2f1d85b85a38876bb81ef4347d2a1ec6f60c3c0db7b7a5f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.019.chunk",
+          "bytes": 1048576,
+          "sha256": "88a379073fac37d7f305b32cd4f2951752ec454077dddd08b9995e0efcb826d9"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.020.chunk",
+          "bytes": 1048576,
+          "sha256": "58147f86c0d78ce746f8640a8829e56a57b793673b5c9180ff9e8d8a5757d56b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.021.chunk",
+          "bytes": 1048576,
+          "sha256": "4255c809f58f0fca9a9a9d9d790911b0c63235533c443d13b732fb4a04908cf3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.022.chunk",
+          "bytes": 1048576,
+          "sha256": "a08cafea032fb2b926f7894e06acbf421894b58d0764758b221cdfd1f0be1337"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.023.chunk",
+          "bytes": 1048576,
+          "sha256": "a1dc0b70c6f074d3da71e41f2cb356d3d63020c7fdf7b1a9deeebe75c6e62800"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.024.chunk",
+          "bytes": 1048576,
+          "sha256": "c7b358f9c8ed76140d2a24f415eda6f759a57e1ba3a619d2968dd8cdc72a4f0f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.025.chunk",
+          "bytes": 1048576,
+          "sha256": "53c8753de179b3858344c6a7450b92fa6b237ee07437156702c064c91ed7e07d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.026.chunk",
+          "bytes": 1048576,
+          "sha256": "265026bcb862ffc52081fc16612e94e9b6f271dbe48529871f6dcd4608f7b2be"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.027.chunk",
+          "bytes": 1048576,
+          "sha256": "595103dbecf27234f53079e1d250ce9d664230f5bd6425eec45e9340a2851200"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.028.chunk",
+          "bytes": 1048576,
+          "sha256": "4caa142cb5abe4b1e3db1b66816be927c2da499adaa7dde9c0311ea9330944c8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.029.chunk",
+          "bytes": 1048576,
+          "sha256": "d59d5ff7af46ae8235942abea55e18a75d34a125db30c5837e91626902f792f9"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.030.chunk",
+          "bytes": 1048576,
+          "sha256": "f4e61c1654c506c402bbc72093d2c0c9fa2151059d5cdf708052359c25083fdb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.031.chunk",
+          "bytes": 1048576,
+          "sha256": "e2bf137f916d128815bd7310e0b5ec5883a74d690a4984a8ee92599f9f2bd7aa"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.032.chunk",
+          "bytes": 1048576,
+          "sha256": "6b96c359fc7e5ea593c32c73bca3a810dbd8676eefbc648849937575f7128117"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.033.chunk",
+          "bytes": 1048576,
+          "sha256": "0f23d53108e7f4cf199419acbfd44962e9da2f35b7eb7c7c436c3b2552ea2074"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.034.chunk",
+          "bytes": 1048576,
+          "sha256": "7629f906a01390331b3c7c412f4893427f353b9e5f2ffd272566428f96a3ec5d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.035.chunk",
+          "bytes": 1048576,
+          "sha256": "1ec760bcb657d418b90ab5c3b76dad52c2544b19c70c6315550844c818079b4e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.036.chunk",
+          "bytes": 1048576,
+          "sha256": "6ab57e9aed5cc425d5726c42de50662e7a6f6e0be93e4030cce8ab160c394f73"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.037.chunk",
+          "bytes": 1048576,
+          "sha256": "e2cf80e5afbd7eca4213e13cec549a0d5acd73d1a1b4401411d358471c86d349"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.038.chunk",
+          "bytes": 1048576,
+          "sha256": "e32209654dcb52e7cb1d18ee4edef451c85a1071ad1e9927ec3f2921b9f8860e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.039.chunk",
+          "bytes": 1048576,
+          "sha256": "8a7addb101ad2d3a18baf4b5e06b3963552befbce70422819a4b8fe8474a46ef"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.040.chunk",
+          "bytes": 1048576,
+          "sha256": "ac0f351875d17874c326f3e71caa2f765e0bbf97454b400c1434b10d91f11e5e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.041.chunk",
+          "bytes": 1048576,
+          "sha256": "78ead29481bd5ca9fc4edbf5ab8209e816666b5c8949cfe5818e8e1d3d4a6d8d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.042.chunk",
+          "bytes": 1048576,
+          "sha256": "0fee2197a666120878c34dfb236fc088d010878cdb8584c08b3de3b0e4d02d22"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.043.chunk",
+          "bytes": 1048576,
+          "sha256": "43c57cb53d8296cde39293aa72ee9335a776f8326bcccc232bf59c19abd3b2da"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.044.chunk",
+          "bytes": 1048576,
+          "sha256": "ddfe17d527ece36669f86077ac5c1beec5409a9c40995bd1c4e1594705e26c4e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.045.chunk",
+          "bytes": 1048576,
+          "sha256": "0a9788c3e7f21271db7814fa6dc24b349e9d715590868ff218817cce7a5cc9d5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.046.chunk",
+          "bytes": 1048576,
+          "sha256": "053bc70a9f9e48d2a03452ceab39b462f2a59db28ef657d4d42efa6f0a8d4524"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.047.chunk",
+          "bytes": 1048576,
+          "sha256": "24c74864b87cc854aabeb865cfc8ac2536e167ed264a3ffc11d0f35e20013330"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.048.chunk",
+          "bytes": 1048576,
+          "sha256": "2d2a2c3a83fff6e2ea3893d1b49bfdfe2197adaa6e1e45761be05147beb1a70b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.049.chunk",
+          "bytes": 1048576,
+          "sha256": "68eac132b8a7b9505704d789ddf669c33026d414e03f64e0fb9d84f843452657"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.050.chunk",
+          "bytes": 1048576,
+          "sha256": "2ac2f22fe19e2adc53ce93cc558c2bd0de7eb2f1ddf9eb41aa8f9a02ceb64295"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.051.chunk",
+          "bytes": 1048576,
+          "sha256": "edeba1a06808600f76ef16ad7afc82d600346ded95cd65619a30c8fcd642764e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.052.chunk",
+          "bytes": 1048576,
+          "sha256": "7b6b9457ee458dd3b28e436a890f17c059cbce51dda1d6f112dbe6d53d3b6acd"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.053.chunk",
+          "bytes": 1048576,
+          "sha256": "499b9a08b880730eafb906e8841c21756d372b9b389e903990cbe9e81cb38da1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.054.chunk",
+          "bytes": 1048576,
+          "sha256": "4392bf7f4b5989e8a2a5b6514d7891131b36698d0899cc34127f66abc12ae82d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.055.chunk",
+          "bytes": 1048576,
+          "sha256": "d23b2af52e4681df1e9ddf0c4c03ab1db1570e2757bd1c22b3881f5a0674e2d5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.056.chunk",
+          "bytes": 1048576,
+          "sha256": "81f4db20effaa4c049d4d9264e82f5a3a7e5fcd3efc7d6275f0bcc4338958faa"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.057.chunk",
+          "bytes": 1048576,
+          "sha256": "36bb4c5ca98152dc7310de38d3559db8ed88842103b0d4743fcf67973e8fdbc8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.058.chunk",
+          "bytes": 1048576,
+          "sha256": "59b3b924690260b8f8db60b9e35ae6b9111ebc7558454e6b186b765cc5e1be46"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.059.chunk",
+          "bytes": 1048576,
+          "sha256": "b7b492c7462eb2ecdb2d8ae524e481f01ee595ca492ff593177c860101d3ed52"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.060.chunk",
+          "bytes": 1048576,
+          "sha256": "80397e964fb823c3da512b6517d96ec173ecc122c41a1d27684d0c2de6a8b6c0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.061.chunk",
+          "bytes": 1048576,
+          "sha256": "6785d6250974006975821f953bf34e5e1afbd4037896c62c5f7bf6b27a083c14"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.062.chunk",
+          "bytes": 1048576,
+          "sha256": "2c155d99bdd212a050f6fe3f147cae6351104bd9fde7a14c9d46db1eb59d3b67"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.063.chunk",
+          "bytes": 1048576,
+          "sha256": "fb602d6ee0018bd4511a5f9cb8c1bacc60f674f77427ec8fa5c48911fea76a9b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.064.chunk",
+          "bytes": 1048576,
+          "sha256": "309933e42627aa8625400be37d83aa486ea2292adff70fa59d6da418bffa9263"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.065.chunk",
+          "bytes": 1048576,
+          "sha256": "6aa59683c95f14c2870d9547e64e530d1b50e516cce9a4685225e51952fec8ed"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.066.chunk",
+          "bytes": 1048576,
+          "sha256": "ee485fdb036b7f17f7d1efc5cc31ea74fa139df8d5e7efa0342e68727d475c85"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.067.chunk",
+          "bytes": 1048576,
+          "sha256": "5e10efa826633afb24c9af116cecc0e0d0e5a27c2fd378e733b206aadc1dcb2b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.068.chunk",
+          "bytes": 1048576,
+          "sha256": "4c9c85030168761f648e628f1ffe5152af2b14dc70aef1ae0767eb3832d71ceb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.069.chunk",
+          "bytes": 1048576,
+          "sha256": "097bb57c741b7745249540ea28afd5fefbecf833385e446f0ea4e6b52511777b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.070.chunk",
+          "bytes": 1048576,
+          "sha256": "e4b483b53df74f56ffca99c4fa32dca11fac41df1ac2d62f8df33a232c248c00"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.071.chunk",
+          "bytes": 1048576,
+          "sha256": "c1e754ae0a384917d9180aec28c1e4ab18ff927489f852576d32cbe3fc987b83"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.072.chunk",
+          "bytes": 1048576,
+          "sha256": "1c302536c291dbfc9d11255319e4a97a0d022effa62977328ebde3bcaa0225c9"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.073.chunk",
+          "bytes": 1048576,
+          "sha256": "49be8b79663cfa414a46261ab00d1cf8952f74f70cdf5edd9ad6eaf80b57ec48"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.074.chunk",
+          "bytes": 1048576,
+          "sha256": "de1470ce4dfca4845394918f7f776e03410a0ca9f50929977a6c184364eabb58"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.075.chunk",
+          "bytes": 1048576,
+          "sha256": "2a9ab0b58b7bec11e7e56f48b5cf73897322ea27bf1f468a95ca4f669b4b83fc"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.076.chunk",
+          "bytes": 1048576,
+          "sha256": "438484919ff374bab612ad68eb1bd82ae6e06e39200c45e796efb061986d96d5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.077.chunk",
+          "bytes": 1048576,
+          "sha256": "8b57608194c775d46ab8a7dea1de0364876a6299fc16ba49600d28ec223aa0a3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.078.chunk",
+          "bytes": 1048576,
+          "sha256": "e1cc29b994941566af82f1b59212da7925917ac46cada2675f56e1c1e4cab7b6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.079.chunk",
+          "bytes": 1048576,
+          "sha256": "a0d91a0116b2c441fe5e5413614b8a341f6b5037fe3c7997a3423c42fec77079"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.080.chunk",
+          "bytes": 1048576,
+          "sha256": "6f0623a5ce599228d9864363ccc4139e5f7723780b31b09b3af2af9597693163"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.081.chunk",
+          "bytes": 1048576,
+          "sha256": "0c5d9b67d519efe5c7c93aace267a2e3ac55ffafb16a588d4f88f31540a65803"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.082.chunk",
+          "bytes": 1048576,
+          "sha256": "843ba9131f92da2cfba9102faa84bae6935ca29fec496a743e34828bcb987696"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.083.chunk",
+          "bytes": 1048576,
+          "sha256": "d29344407b9d614eaf26c89fe5ca313777613256b3298efcd493c59cd482f7b0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.084.chunk",
+          "bytes": 1048576,
+          "sha256": "f8dc6396542b598c65a5bc9b1aacfa33d902487326094423c8da9e11add00f92"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.085.chunk",
+          "bytes": 1048576,
+          "sha256": "f6e758d02eb28dcb78416ed264caa38db5926f13abe1b84f908ef9655b74b6e0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.086.chunk",
+          "bytes": 1048576,
+          "sha256": "c4a5407e17920254e442da00b33a003c3f17cc2b0234f5d315ce1a4ee8da4399"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.087.chunk",
+          "bytes": 1048576,
+          "sha256": "8c0e06b648a3d0ab46c28e211bfbb00e686c47fde89050ebeacc5a42a36edbe3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.088.chunk",
+          "bytes": 1048576,
+          "sha256": "07bed591c0ff61bcfdbb403a19019a28159ad57ffadee7d8550885c5488affd1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.089.chunk",
+          "bytes": 1048576,
+          "sha256": "995927cb4e1abf00369958676ee19e04866e527987638dc7aa488ec54f4f9518"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.090.chunk",
+          "bytes": 1048576,
+          "sha256": "af6a0ac0963012bf6459f3beeff4d128d84aa9ae6e68a66fb906a1559414a44b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.091.chunk",
+          "bytes": 1048576,
+          "sha256": "c893476212dddf6bc6d942c3dae236b4a797bfa65f143b0295d4adc29e44da16"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.092.chunk",
+          "bytes": 1048576,
+          "sha256": "c41dc6786108bd6046f64909061937ead6105b6d18651e5e644e16d7717f0880"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.093.chunk",
+          "bytes": 1048576,
+          "sha256": "c6f5ab31f26f6a0112ebd09e90540d15e49fedc27a72dec4bc1c293e975c1b8b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.094.chunk",
+          "bytes": 1048576,
+          "sha256": "742349f502634cc733e24b2e999847ea325e4a780ec091281c92f91f9b5cb5b2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.095.chunk",
+          "bytes": 1048576,
+          "sha256": "54e52e4c65aadeb96b9235fbb4dc46003cc3288f3a52ede9a6282f767c112286"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.096.chunk",
+          "bytes": 1048576,
+          "sha256": "1edf972ada084f9c1d92033363b291669f00eeea3ebfea0c628d375b61651160"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.097.chunk",
+          "bytes": 1048576,
+          "sha256": "e5fce9329675b80d3d12647796522bca2fc1c292a204593a6eaece7d6c7f7b9b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.098.chunk",
+          "bytes": 1048576,
+          "sha256": "9a010abc3a442f6277452c6cddb415dee31acc482cea645cb10196fd6f1bda6a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.099.chunk",
+          "bytes": 1048576,
+          "sha256": "886a9f708b3e0eb1342334ee01b9c6e08ad9ae715431a13d0978660419ad81f1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.100.chunk",
+          "bytes": 1048576,
+          "sha256": "eb455361eab1e92abf7ed048bc447a2f1a77df3f9ef4ecd50303271da9b3be44"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.101.chunk",
+          "bytes": 1048576,
+          "sha256": "a83867825c1dc428767308fdcab1075dc310d0fbb37b3c8777694ab44a79ed29"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/processed.102.chunk",
+          "bytes": 768626,
+          "sha256": "3941d0d355ca72ebc4e3427cc6cf41e67cab0c9bd67f762c71a4076e2f008c89"
+        }
+      ]
+    },
+    {
+      "kind": "sources",
+      "file": "firecal-indonesia-593ae2d95fdf-sources.zip",
+      "bytes": 187265986,
+      "sha256": "0090148ad696dda124d20e5d7e09210abdc6d629e3eb259096148f97968f54ae",
+      "pieces": [
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.001.chunk",
+          "bytes": 1048576,
+          "sha256": "20b30e706fedc180de1febfaf736b352a5f9134dd78852ea0b465132995a5c1d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.002.chunk",
+          "bytes": 1048576,
+          "sha256": "fe4bba7cbc03ecb7bf5fec37b1dd53c423921df53a7b94597f6629ad8e8872c2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.003.chunk",
+          "bytes": 1048576,
+          "sha256": "39a0f68925ac7545e79774ccda207b49c1670f3e302bf318496df7d6e2834c57"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.004.chunk",
+          "bytes": 1048576,
+          "sha256": "936bb091fce3e1b82ac76bb7840a2c3f9953d1976d32c27041c875afe4a37a0a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.005.chunk",
+          "bytes": 1048576,
+          "sha256": "139cdc3fc182940a3e6ef74c9507bd909cfff005c06853ed2cd36bbe8b90d7cc"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.006.chunk",
+          "bytes": 1048576,
+          "sha256": "f20993fed1e41718f5183a85fa743f59833fd2713316f3836f41716d8f66f1cb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.007.chunk",
+          "bytes": 1048576,
+          "sha256": "90d670a494b71d25a5265bed958d7787e55ec7069ac92c2b4cdaae5d875d44c0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.008.chunk",
+          "bytes": 1048576,
+          "sha256": "c2d0e6e4fe895eeeee4684df752ea2cf146406697c151c56fdaa4d21dc173e20"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.009.chunk",
+          "bytes": 1048576,
+          "sha256": "61ba5cb55500723a7afb5a43b9d7a3dd8f8a001b8250acde1c5fa5ca5abc77a4"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.010.chunk",
+          "bytes": 1048576,
+          "sha256": "e5723b8b7ed66f911a18c7846ab73ff14670515c051109826838347e99831064"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.011.chunk",
+          "bytes": 1048576,
+          "sha256": "637d8c0e7969698e642f25ee6c87e15165c62dc1af098afcc502e118a3be39a5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.012.chunk",
+          "bytes": 1048576,
+          "sha256": "bd41c0c8facb22faab9db0fbf34ef6bce318a5e20ebdda2d959d6203036517a2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.013.chunk",
+          "bytes": 1048576,
+          "sha256": "a795ba550f2e1698bbfe56cbd378fad7d802fbe6494f2e98e67b39fac32936c6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.014.chunk",
+          "bytes": 1048576,
+          "sha256": "772a95d07f967a48c69ab608e758379ba7a2048d0b85804320ef8baae9d67233"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.015.chunk",
+          "bytes": 1048576,
+          "sha256": "39fcca705077b5bf6771a10044da6e07bee9b05fef65243f7cce60cc7927801b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.016.chunk",
+          "bytes": 1048576,
+          "sha256": "6902c4ebd69bbead4f5460c7fba9890b37282ad75514ef6e2712feb33c89bc38"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.017.chunk",
+          "bytes": 1048576,
+          "sha256": "e4d305e35ef0ed11600ceedb932f1bd7c30861fbaeecdd11b7f6c900db94fbb0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.018.chunk",
+          "bytes": 1048576,
+          "sha256": "932082846a1e1d17ba36ffeb6a31f895003f9f9f22ed6fec6b07fe989965e109"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.019.chunk",
+          "bytes": 1048576,
+          "sha256": "57e3f1b313da8b5603f7df54efb1ca240aabbbf099c2dcaffb7ccc679e591da5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.020.chunk",
+          "bytes": 1048576,
+          "sha256": "057eb8fef42ccfb4270cc1db7d70133c37578b06a002762e3c6a0aaef1e561c3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.021.chunk",
+          "bytes": 1048576,
+          "sha256": "f32483b5c5858606c0f78d7fa05dcc15160d6311f673a96f706cd3a8b040ba7e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.022.chunk",
+          "bytes": 1048576,
+          "sha256": "9706c9b685a4ad28dc29be7f549df462eda76858104b202989ff5ef1c64e05e3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.023.chunk",
+          "bytes": 1048576,
+          "sha256": "e23b2db418181d06b0972cae1ed68af1aa3ab36edcee9b4c1b3db78486cdc2e4"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.024.chunk",
+          "bytes": 1048576,
+          "sha256": "84824226b62b84d4c581b4a117106b9880cdec0f7d9d2d385574e284352992c7"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.025.chunk",
+          "bytes": 1048576,
+          "sha256": "ded9126e933ab09aef9711dae78fa8f269d3922386c8b0fd9e83bbe70e1e6f57"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.026.chunk",
+          "bytes": 1048576,
+          "sha256": "d295116c0d1eed3eb854cdaf5c552aa081225830a6f7ec365d15d9f038f7e9bb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.027.chunk",
+          "bytes": 1048576,
+          "sha256": "1d6afdb5baa9b4b89bd64018d5de360a506617098215c653b7e6b78bc29822d2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.028.chunk",
+          "bytes": 1048576,
+          "sha256": "c25b135ee7435d88cd968ea74acc9f29a019a82bc54d4b8cd2e6ee51d54c4b60"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.029.chunk",
+          "bytes": 1048576,
+          "sha256": "cc0a99a1ab8457b43884ff0c2d0bad8231012bbcf9f98a55ca5b96b2284bacec"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.030.chunk",
+          "bytes": 1048576,
+          "sha256": "f766f0b89f05c6b522cb8dd239e2933762d8301cb71eaf6834141275765c0dd7"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.031.chunk",
+          "bytes": 1048576,
+          "sha256": "15cd4f62cf8f4e58040b4285409fb028989ab6c89c49b054a58b79081d3c3815"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.032.chunk",
+          "bytes": 1048576,
+          "sha256": "ea195329a1e8b0170741a0986c257cc60be42aac482107cea83d5cd34d878fa5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.033.chunk",
+          "bytes": 1048576,
+          "sha256": "de806eff053b5f338d12d7831abcfe01179b724f3765a8a989ec9ee5f44362e8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.034.chunk",
+          "bytes": 1048576,
+          "sha256": "224242e9a3951cf2bd16588236a0dfdd7eaea24eb12836210bd1cd3da2b3361e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.035.chunk",
+          "bytes": 1048576,
+          "sha256": "88f50e07adb7d261674bb693e3ce96fb4b239e480eb2065ef737f1784bf4a172"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.036.chunk",
+          "bytes": 1048576,
+          "sha256": "65198b50d2fc2fbe07fcd69cadc61d68038cd2fd5687c4a3bc65867de1930c53"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.037.chunk",
+          "bytes": 1048576,
+          "sha256": "f7186e9d6e80d5a36e5ffa51d6b7b4020480ff9f6aacff4f353232612da78095"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.038.chunk",
+          "bytes": 1048576,
+          "sha256": "040f9e36848899d8a8ff4a4b3a2de686a442328c4735c799f3345cb5c98a8f41"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.039.chunk",
+          "bytes": 1048576,
+          "sha256": "851a5b33a27bce0c3e9439405034eb08ba3ab737afb10689c45a034bcd7838d0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.040.chunk",
+          "bytes": 1048576,
+          "sha256": "cf4a4bb61ede35b684f6dcc69af41760e1fbde46d152944f9a46c2c353ef45a3"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.041.chunk",
+          "bytes": 1048576,
+          "sha256": "fbd9219dbf68f28797f09633b177f3b165a25d83479c9a0ac7dfbb76931ab307"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.042.chunk",
+          "bytes": 1048576,
+          "sha256": "a30dc3702220bf57ef70d1191d525954825625d5bcf9ea54d289cfc59c491122"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.043.chunk",
+          "bytes": 1048576,
+          "sha256": "82da845df9d05a57366651c82ae68140190b033d2565a62a4361b5b1a38ee4c6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.044.chunk",
+          "bytes": 1048576,
+          "sha256": "cee723ad4545da6338d06627bcf36397c23d9032ba6dfecfadb02d599a33ede5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.045.chunk",
+          "bytes": 1048576,
+          "sha256": "f83b727531471a39c18fc06c81f2e022d7ffad3e2ef596b5503cc52c3d3b9c63"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.046.chunk",
+          "bytes": 1048576,
+          "sha256": "565309ae88a4a352680efb02089e7aaf2f9bd5df6054e5c18564b7b52da607c7"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.047.chunk",
+          "bytes": 1048576,
+          "sha256": "b885fd3e26769297bde63ef6a11bb2bac7ce12af0d194d58685056e2ec3e622a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.048.chunk",
+          "bytes": 1048576,
+          "sha256": "6e52b9d7554df4f03edae452ce725c3acc409a62e171f27823097d09ba62b00f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.049.chunk",
+          "bytes": 1048576,
+          "sha256": "9906a258fc458a199785f19f51aaca9acb6fc6c996d8ff04df8285523409ee8e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.050.chunk",
+          "bytes": 1048576,
+          "sha256": "2708af83ce06c9716a0197c53c6995ecd0cb342da835e59262ea393e7fbd306c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.051.chunk",
+          "bytes": 1048576,
+          "sha256": "968d5599445a2a7b948d3456ec87dcac66c7e2b5754637f83294e1918bfcfa20"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.052.chunk",
+          "bytes": 1048576,
+          "sha256": "c68a783295b5d0d1452339c4b08c71e7367f56acdd632cb862c65f375e7f7eb2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.053.chunk",
+          "bytes": 1048576,
+          "sha256": "9eb209c69a544628d422cc1ec51ac61cf714ef01461516e94657ee3256187a08"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.054.chunk",
+          "bytes": 1048576,
+          "sha256": "64b834f3fa4d0f58df9b24513f8797ad8b42d0c27ab7ae861b5be09fb1bbec33"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.055.chunk",
+          "bytes": 1048576,
+          "sha256": "d99d5ecac1846292196826e1fd17b90bac71cfd6dfc7e30995b25775a0c0c101"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.056.chunk",
+          "bytes": 1048576,
+          "sha256": "d076eda189bd78fa93334c5567ff3b2529dc5673963baf4f5580c2f5d4c8afdf"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.057.chunk",
+          "bytes": 1048576,
+          "sha256": "a988b3a57a8644eaa61ed885811fc39fe43941a3b383dcc694c91365d40f5b89"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.058.chunk",
+          "bytes": 1048576,
+          "sha256": "bd9afcb9be34a2b5772f184040c2f53446a63bd736a359cb1238fd96271c6bc1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.059.chunk",
+          "bytes": 1048576,
+          "sha256": "51825038540f7c72e0d4ada049ef2f4351221dbf7277365eb7625879b8cdd1db"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.060.chunk",
+          "bytes": 1048576,
+          "sha256": "d8ff7aeea14fe40f226cdab841228f3fb9323375a9222ef7064f1eefc810bf3d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.061.chunk",
+          "bytes": 1048576,
+          "sha256": "a3d1cdb23f9fb86decae97ebc7c745fdc8010f7281235f93c1a049a4ef8dd0b6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.062.chunk",
+          "bytes": 1048576,
+          "sha256": "0d804e325f18f765e0a17b111df058f4e97a8070c8d37c69a4f7a642d5ea36fe"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.063.chunk",
+          "bytes": 1048576,
+          "sha256": "1ab0688bfde8aad37c6c984a0de445f42b666d6cd777b714bd5a7a7fa49ace96"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.064.chunk",
+          "bytes": 1048576,
+          "sha256": "0461abde566103c6e0bfc941f327bbb61fcc537e6169cc5756f1116a8cc32a25"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.065.chunk",
+          "bytes": 1048576,
+          "sha256": "2168a721546af83d4ca97727f767951d5d89ddc04bf4731c070f14f0fde97eed"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.066.chunk",
+          "bytes": 1048576,
+          "sha256": "f88eaabf9a19aee711e8e71eaaa9a34ff635526d70d82b476a92c5c752259552"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.067.chunk",
+          "bytes": 1048576,
+          "sha256": "9bc1ca80203c6e85488591db259e9c47871b39fe0724e8553e1d118542083bc9"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.068.chunk",
+          "bytes": 1048576,
+          "sha256": "6c9c658d394ce63fb0bf08e2e052bb72c9c290f2e13a7a8bd929e4a16700f9e9"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.069.chunk",
+          "bytes": 1048576,
+          "sha256": "68ae1f7c39f571dd3ba5c55dccc53fa9ab46af6afccbb44152e52cd9f3b1c31c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.070.chunk",
+          "bytes": 1048576,
+          "sha256": "8b6e38721f0dfda44320a4690963cefd5e08d664f37d29e4f225fdf76e9c9419"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.071.chunk",
+          "bytes": 1048576,
+          "sha256": "1d579242f8af162026e432595574bde22706b9f08f575a871445524a5c13c386"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.072.chunk",
+          "bytes": 1048576,
+          "sha256": "75cacb84f114f9c27ef55b4cb7f8b0b5ffff08ddab50c0e1c669b82cefa5610b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.073.chunk",
+          "bytes": 1048576,
+          "sha256": "7507615df0ee64d448b4d0e34f5944154a7ac96739a33ca31e52b5ffe7cad040"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.074.chunk",
+          "bytes": 1048576,
+          "sha256": "09897fc6156798b9d27d8b7af0ae683217d5a4ae5495a3f12bcd6e2266ef864e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.075.chunk",
+          "bytes": 1048576,
+          "sha256": "e4f289e1abe07ff3aa8cfd310a0a11d5bcc2e2c969c7e4ac497d9787eaa098c0"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.076.chunk",
+          "bytes": 1048576,
+          "sha256": "5721ab222c9a6a29fb10f3885065040538471a0bcfc9a444fe2b03abf938598b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.077.chunk",
+          "bytes": 1048576,
+          "sha256": "baf051cd93ba004c4483db29190f3753e290247684ff4194733b77b6e3cf73cb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.078.chunk",
+          "bytes": 1048576,
+          "sha256": "e364acf081c7d905e724d8fd5f9dae45bd6c5524d7697c44542dedaaa9db3ffd"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.079.chunk",
+          "bytes": 1048576,
+          "sha256": "4e1cc6e88ec24b2e5b2186f1dca0a2ecef5f853e11addaf3cdb5e6949f8cce5b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.080.chunk",
+          "bytes": 1048576,
+          "sha256": "f190a9efcbdbc1c6ba442bea608eea9886eae98b2f345c28c0faa342cccd6f83"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.081.chunk",
+          "bytes": 1048576,
+          "sha256": "712e677409b6fe1961e180c3b81a6db3453f25530137920eabc22b160a222740"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.082.chunk",
+          "bytes": 1048576,
+          "sha256": "3060ddfec9a858e74cf7fa113a9829e4bc955ec3d9d39f4440c2910673273a1e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.083.chunk",
+          "bytes": 1048576,
+          "sha256": "63ec622dfe8459567019ef1b346469fc80b980d67500c16845e039e08ecbfec6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.084.chunk",
+          "bytes": 1048576,
+          "sha256": "738b82c465435e82d4057b1bf4e509e7a8195080ac656e7c57bf4bef7f93dad2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.085.chunk",
+          "bytes": 1048576,
+          "sha256": "cb401471a226cbbe54e4298bc9af9f0f03967fa7432aa13fb77ae54f7a19efc5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.086.chunk",
+          "bytes": 1048576,
+          "sha256": "591318b0602f5ab6b33dea0868064010c926f84c46b1c54f572cfecd8c7fd266"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.087.chunk",
+          "bytes": 1048576,
+          "sha256": "66b48c7e83f112d832cc6311cfa384e063d8cea1394b9d9fd132d8b60eba3232"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.088.chunk",
+          "bytes": 1048576,
+          "sha256": "509c983225522de81b7d0b17a5d2c1f408ae94c16384407d7794716759e44613"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.089.chunk",
+          "bytes": 1048576,
+          "sha256": "54c28560334e21b72a50aec910912e00bca8c956d5b3302e96b28b51cd8ff58a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.090.chunk",
+          "bytes": 1048576,
+          "sha256": "d514257a55a8e17b94b34ab5baac785d7c603948ec19df8bd628731a89c18bcb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.091.chunk",
+          "bytes": 1048576,
+          "sha256": "ba38eaa5c984ac6e4b17f2e6180bf6d6a5cf28bb2f81f6c689c1add024bc6f5f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.092.chunk",
+          "bytes": 1048576,
+          "sha256": "0e519cc969213b5ec88701087d128022ef3fafae39c3044f8d8f203566064148"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.093.chunk",
+          "bytes": 1048576,
+          "sha256": "40b1e56df9d7e2f799c91dabfebd1a58ab629ebb9834c4201152975a21481ee1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.094.chunk",
+          "bytes": 1048576,
+          "sha256": "c8a5900c03773bdc1825e037155a1f0d79dae2e09dbc83511ace0ecae6184850"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.095.chunk",
+          "bytes": 1048576,
+          "sha256": "07464cb1b08e1ad7b67b9170f17c853d3f467e089a66206f7bb1e67237015337"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.096.chunk",
+          "bytes": 1048576,
+          "sha256": "d02ba0d2410e3044e4cc0bf4f3d3c692bede03b044f06583fcb4cff728946f18"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.097.chunk",
+          "bytes": 1048576,
+          "sha256": "d5d806d3f9b4dd4129ca269c0bcc600de2bb056363851ce0c70323674f912f99"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.098.chunk",
+          "bytes": 1048576,
+          "sha256": "8fda24ad6317b54ae64019ce1b9145b5ff5133105107a82cafcc0ccfa8ad2776"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.099.chunk",
+          "bytes": 1048576,
+          "sha256": "97b34c60b8212ce780e09847885b3518a90f7ab63b33f07becb83ef2a736c8f5"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.100.chunk",
+          "bytes": 1048576,
+          "sha256": "f0a9787d4a1d186caa7c44859134bc1a520ed67578df1bfc516c740e5b93ff4e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.101.chunk",
+          "bytes": 1048576,
+          "sha256": "23eaf0c3c590debef6da27d21da925f5bef7124f21a0ef527cfb8978f37aad9b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.102.chunk",
+          "bytes": 1048576,
+          "sha256": "b4eeb6e42fe76ac941c58c9668d7b6b38b351abdf18f137a72f364b957c9bbb6"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.103.chunk",
+          "bytes": 1048576,
+          "sha256": "6e60721cc509ae7413a5c477a0c53e4bc15bc7f612a1fbe457b3fe86f8f1599f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.104.chunk",
+          "bytes": 1048576,
+          "sha256": "a0c43a954c541cacd186bee209c320db8814e15c581e3e506dbdf4876064a49f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.105.chunk",
+          "bytes": 1048576,
+          "sha256": "c1eb68b14b372947b398995adbbff09514d4e9e0ffb2550323d4cdc22a7d0307"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.106.chunk",
+          "bytes": 1048576,
+          "sha256": "c0c5cc48431159fe5f6f29b6df94bb31b2c6a4f4c2d28dbbae2ca35b33785d09"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.107.chunk",
+          "bytes": 1048576,
+          "sha256": "5faec282aff39388ff8482c8f9df387c67bdf189c719b0c992837606e95907b4"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.108.chunk",
+          "bytes": 1048576,
+          "sha256": "a35f531971807ed4e633e3d182205c02cb2770b78d8ea97c2aa0b0d96cf3d533"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.109.chunk",
+          "bytes": 1048576,
+          "sha256": "cdd25c1243bba4be6289c80a164c4057814b1eb3de390e5efefa0b41756f724f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.110.chunk",
+          "bytes": 1048576,
+          "sha256": "d98f415af3a49d771ccff3e41e21890db5de3c116c69ff7225eaf865fb0d0e95"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.111.chunk",
+          "bytes": 1048576,
+          "sha256": "ba180d78cbed24c0231cccd1f6c617e648d61e5a311e8ecf897fca1a24cc4f08"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.112.chunk",
+          "bytes": 1048576,
+          "sha256": "a186bab03ee544000136e16925169e526cf27d8df3ee31e0291a9bda0eb1e042"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.113.chunk",
+          "bytes": 1048576,
+          "sha256": "ee76df982376439e684bbe691d2854973443de42d3fb5225d949783098578a80"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.114.chunk",
+          "bytes": 1048576,
+          "sha256": "5ee0b3d698f32cb637a1b5ccd7e6384f2e26b93f49e5a94d304243a6666b3d10"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.115.chunk",
+          "bytes": 1048576,
+          "sha256": "3a23dcb48ca6b0febbe2a6746540699a44b38321c60ffe37e58384a3467e59cf"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.116.chunk",
+          "bytes": 1048576,
+          "sha256": "e5b54a12661c0a6aa36f5210754f6570e4317e88594294f4d04eefeb1a3d843e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.117.chunk",
+          "bytes": 1048576,
+          "sha256": "3d2eb783b7f56560db1ab27539caa165e294a3e4b36557e254b852f20f5ea880"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.118.chunk",
+          "bytes": 1048576,
+          "sha256": "705b78517540fcaed9668c07fa9bd3c08aa5964327d0a7ac8d387c172a808257"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.119.chunk",
+          "bytes": 1048576,
+          "sha256": "bdeae2a11d071b26b81abaa148239930d81aa6c3e3a45aba8d612638f3cacb6a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.120.chunk",
+          "bytes": 1048576,
+          "sha256": "5a3c20504b118bb37f8b5b1a29d79cd0f11ab2a161981b3374f5860556ffe54d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.121.chunk",
+          "bytes": 1048576,
+          "sha256": "599f120f92f0a8fa9726a14aa3f4221faf315cd270414c689e55e50d4a9e6745"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.122.chunk",
+          "bytes": 1048576,
+          "sha256": "807ec117c8d29408bb7a570cb37c3421154593d8abf146f1f8c8c7e1bb1a12a8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.123.chunk",
+          "bytes": 1048576,
+          "sha256": "9e1ffbb33ffada7b8ffedcb4be5ab2fd8149cd1d739c05da1d136fc11fd8716b"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.124.chunk",
+          "bytes": 1048576,
+          "sha256": "acc7403042495f9e2aade95da7e8c3b5c17f3328e6a62324a1cfe006567a9780"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.125.chunk",
+          "bytes": 1048576,
+          "sha256": "cb09984dda5d7302c925f5948c42697964322825a8a69d1bf8ad111aa88d5879"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.126.chunk",
+          "bytes": 1048576,
+          "sha256": "9a98936c6cf64d51a499785234060eddaa95bf47ddafd956b172f47474c5a6f8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.127.chunk",
+          "bytes": 1048576,
+          "sha256": "b44fa696d8051c82ff05e870ebee77062a74b39ce724d7cfab01a88615405dac"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.128.chunk",
+          "bytes": 1048576,
+          "sha256": "62a1e299a8b267a00dd76a886e0dc04a09b186cd3dd20083d9a952912ea3cbb1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.129.chunk",
+          "bytes": 1048576,
+          "sha256": "136236def59267a1b10d01e7ee803c18f299b17d903cff76ab4e4d9802ff6c1f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.130.chunk",
+          "bytes": 1048576,
+          "sha256": "ef6b94a3c7a6384289617956a41540ad7f505c5020a41e96376b9eb858e670d8"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.131.chunk",
+          "bytes": 1048576,
+          "sha256": "9207073336f0d478b5d59d632dba728f8b0a2b60c7b2df4da5ff7db706b8718f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.132.chunk",
+          "bytes": 1048576,
+          "sha256": "559366fe4d099fe2a85a7943790ea3e0ae2c34c15bacdd80702f52366cfa2718"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.133.chunk",
+          "bytes": 1048576,
+          "sha256": "6b25fef85b367d7fc6f4fe0b6c2fbe6164b2dcf817acf60c36c6712279833d4c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.134.chunk",
+          "bytes": 1048576,
+          "sha256": "2402874c61cd73fadb23f8eb946be74ae0e1b547a78e8a14cfe674532bdf4663"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.135.chunk",
+          "bytes": 1048576,
+          "sha256": "4f5b74ba102f23facb1951a740685ff708d8ba278b401780449a1e6c9dbbd31d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.136.chunk",
+          "bytes": 1048576,
+          "sha256": "f24958b4a9a29851377883df2a0c60b7cf22f7a65c7e44d8851e08977cbbb0db"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.137.chunk",
+          "bytes": 1048576,
+          "sha256": "49493aacb97a4ab8b109017201c10eac6980052377ad5b36a34d49866a313666"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.138.chunk",
+          "bytes": 1048576,
+          "sha256": "1882a3ead7cfba4fe63cee59a544301b3a6dcbe36cad97f601f3efd36ad5bedb"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.139.chunk",
+          "bytes": 1048576,
+          "sha256": "dfec3a3fdd995cd598658a30690fc6f60cd3996a5d465f6b87c6a1b172183a22"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.140.chunk",
+          "bytes": 1048576,
+          "sha256": "8cd9a2bdf186584dac3c64a8479ae1f9cf7f8a0fa611408f4a0e355dfea0094c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.141.chunk",
+          "bytes": 1048576,
+          "sha256": "bf1743c21b2d34e13eca5c14693143c8da3ba55d6a0191094509c78133efa2ea"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.142.chunk",
+          "bytes": 1048576,
+          "sha256": "a08102526eb78920cacfcae8d58e4984dce5292c62209984e197b5ab8ac7f74c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.143.chunk",
+          "bytes": 1048576,
+          "sha256": "5598d15afffa384468aed9cef8d7a6c2e704694500f5ddc76f286a7110c9743a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.144.chunk",
+          "bytes": 1048576,
+          "sha256": "c9af5072abf4cb05733e12d6a07913caafbcf869a820adca4bff71a0ac80c9d2"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.145.chunk",
+          "bytes": 1048576,
+          "sha256": "3da33f8b68766069eef81f4f632367facaf295bfcc491ea72b44f338e081e209"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.146.chunk",
+          "bytes": 1048576,
+          "sha256": "3b44edf687ac470b45f931288a87934c62f8523621c2b494837d008859878d89"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.147.chunk",
+          "bytes": 1048576,
+          "sha256": "d1f0f08546466e95efae4917b7eff6c96a55f30cb27024efd5739141e2e8370f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.148.chunk",
+          "bytes": 1048576,
+          "sha256": "171cd14fd2665be454f297cf8af8e0ec2fd7c44d2e67eb5933c9cca3960cb41d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.149.chunk",
+          "bytes": 1048576,
+          "sha256": "20a082b97ffe38edbb800f1ffe7487d103c4fc5977e6c4da3f10481a12f91f34"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.150.chunk",
+          "bytes": 1048576,
+          "sha256": "438ef91a63744b83ed657e042c348f7eb4fefe74b3db0e60fb45caf7c2c9cf9d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.151.chunk",
+          "bytes": 1048576,
+          "sha256": "95cea2de07b3c9f33954ed2ec24c04245bb2857ba2de655c0a0c2f866d0fe7a1"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.152.chunk",
+          "bytes": 1048576,
+          "sha256": "002a19b4b77ebc57bd929a2e8ea787f6fefe433e7751f82e786f6460958cea33"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.153.chunk",
+          "bytes": 1048576,
+          "sha256": "532f657885af9aa4bba4ffed1b299653cdd5540b77bcdfe7b96a3775c2ed80c7"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.154.chunk",
+          "bytes": 1048576,
+          "sha256": "30172d4ee9ac1e54d26be2d79ab83fb2cd202ce51006d58e69aea4ba16789185"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.155.chunk",
+          "bytes": 1048576,
+          "sha256": "6452809823b4f626c396a94dbec5658585ef92677c303caf80b5a88bc2bc3bc7"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.156.chunk",
+          "bytes": 1048576,
+          "sha256": "c6dc0ae763c860facf1ff3f372551db553cec476ade6b6dcdda426dc9ab7b6cf"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.157.chunk",
+          "bytes": 1048576,
+          "sha256": "6a1f0b280ecdb4667d44cdb82acc15aaa413c0d44505dc0959046a11f5f6656a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.158.chunk",
+          "bytes": 1048576,
+          "sha256": "b6e16090c42d7e48ac61e23289d30014f80f70caf0a3a19246a54d34d589378c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.159.chunk",
+          "bytes": 1048576,
+          "sha256": "dd52da76715496d1923bcd254fe61ebafbf67cf8a084e0e0944b5e4ef52eaa14"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.160.chunk",
+          "bytes": 1048576,
+          "sha256": "79473f102a1a0d1d00cad5cfc5e637abefa3ec6fa08298adc34b9cb454d03667"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.161.chunk",
+          "bytes": 1048576,
+          "sha256": "d8ab37c882ae07791d8fc24f0b89ddacf3323cc7be090f8584fcd4bb83427030"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.162.chunk",
+          "bytes": 1048576,
+          "sha256": "121b47b0d97bf4001b5b73aea05c41686e0b5aab0648c6521a37dda44159806f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.163.chunk",
+          "bytes": 1048576,
+          "sha256": "a0abed1f2e96ac574c04deb8e321469e8f78172c21be4a516d694dbce3f80d61"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.164.chunk",
+          "bytes": 1048576,
+          "sha256": "a206d044347dbd51adf9b3473a0e4154fe4dbee1caabc058fc017eb0f6dd6a50"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.165.chunk",
+          "bytes": 1048576,
+          "sha256": "ea231ee09d45f5406415708eb492e09a486e11a5f8be0bd8e9fb7286b014b0ac"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.166.chunk",
+          "bytes": 1048576,
+          "sha256": "b11eb4485968a650e7d0d3c2bbc9e2cbb8a6c2f8f2963ab3aac2b605deec9369"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.167.chunk",
+          "bytes": 1048576,
+          "sha256": "34f575434aeeaabcb8972a892eaf190affd31e240118efae9cdaeccf74c5f673"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.168.chunk",
+          "bytes": 1048576,
+          "sha256": "0968f16deca833c5b42b3e594e6271b972287f9af58f173ea062a7e243f6465c"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.169.chunk",
+          "bytes": 1048576,
+          "sha256": "88d86c25f6c050d3ec3d61ae4fb8a638ff461066dbed42e9d94732731b77d4ab"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.170.chunk",
+          "bytes": 1048576,
+          "sha256": "bfd9ec5d0e133b59e66af06fda87f39976cf89af0b879fe6e38c9e642c9730af"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.171.chunk",
+          "bytes": 1048576,
+          "sha256": "69be7c5dff7f9f5f2d53a7ddbbff1da3d2b5868e49fbf6523fa49925ce83225e"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.172.chunk",
+          "bytes": 1048576,
+          "sha256": "efe929e656b1f7e07bf7f52c05f69914d6d8950a3cec290c77c32afc563df22d"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.173.chunk",
+          "bytes": 1048576,
+          "sha256": "5e4f9fe51f211b8e45b762b72280d1db68204b30d9ea1ed1e79259de5abb0d6f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.174.chunk",
+          "bytes": 1048576,
+          "sha256": "53df488720737ad271dea9141bcaf45f8c1ac286052bcae889c4eefe5611a892"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.175.chunk",
+          "bytes": 1048576,
+          "sha256": "f724658b15dc7589763c60842cd251f4a6b6282aff888e8f8eecbabcc32f434f"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.176.chunk",
+          "bytes": 1048576,
+          "sha256": "89cc2e00b79973b88ecffdf395c74defb19f3a418c2a3eafc05b0938e9710e03"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.177.chunk",
+          "bytes": 1048576,
+          "sha256": "05576fedd3d67a8b941ea8cf389a2ece75b71ea191a834116c3b3ae08959f05a"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.178.chunk",
+          "bytes": 1048576,
+          "sha256": "e694ebc4970c83d628a953bd0d6e0a04d5dade3de5caa42ca9e4652b0ce39aba"
+        },
+        {
+          "path": "datasets/indonesia/593ae2d95fdf/sources.179.chunk",
+          "bytes": 619458,
+          "sha256": "7036908a74eaca72b263588d58cf6d72a5858f247326103b6bcbabdddbb8abc8"
+        }
+      ]
+    }
+  ],
+  "storage": "repository-chunks"
+}

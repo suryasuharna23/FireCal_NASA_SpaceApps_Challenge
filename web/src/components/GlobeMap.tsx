@@ -1,4 +1,4 @@
-import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl';
+import type { GeoJSONSource, Map as MapLibreMap, StyleSpecification } from 'maplibre-gl';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef, useState } from 'react';
@@ -43,7 +43,28 @@ import { aoiForClick } from '../lib/regions';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
-const STYLE = import.meta.env.VITE_BASEMAP_STYLE || 'https://tiles.openfreemap.org/styles/dark';
+// NASA's cloud-free Blue Marble mosaic gives the globe natural land, ocean,
+// desert, and ice colours. Keep an optional style override for deployments.
+const EARTH_STYLE: StyleSpecification = {
+  version: 8,
+  sources: {
+    'blue-marble': {
+      type: 'raster',
+      tiles: [
+        'https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg',
+      ],
+      tileSize: 256,
+      maxzoom: 8,
+      attribution:
+        '<a href="https://earthobservatory.nasa.gov/features/BlueMarble">NASA Blue Marble</a>',
+    },
+  },
+  layers: [
+    { id: 'space', type: 'background', paint: { 'background-color': '#030914' } },
+    { id: 'blue-marble', type: 'raster', source: 'blue-marble' },
+  ],
+};
+const STYLE = import.meta.env.VITE_BASEMAP_STYLE || EARTH_STYLE;
 const EMPTY = { type: 'FeatureCollection' as const, features: [] };
 const DRAW_COLOR = '#ff7a3d';
 type Tool = 'polygon' | 'rectangle' | 'select' | 'static';
@@ -102,20 +123,13 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
 
     map.on('style.load', () => {
       map.setProjection({ type: 'globe' });
-      // Tint the dark basemap so oceans read as a blue planet from orbit.
-      for (const layer of map.getStyle().layers ?? []) {
-        if (layer.type === 'background')
-          map.setPaintProperty(layer.id, 'background-color', '#141a2b');
-        if (layer.type === 'fill' && layer.id.includes('water'))
-          map.setPaintProperty(layer.id, 'fill-color', '#0a1a3d');
-      }
       map.setSky({
-        'sky-color': '#060914',
-        'horizon-color': '#24407f',
-        'fog-color': '#0b1430',
-        'sky-horizon-blend': 0.6,
-        'horizon-fog-blend': 0.6,
-        'fog-ground-blend': 0.4,
+        'sky-color': '#020610',
+        'horizon-color': '#2d6695',
+        'fog-color': '#102b4a',
+        'sky-horizon-blend': 0.45,
+        'horizon-fog-blend': 0.5,
+        'fog-ground-blend': 0.25,
         'atmosphere-blend': ['interpolate', ['linear'], ['zoom'], 0, 1, 5, 1, 7, 0],
       });
     });

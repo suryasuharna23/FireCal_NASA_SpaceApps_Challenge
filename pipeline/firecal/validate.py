@@ -85,7 +85,7 @@ def plot(series: pd.DataFrame, path) -> None:
     ax1.plot(x, g.predicted, color="#1b9e77", label="VIIRS harmonized")
     step = max(1, len(x) // 8)
     ax1.set_xticks(x[::step], labels[::step], rotation=30, ha="right", fontsize=8)
-    ax1.set(ylabel="detections / month", title="Hold-out years: monthly global totals")
+    ax1.set(ylabel="detections / month", title="Hold-out years: monthly dataset totals")
     ax1.legend(fontsize=8)
     ax1.grid(alpha=0.3)
     hi = float(max(g.n_modis.max(), g.v_norm.max(), g.predicted.max(), 1)) * 1.05

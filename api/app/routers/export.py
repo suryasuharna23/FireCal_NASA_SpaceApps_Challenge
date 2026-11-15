@@ -33,12 +33,20 @@ class ExportRequest(SeriesRequest):
 def header(kind: str, aoi: Aoi, start: str, end: str, meta: dict, ref=None) -> str:
     lines = [
         f"# FireCal export: {kind}, {start} to {end}, AOI {aoi.area_km2:,.0f} km2",
-        "# Data: NASA FIRMS (Fire Information for Resource Management System), MODIS C6.1 "
+        "# Data: NASA FIRMS (Fire Information for Resource Management System), MODIS "
         "and VIIRS 375 m; https://firms.modaps.eosdis.nasa.gov",
         f"# Harmonized to MODIS-equivalent scale; data version {meta['data_version']}, "
         f"MODIS until {meta['transition_month']}",
         f"# Generated {datetime.now(UTC).isoformat(timespec='seconds')}",
     ]
+    if meta.get("dataset_status"):
+        country = (meta.get("coverage") or {}).get("country", "configured coverage")
+        lines.append(f"# Dataset status: {meta['dataset_status']}; coverage: {country}")
+    if meta.get("source_versions"):
+        versions = "; ".join(
+            f"{sensor}: {', '.join(codes)}" for sensor, codes in meta["source_versions"].items()
+        )
+        lines.append(f"# Reported source versions: {versions}")
     if ref:
         lines.insert(3, f"# Median/anomaly reference years: {ref[0]}-{ref[1]}")
     if kind == "points":

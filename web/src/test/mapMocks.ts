@@ -39,9 +39,14 @@ export class FakeMap {
   static last: FakeMap | null = null;
   handlers: Record<string, Handler[]> = {};
   sources: Record<string, { setData: (d: unknown) => void }> = {};
-  constructor() {
+  projection: unknown;
+  sky: unknown;
+  constructor(readonly options?: unknown) {
     FakeMap.last = this;
-    queueMicrotask(() => this.handlers.load?.forEach((h) => h()));
+    queueMicrotask(() => {
+      this.handlers['style.load']?.forEach((h) => h());
+      this.handlers.load?.forEach((h) => h());
+    });
   }
   on(event: string, handler: Handler) {
     (this.handlers[event] ??= []).push(handler);
@@ -77,8 +82,12 @@ export class FakeMap {
   fitBounds(b: unknown) {
     mapCalls.fitBounds.push(b);
   }
-  setProjection() {}
-  setSky() {}
+  setProjection(projection: unknown) {
+    this.projection = projection;
+  }
+  setSky(sky: unknown) {
+    this.sky = sky;
+  }
   getStyle() {
     return { layers: [] };
   }

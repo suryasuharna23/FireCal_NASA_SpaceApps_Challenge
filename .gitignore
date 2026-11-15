@@ -2,7 +2,9 @@
 data/raw/*
 data/interim/*
 data/processed/*
+data/live/
 !data/**/.gitkeep
+/SNAPSHOT-MANIFEST-*.json
 
 # --- Secrets ---
 .env

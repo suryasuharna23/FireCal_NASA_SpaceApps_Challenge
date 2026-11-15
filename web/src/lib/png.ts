@@ -3,7 +3,7 @@ import { FONT_BODY, FONT_DISPLAY, FONT_MONO, fontsReady } from './fonts';
 
 /** Pixel ratio of exported images (FR-W-18: at least 2x). */
 export const EXPORT_SCALE = 2;
-export const ATTRIBUTION = 'Data: NASA FIRMS (MODIS C6.1 & VIIRS 375 m) · FireCal';
+export const ATTRIBUTION = 'Data: NASA FIRMS (MODIS & VIIRS 375 m) · FireCal';
 
 const BG = '#0b1022';
 const FG = '#e8edff';

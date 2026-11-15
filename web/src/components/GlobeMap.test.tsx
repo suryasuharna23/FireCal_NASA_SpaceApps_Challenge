@@ -3,7 +3,7 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { checkAoi } from '../lib/aoi';
 import { cellsToGeoJSON, spinSpeed } from '../lib/globe';
 import { useAppStore } from '../state/useAppStore';
-import { FakeDraw, mapCalls } from '../test/mapMocks';
+import { FakeDraw, FakeMap, mapCalls } from '../test/mapMocks';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
 
@@ -65,6 +65,29 @@ describe('globe helpers', () => {
 });
 
 describe('GlobeMap', () => {
+  it('renders NASA Blue Marble imagery on a globe with an atmosphere', async () => {
+    renderWithQuery(<GlobeMap />);
+    await waitFor(() => expect(FakeMap.last?.projection).toEqual({ type: 'globe' }));
+
+    const style = (
+      FakeMap.last?.options as {
+        style: {
+          sources: Record<string, { tiles: string[] }>;
+          layers: { id: string; type: string; source?: string }[];
+        };
+      }
+    ).style;
+    expect(style.sources['blue-marble']?.tiles[0]).toContain(
+      'gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration',
+    );
+    expect(style.layers).toContainEqual({
+      id: 'blue-marble',
+      type: 'raster',
+      source: 'blue-marble',
+    });
+    expect(FakeMap.last?.sky).toMatchObject({ 'horizon-color': '#2d6695' });
+  });
+
   it('shows world hotspots of the latest month with a legend', async () => {
     renderWithQuery(<GlobeMap />);
     expect(await screen.findByText('November 2026')).toBeInTheDocument();

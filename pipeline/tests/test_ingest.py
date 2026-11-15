@@ -3,7 +3,7 @@ import json
 import duckdb
 import pandas as pd
 
-from firecal.ingest import detect_sensor, discover, ingest
+from firecal.ingest import detect_sensor, discover, ingest, normalize_sql
 
 
 def _read(paths, sensor: str) -> pd.DataFrame:
@@ -14,6 +14,30 @@ def _read(paths, sensor: str) -> pd.DataFrame:
 def test_detect_sensor_from_header() -> None:
     assert detect_sensor(["latitude", "longitude", "brightness", "bright_t31"]) == "MODIS"
     assert detect_sensor(["foo", "bar"]) is None
+
+
+def test_real_time_and_ultra_real_time_versions_remain_provisional():
+    frame = pd.DataFrame(
+        {
+            "latitude": [-2] * 4,
+            "longitude": [104] * 4,
+            "acq_date": ["2026-11-14"] * 4,
+            "acq_time": ["0130"] * 4,
+            "satellite": ["Terra"] * 4,
+            "version": ["6.1NRT", "6.1URT", "6.1RT", "61.03"],
+        }
+    )
+    with duckdb.connect() as con:
+        con.register("raw", frame)
+        rows = con.execute(
+            f"SELECT version, source FROM ({normalize_sql('MODIS', 'raw', frame.columns)})"
+        ).fetchall()
+    assert dict(rows) == {
+        "6.1NRT": "NRT",
+        "6.1URT": "NRT",
+        "6.1RT": "NRT",
+        "61.03": "SP",
+    }
 
 
 def test_discover_groups_modis_files(paths) -> None:
@@ -60,7 +84,7 @@ def test_viirs_ingest_keeps_satellite_and_normalizes_confidence(paths) -> None:
     assert viirs.years_match
     assert viirs.warnings == []
     df = _read(paths, "VIIRS")
-    assert set(df.satellite) == {"S-NPP", "NOAA-20"}  # NOAA-21 starts 2024
+    assert set(df.satellite) == {"S-NPP", "NOAA-20"}  # This fixture ends in 2020.
     assert set(df.confidence) <= {"low", "nominal", "high"}
     first = pd.to_datetime(df.groupby("satellite").acq_date.min())
     assert first["NOAA-20"] >= pd.Timestamp("2018-04-01")

@@ -3,6 +3,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from firecal.clean import CleanConfig
@@ -16,7 +17,7 @@ NATURAL_EARTH = "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/
 class PipelineSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    firms_map_key: str = ""
+    firms_map_key: str = Field(default="", repr=False)
     firms_api_base: str = "https://firms.modaps.eosdis.nasa.gov/api"
     data_root: Path = Path("data")
     coverage_bbox: str = "-180,-90,180,90"
