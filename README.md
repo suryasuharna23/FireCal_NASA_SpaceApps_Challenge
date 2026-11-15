@@ -8,6 +8,13 @@ The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireC
 
 ## Start with the real Indonesia data
 
+**One command on Windows:** run `.\run.ps1` from the repository folder.
+It installs missing project dependencies, starts the real-data API with automatic
+NASA catch-up, starts the website, and opens it. Keep the terminal open; Ctrl+C
+stops the services it started. Git, uv and Node.js must already be installed.
+
+The separate commands below are useful when developing individual services.
+
 The complete real Indonesia snapshot is included under
 `datasets/indonesia/593ae2d95fdf/` as checksum-verified binary pieces.
 A normal clone contains the data; `firecal bootstrap` assembles and installs it
