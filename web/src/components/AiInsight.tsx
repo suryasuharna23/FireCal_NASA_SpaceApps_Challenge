@@ -45,33 +45,21 @@ export function AiInsight() {
   return (
     <Panel title="AI insight" className="ai-insight">
       <div className="ai-insight__content">
-        <div>
-          <p className="muted">
-            Ask about the selected area’s satellite hotspot statistics, or leave this blank for a
-            short summary.
-          </p>
-          <label className="ai-insight__question">
-            Your question
-            <textarea
-              value={question}
-              onChange={(event) => setQuestion(event.target.value)}
-              maxLength={500}
-              rows={2}
-              disabled={loading}
-              placeholder="How does the latest month compare with the historical median?"
-            />
-          </label>
-          {current && (
-            <p className="ai-insight__text" aria-live="polite">
-              {current.text}
-            </p>
-          )}
-          {error && requestKey === key && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
-        </div>
+        <p className="muted">
+          Ask about the selected area’s satellite hotspot statistics, or leave this blank for a
+          short summary.
+        </p>
+        <label className="ai-insight__question">
+          Your question
+          <textarea
+            value={question}
+            onChange={(event) => setQuestion(event.target.value)}
+            maxLength={500}
+            rows={2}
+            disabled={loading}
+            placeholder="How does the latest month compare with the historical median?"
+          />
+        </label>
         <button
           className="btn btn--primary"
           type="button"
@@ -86,6 +74,16 @@ export function AiInsight() {
                 ? 'Ask FireCal'
                 : 'Generate insight'}
         </button>
+        {current && (
+          <p className="ai-insight__text" aria-live="polite">
+            {current.text}
+          </p>
+        )}
+        {error && requestKey === key && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
       </div>
       <p className="ai-insight__note">
         AI-generated interpretation · Source: NASA FIRMS / FireCal statistics

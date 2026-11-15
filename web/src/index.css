@@ -513,23 +513,24 @@ h3 {
 
 .ai-insight__content {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+  gap: 12px;
 }
 
-.ai-insight__content > div {
-  min-width: 0;
-  flex: 1;
+.ai-insight__content > p.muted {
+  margin: 0;
 }
+
 .ai-insight__question {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 12px;
+  width: 100%;
   font-size: 0.8rem;
   color: var(--muted);
 }
+
 .ai-insight__question textarea {
   width: 100%;
   min-height: 68px;
@@ -541,27 +542,26 @@ h3 {
   color: var(--fg);
   font: inherit;
 }
+
 .ai-insight__question textarea:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
+
 .ai-insight__content button {
   flex: 0 0 auto;
 }
+
 .ai-insight__text {
+  margin: 0;
   line-height: 1.65;
   max-width: 78ch;
 }
+
 .ai-insight__note {
   font-size: 0.78rem;
   opacity: 0.7;
   margin: 12px 0 0;
-}
-
-@media (max-width: 640px) {
-  .ai-insight__content {
-    flex-direction: column;
-  }
 }
 
 @media (min-width: 900px) {
@@ -1491,9 +1491,21 @@ h3 {
 /* ---------- summary cards ---------- */
 .kpis {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
   transition: opacity 0.2s;
+}
+
+@media (max-width: 900px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .kpis {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .kpis.is-stale {
@@ -1501,11 +1513,11 @@ h3 {
 }
 
 .kpi {
-  padding: 16px 18px;
-  border: 1.5px solid var(--fc-border-techno);
-  border-radius: 12px;
+  min-width: 0;
+  padding: 18px 20px;
+  border: 1px solid var(--fc-border-subtle);
+  border-radius: 14px;
   background: var(--fc-space-panel);
-  border-top: 3px solid var(--fc-border-techno);
   box-shadow: 0 4px 18px rgba(5, 5, 12, 0.4);
   transition: transform 0.15s ease, border-color 0.15s ease;
 }
@@ -1517,39 +1529,37 @@ h3 {
 
 .kpi h3 {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--fc-text-muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .kpi__value {
-  margin: 6px 0 2px;
+  margin: 8px 0 6px;
   font-family: var(--font-display);
-  font-size: 1.85rem;
+  font-size: clamp(1.45rem, 2.2vw, 1.95rem);
   font-weight: 700;
   line-height: 1.15;
   color: var(--fc-text-primary);
   font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
 }
 
 .kpi__sub {
-  margin: 0 0 4px;
-  font-size: 0.8rem;
+  margin: 0 0 6px;
+  font-size: 0.84rem;
+  line-height: 1.45;
   color: var(--fc-text-muted);
 }
 
 .kpi--current {
-  grid-column: 1 / -1;
-  border-top: 3px solid var(--fc-flare-orange);
+  border-color: rgba(255, 107, 26, 0.45);
 }
 
 .kpi--hot {
   border-color: rgba(255, 107, 26, 0.5);
-  border-top: 3px solid var(--fc-flare-orange);
-  background: linear-gradient(135deg, rgba(255, 107, 26, 0.15), var(--fc-space-panel) 65%);
+  background: linear-gradient(135deg, rgba(255, 107, 26, 0.14), var(--fc-space-panel) 65%);
 }
 
 .kpi--hot .kpi__value {
@@ -1558,8 +1568,7 @@ h3 {
 
 .kpi--cool {
   border-color: rgba(113, 179, 247, 0.45);
-  border-top: 3px solid var(--fc-space-atmosphere);
-  background: linear-gradient(135deg, rgba(113, 179, 247, 0.15), var(--fc-space-panel) 65%);
+  background: linear-gradient(135deg, rgba(113, 179, 247, 0.14), var(--fc-space-panel) 65%);
 }
 
 .kpi--cool .kpi__value {
