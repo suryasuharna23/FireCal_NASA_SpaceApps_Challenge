@@ -24,6 +24,11 @@ const GLOBE = {
     [113.25, -1.75, 20],
     [-60.25, -9.75, 10],
   ],
+  points: [
+    [102.69, -4.71, 1],
+    [113.18, -1.83, 1],
+    [-60.32, -9.68, 1],
+  ],
   data_version: 'abc123',
 };
 
@@ -156,6 +161,13 @@ describe('GlobeMap', () => {
         ),
       ).toBe(true),
     );
+    expect(
+      mapCalls.setData.some((data) =>
+        (data as { features?: { geometry: { coordinates: number[] } }[] }).features?.some(
+          (feature) => feature.geometry.coordinates[0] === 102.69,
+        ),
+      ),
+    ).toBe(true);
     expect(screen.getByRole('button', { name: 'Stop rotation' })).toHaveAttribute(
       'aria-pressed',
       'true',
@@ -174,6 +186,29 @@ describe('GlobeMap', () => {
       'aria-pressed',
       'true',
     );
+  });
+
+  it('uses the measured density grid when an hourly point sample is unavailable', async () => {
+    useAppStore.setState({ scope: 'global', aoi: null, mode: 'raw', mapDisplay: 'points' });
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { ...GLOBE, points: null, mode: 'raw' },
+      ...GLOBAL_REGION_ROUTES,
+    });
+    renderWithQuery(<GlobeMap />);
+    const heatmap = await screen.findByRole('button', { name: 'Heatmap' });
+    await waitFor(() => expect(heatmap).toHaveAttribute('aria-pressed', 'true'));
+    expect(screen.getByRole('button', { name: 'Points' })).toBeDisabled();
   });
 
   it('follows the month selected in the calendar', async () => {

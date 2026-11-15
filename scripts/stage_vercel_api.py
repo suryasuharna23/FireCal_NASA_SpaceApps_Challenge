@@ -85,6 +85,23 @@ def main() -> None:
             "*",
             "id",
         )
+        points = global_source / "points/**/*.parquet"
+        if not list((global_source / "points").glob("year=*/*.parquet")):
+            raise SystemExit(
+                "Worldwide raw observations are required to stage real point locations"
+            )
+        con.execute(
+            "COPY (WITH raw AS ("
+            "SELECT year, month, floor(longitude * 2) / 2 + 0.25 AS cell_lon, "
+            "floor(latitude * 2) / 2 + 0.25 AS cell_lat, longitude, latitude, "
+            "hash(longitude, latitude, acq_datetime, satellite) AS pick "
+            "FROM read_parquet(?, hive_partitioning=true)) "
+            "SELECT year,month,cell_lon,cell_lat,arg_min(longitude,pick) AS lon, "
+            "arg_min(latitude,pick) AS lat FROM raw GROUP BY year,month,cell_lon,cell_lat "
+            "ORDER BY year,month,cell_lon,cell_lat) TO ? "
+            "(FORMAT PARQUET, COMPRESSION ZSTD, COMPRESSION_LEVEL 19)",
+            [str(points), str(global_target / "representatives.parquet")],
+        )
         (target / "data/global/current.json").write_text(
             json.dumps({**global_record, "processed": "snapshot"}, indent=2) + "\n"
         )

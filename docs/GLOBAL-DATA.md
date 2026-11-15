@@ -40,11 +40,20 @@ The later dates use NRT. MODIS, NOAA-20, and NOAA-21 were available through 15 N
 this difference. Successful requests do not establish uninterrupted satellite
 observation coverage.
 
-The globe uses hourly counts on a 0.5-degree grid, summed for the selected period.
-If more than 5,000 occupied cells would be drawn, the API combines adjacent cells
-into larger cells until all occupied cells fit. The response gives the actual
-resolution; counts and regions are retained. Area detail queries read the saved
-points, independently of this globe display resolution.
+The globe heatmap uses hourly counts on a 0.5-degree grid, summed for the selected
+period. The interactive view requests up to 30,000 occupied cells; if more would be
+drawn, the API combines adjacent cells until they fit. The response gives the actual
+resolution, and all counts are retained. For monthly or yearly Points, the API shows
+one **observed** coordinate sampled from each occupied display cell. These are a
+sample of real detections, not every detection and not synthetic cell-centre points.
+Daily and hourly views show the measured heatmap because the compact production
+package has no time-specific raw point samples. Full local area detail queries read
+the saved raw points independently of this globe display resolution.
+
+The pinned worldwide data covers only 15 August–15 November 2026. Earlier worldwide
+years are unavailable in FireCal, not zero. Historical worldwide detections require
+a separate NASA FIRMS Archive acquisition and storage; the interface does not infer
+missing years from this snapshot.
 
 ## Installation and updates
 

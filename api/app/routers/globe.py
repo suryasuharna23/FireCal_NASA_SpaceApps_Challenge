@@ -26,6 +26,7 @@ def get_globe(
     hour: int | None = Query(None, ge=0, le=23),
     mode: Literal["harmonized", "raw"] = "harmonized",
     scope: Literal["indonesia", "global"] = "indonesia",
+    detail: Literal["standard", "fine"] = "standard",
     con=Depends(get_connection),
     ds: Dataset = Depends(get_dataset),
 ) -> dict[str, Any]:
@@ -39,7 +40,17 @@ def get_globe(
     if scope == "global":
         from app.global_view import global_globe
 
-        return global_globe(con, get_global_dataset(), year, month, period, day, hour, mode)
+        return global_globe(
+            con,
+            get_global_dataset(),
+            year,
+            month,
+            period,
+            day,
+            hour,
+            mode,
+            max_cells=30_000 if detail == "fine" else MAX_CELLS,
+        )
     meta = ds.meta(con)
     from datetime import date
 

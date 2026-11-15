@@ -80,8 +80,20 @@ export function TimeControls() {
       ) {
         const warm = future;
         void queryClient.prefetchQuery({
-          queryKey: ['/globe', warm, state.mode, state.scope],
-          queryFn: () => apiGet('/globe', { ...warm, mode: state.mode, scope: state.scope }),
+          queryKey: [
+            '/globe',
+            warm,
+            state.mode,
+            state.scope,
+            state.scope === 'global' ? 'fine' : 'standard',
+          ],
+          queryFn: () =>
+            apiGet('/globe', {
+              ...warm,
+              mode: state.mode,
+              scope: state.scope,
+              ...(state.scope === 'global' ? { detail: 'fine' } : {}),
+            }),
           staleTime: 30 * 60 * 1000,
         });
         if (

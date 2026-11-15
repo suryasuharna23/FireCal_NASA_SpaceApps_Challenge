@@ -142,6 +142,9 @@ export interface GlobeResponse {
   truncated: boolean;
   /** [lon, lat, value] triples on a 0.5° grid, strongest first. */
   cells: [number, number, number][];
+  /** Observed coordinates sampled from occupied cells; never synthetic cell centres. */
+  points?: [number, number, number][] | null;
+  points_note?: string | null;
   data_version: string | null;
 }
 
@@ -149,8 +152,14 @@ export interface GlobeResponse {
 export function useGlobe(ym: PlaybackFrame | null, mode: 'harmonized' | 'raw') {
   const scope = useAppStore((s) => s.scope);
   return useQuery({
-    queryKey: ['/globe', ym, mode, scope],
-    queryFn: () => apiGet<GlobeResponse>('/globe', { ...ym!, mode, scope }),
+    queryKey: ['/globe', ym, mode, scope, scope === 'global' ? 'fine' : 'standard'],
+    queryFn: () =>
+      apiGet<GlobeResponse>('/globe', {
+        ...ym!,
+        mode,
+        scope,
+        ...(scope === 'global' ? { detail: 'fine' } : {}),
+      }),
     enabled: ym !== null,
     staleTime: 30 * 60 * 1000,
   });

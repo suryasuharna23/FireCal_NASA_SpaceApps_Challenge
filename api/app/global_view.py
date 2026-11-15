@@ -29,7 +29,7 @@ def validate_global_period(meta, year, month, period, day=None, hour=None):
             raise RangeError("Hour is required for hourly view")
 
 
-def global_globe(con, ds: Dataset, year, month, period, day, hour, mode):
+def global_globe(con, ds: Dataset, year, month, period, day, hour, mode, max_cells=5000):
     if mode != "raw":
         raise RangeError("Global harmonization is unavailable; use raw NASA detection counts")
     meta = ds.meta(con)
@@ -52,7 +52,7 @@ def global_globe(con, ds: Dataset, year, month, period, day, hour, mode):
     ).fetchall()
     resolution = 0.5
     original_cells = len(rows)
-    while len(rows) > 5000:
+    while len(rows) > max_cells:
         resolution *= 2
         bins = defaultdict(int)
         for lon, lat, value in rows:
@@ -60,6 +60,44 @@ def global_globe(con, ds: Dataset, year, month, period, day, hour, mode):
             y = floor((lat + 90) / resolution) * resolution - 90 + resolution / 2
             bins[x, y] += value
         rows = sorted(((x, y, n) for (x, y), n in bins.items()), key=lambda r: (-r[2], r[0], r[1]))
+    representative_points = None
+    if period in ("year", "month"):
+        if ds.exists("representatives.parquet"):
+            representatives = ds.path("representatives.parquet")
+            reps = con.execute(
+                f"SELECT cell_lon,cell_lat,lon,lat FROM read_parquet('{representatives}') "
+                "WHERE year = ? AND (? = 0 OR month = ?) ORDER BY month,cell_lon,cell_lat",
+                [year, 0 if period == "year" else month, month],
+            ).fetchall()
+        elif ds.exists("points"):
+            # Full local installs retain all points; compact Vercel installs carry
+            # the verified representatives generated during staging instead.
+            reps = con.execute(
+                f"""WITH raw AS (
+                    SELECT floor(longitude * 2) / 2 + 0.25 AS cell_lon,
+                           floor(latitude * 2) / 2 + 0.25 AS cell_lat,
+                           longitude, latitude,
+                           hash(longitude, latitude, acq_datetime, satellite) AS pick
+                    FROM {ds.points_year(year)}
+                    WHERE ? = 0 OR month = ?
+                )
+                SELECT cell_lon,cell_lat,arg_min(longitude,pick),arg_min(latitude,pick)
+                FROM raw GROUP BY cell_lon,cell_lat ORDER BY cell_lon,cell_lat""",
+                [0 if period == "year" else month, month],
+            ).fetchall()
+        else:
+            reps = []
+        if reps:
+            locations = {}
+            for cell_lon, cell_lat, lon, lat in reps:
+                x = floor((cell_lon + 180) / resolution) * resolution - 180 + resolution / 2
+                y = floor((cell_lat + 90) / resolution) * resolution - 90 + resolution / 2
+                locations.setdefault((x, y), (lon, lat))
+            representative_points = [
+                [round(locations[(x, y)][0], 4), round(locations[(x, y)][1], 4), 1]
+                for x, y, _ in rows[:max_cells]
+                if (x, y) in locations
+            ]
     return {
         "scope": "global",
         "year": year,
@@ -75,8 +113,15 @@ def global_globe(con, ds: Dataset, year, month, period, day, hour, mode):
         "count": len(rows),
         "total": sum(r[2] for r in rows),
         "max": rows[0][2] if rows else 0,
-        "truncated": len(rows) > 5000,
-        "cells": [[lon, lat, value] for lon, lat, value in rows[:5000]],
+        "truncated": len(rows) > max_cells,
+        "cells": [[lon, lat, value] for lon, lat, value in rows[:max_cells]],
+        "points": representative_points,
+        "points_note": (
+            "Sample of observed detection locations; at most one per occupied grid cell. "
+            "Not the full set of detections."
+            if representative_points is not None
+            else None
+        ),
         "data_version": meta["data_version"],
         "start_date": meta["start_date"],
         "last_acq_date": meta["last_acq_date"],

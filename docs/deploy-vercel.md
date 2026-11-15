@@ -21,7 +21,7 @@ The source observations in `data/interim/` are deliberately ignored by Git. To p
 .venv/bin/python scripts/stage_vercel_api.py --global-globe
 ```
 
-The command prints a new `data/interim/vercel-api-stage-*` directory and its source size. It copies the Indonesia API data plus the pinned worldwide globe grid and country boundaries, then compacts the Parquet files to stay under the Vercel Hobby 100 MB source limit. Worldwide monthly, daily, and hourly globe points and heatmap are available in this package. Worldwide raw detection detail is too large for the API function; `/meta.global.points_available` reports `false`, and the interface says so. A full local bootstrap includes the raw detail. From the staged directory, link to the existing `firecal-nasa-api` project and deploy:
+The command prints a new `data/interim/vercel-api-stage-*` directory and its source size. It copies the Indonesia API data plus the pinned worldwide globe grid, observed monthly point samples, and country boundaries, then compacts the Parquet files to stay under the Vercel Hobby 100 MB source limit. Worldwide Points displays sampled real detection locations for month/year views; Heatmap displays measured grid counts for all supported periods. Worldwide raw detection detail is too large for the API function; `/meta.global.points_available` reports `false`, and the interface says so. A full local bootstrap includes the raw detail. From the staged directory, link to the existing `firecal-nasa-api` project and deploy:
 
 ```sh
 cd data/interim/vercel-api-stage-YYYYMMDD-HHMMSS

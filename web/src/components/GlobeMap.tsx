@@ -85,6 +85,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const playbackHour = useAppStore((s) => s.playbackHour);
   const frame = month ? frameFor(month, playbackPeriod, playbackDay, playbackHour) : null;
   const globe = useGlobe(meta?.status === 'ok' ? frame : null, mode);
+  const hasObservedGlobalPoints = scope !== 'global' || Boolean(globe.data?.points?.length);
   const pointsAvailable = scope !== 'global' || meta?.global?.points_available !== false;
   const canInspectAoi = aoi && aoi.areaKm2 <= (meta?.max_aoi_km2 ?? Infinity);
   const points = usePoints(canInspectAoi && pointsAvailable ? frame : null);
@@ -126,6 +127,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
 
     map.on('style.load', () => {
       map.addSource('hotspots', { type: 'geojson', data: EMPTY });
+      map.addSource('hotspots-density', { type: 'geojson', data: EMPTY });
       map.addLayer({
         id: 'hotspots-glow',
         type: 'circle',
@@ -153,7 +155,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       map.addLayer({
         id: 'hotspots-heatmap',
         type: 'heatmap',
-        source: 'hotspots',
+        source: 'hotspots-density',
         layout: { visibility: 'none' },
         paint: {
           'heatmap-weight': ['max', 0.05, ['get', 't']],
@@ -328,6 +330,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     if (!map || !ready) return;
     if (previousScope.current !== scope || globe.error) {
       (map.getSource('hotspots') as GeoJSONSource | undefined)?.setData(EMPTY);
+      (map.getSource('hotspots-density') as GeoJSONSource | undefined)?.setData(EMPTY);
       (map.getSource('points') as GeoJSONSource | undefined)?.setData(EMPTY);
       hasGlobeDataRef.current = false;
     }
@@ -338,10 +341,30 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const map = mapRef.current;
     if (!map || !ready || !globe.data) return;
     const source = map.getSource('hotspots') as GeoJSONSource | undefined;
-    const data = cellsToGeoJSON(globe.data.cells, globe.data.max);
+    const densitySource = map.getSource('hotspots-density') as GeoJSONSource | undefined;
+    const density = cellsToGeoJSON(globe.data.cells, globe.data.max);
+    const data =
+      scope === 'global'
+        ? globe.data.points?.length
+          ? cellsToGeoJSON(globe.data.points, 1)
+          : EMPTY
+        : density;
+    map.setPaintProperty(
+      'hotspots',
+      'circle-color',
+      scope === 'global' && globe.data.points?.length
+        ? '#ff7a3d'
+        : (intensityColorExpression() as never),
+    );
+    map.setPaintProperty(
+      'hotspots',
+      'circle-radius',
+      radiusExpression(scope === 'global' ? 0.45 : 1) as never,
+    );
     if (!hasGlobeDataRef.current) {
       hasGlobeDataRef.current = true;
       source?.setData(data);
+      densitySource?.setData(density);
       return;
     }
     map.setPaintProperty('hotspots', 'circle-opacity', 0);
@@ -350,6 +373,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     let restore: number | undefined;
     const swap = window.setTimeout(() => {
       source?.setData(data);
+      densitySource?.setData(density);
       restore = window.setTimeout(() => {
         map.setPaintProperty('hotspots', 'circle-opacity', detailedRef.current ? 0.25 : 0.95);
         map.setPaintProperty('hotspots-glow', 'circle-opacity', detailedRef.current ? 0.1 : 0.35);
@@ -360,7 +384,13 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       window.clearTimeout(swap);
       window.clearTimeout(restore);
     };
-  }, [globe.data, ready]);
+  }, [globe.data, ready, scope]);
+
+  useEffect(() => {
+    if (scope === 'global' && globe.data && !hasObservedGlobalPoints && mapDisplay === 'points') {
+      setMapDisplay('heatmap');
+    }
+  }, [scope, globe.data, hasObservedGlobalPoints, mapDisplay, setMapDisplay]);
 
   // --- raw points of the selected month (FR-W-15) ------------------------------------------
   useEffect(() => {
@@ -386,7 +416,11 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     if (!map || !ready) return;
     const heatmap = mapDisplay === 'heatmap';
     const detail = Boolean(aoi && points.data);
-    map.setLayoutProperty('hotspots-glow', 'visibility', heatmap ? 'none' : 'visible');
+    map.setLayoutProperty(
+      'hotspots-glow',
+      'visibility',
+      heatmap || scope === 'global' ? 'none' : 'visible',
+    );
     map.setLayoutProperty('hotspots', 'visibility', heatmap ? 'none' : 'visible');
     map.setLayoutProperty(
       'hotspots-heatmap',
@@ -395,7 +429,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     );
     map.setLayoutProperty('points', 'visibility', heatmap ? 'none' : 'visible');
     map.setLayoutProperty('points-heatmap', 'visibility', heatmap && detail ? 'visible' : 'none');
-  }, [mapDisplay, aoi, points.data, ready]);
+  }, [mapDisplay, aoi, points.data, ready, scope]);
 
   // --- Selected administrative boundary and framing ---------------------------------------
   useEffect(() => {
@@ -482,6 +516,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
                 type="button"
                 className="btn btn--small"
                 aria-pressed={mapDisplay === display}
+                disabled={display === 'points' && !hasObservedGlobalPoints && Boolean(globe.data)}
                 onClick={() => setMapDisplay(display)}
               >
                 {t(display === 'points' ? 'map.displayPoints' : 'map.displayHeatmap')}
@@ -498,30 +533,36 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
               {t('globe.legend')}
               {aoi && points.data ? ` · ${formatCount(points.data.count, lang)}` : ''}
             </summary>
-            <div
-              className="legend__bar"
-              style={{
-                background:
-                  mapDisplay === 'heatmap'
-                    ? 'linear-gradient(90deg, #37236b, #a12b83, #ed6925, #f7e225)'
-                    : gradient(countColor),
-              }}
-            />
-            <div className="legend__ticks">
-              <span>0</span>
-              <span>
-                {mapDisplay === 'heatmap'
-                  ? t('map.highDensity')
-                  : formatCount(globe.data?.max ?? 0, lang)}
-              </span>
-            </div>
-            <small>
-              {mapDisplay === 'heatmap'
-                ? t('map.relativeDensity')
-                : scope === 'global'
-                  ? `Detections per ${globe.data?.res ?? 0.5}° cell · selected ${playbackPeriod}`
-                  : t('globe.unit')}
-            </small>
+            {scope === 'global' && mapDisplay === 'points' ? (
+              <small>
+                {formatCount(globe.data?.points?.length ?? 0, lang)} observed locations shown. One
+                real detection sampled per occupied grid cell; the full detection count is in
+                Heatmap.
+              </small>
+            ) : (
+              <>
+                <div
+                  className="legend__bar"
+                  style={{
+                    background:
+                      mapDisplay === 'heatmap'
+                        ? 'linear-gradient(90deg, #37236b, #a12b83, #ed6925, #f7e225)'
+                        : gradient(countColor),
+                  }}
+                />
+                <div className="legend__ticks">
+                  <span>0</span>
+                  <span>
+                    {mapDisplay === 'heatmap'
+                      ? t('map.highDensity')
+                      : formatCount(globe.data?.max ?? 0, lang)}
+                  </span>
+                </div>
+                <small>
+                  {mapDisplay === 'heatmap' ? t('map.relativeDensity') : t('globe.unit')}
+                </small>
+              </>
+            )}
             {mapDisplay === 'heatmap' && <small>{t('map.heatmapHint')}</small>}
             {aoi && points.data && mapDisplay === 'points' && (
               <div className="points-legend">
@@ -590,8 +631,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       {scope === 'global' && (
         <p className="hint">
           Worldwide NASA observations · {meta?.global?.start_date} to {meta?.global?.last_acq_date}.{' '}
-          MODIS and all three VIIRS platforms. Counts are satellite detections; several satellites
-          may see the same fire.
+          Earlier worldwide years are not installed, so they are unavailable rather than zero. MODIS
+          and all three VIIRS platforms. Counts are satellite detections; several satellites may see
+          the same fire.
           {meta?.global?.lagging_sources?.map((s) => (
             <span key={s.source}>
               {' '}

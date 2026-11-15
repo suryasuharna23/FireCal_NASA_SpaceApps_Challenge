@@ -29,7 +29,7 @@ def global_data(tmp_path, monkeypatch, client):
     folder = root / "points/year=2026"
     folder.mkdir(parents=True)
     with duckdb.connect() as con:
-        con.execute(f"""COPY (SELECT -8::DOUBLE AS longitude,40::DOUBLE AS latitude,
+        con.execute(f"""COPY (SELECT -8::DOUBLE AS longitude,39.7::DOUBLE AS latitude,
             TIMESTAMP '2026-11-15 12:00:00' AS acq_datetime,11 AS month,
             'D' AS daynight,'nominal' AS confidence,5.0 AS frp,'VIIRS' AS sensor,
             'NOAA-20' AS satellite,'NRT' AS source,NULL::DOUBLE AS weight,72704 AS cell_id)
@@ -57,6 +57,10 @@ def test_global_globe_and_foreign_area_points_use_actual_world_dataset(client, g
     assert globe.status_code == 200
     assert globe.json()["total"] == 1
     assert globe.json()["data_version"] == "global-fixture"
+    monthly = client.get(
+        "/globe", params={"scope": "global", "mode": "raw", "year": 2026, "month": 11}
+    )
+    assert monthly.json()["points"] == [[-8.0, 39.7, 1]]
     body = {**params, "aoi": box(-9, 39, -7, 41)}
     points = client.post("/points", json=body)
     assert points.status_code == 200
@@ -149,3 +153,18 @@ def test_adaptive_globe_keeps_all_regions_and_all_counts(global_data):
         assert len(result["cells"]) <= 5000
         assert sum(row[2] for row in result["cells"]) == result["total"] == 10000
         assert result["truncated"] is False
+
+
+def test_fine_global_globe_keeps_original_half_degree_cells(client, global_data):
+    with duckdb.connect() as con:
+        p = global_data / "globe.parquet"
+        con.execute(f"""COPY (SELECT 2026 AS year,11 AS month,DATE '2026-11-15' AS acq_date,
+            12 AS hour,(x%720)*0.5-179.75 AS lon,floor(x/720)*0.5-89.75 AS lat,1 AS raw
+            FROM range(10000) t(x)) TO '{p.as_posix()}' (FORMAT parquet)""")
+    response = client.get(
+        "/globe",
+        params={"scope": "global", "mode": "raw", "year": 2026, "month": 11, "detail": "fine"},
+    )
+    assert response.status_code == 200
+    assert response.json()["res"] == 0.5
+    assert len(response.json()["cells"]) == 10000
