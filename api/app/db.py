@@ -168,8 +168,8 @@ def get_global_dataset() -> Dataset:
         ds = _datasets.setdefault(uri, Dataset(uri))
         if ds.meta().get("format") != "firecal-global-v1":
             raise ValueError("Unverified global data format")
-        if not ds.exists("points") or not ds.exists("globe.parquet"):
-            raise ValueError("Global observation files are missing")
+        if not ds.exists("globe.parquet"):
+            raise ValueError("Global globe summary is missing")
         return ds
     except (OSError, ValueError) as exc:
         raise DataUnavailableError(

@@ -47,6 +47,7 @@ export async function apiPost<T>(path: string, body: unknown, signal?: AbortSign
 export interface Meta {
   global?: {
     status: 'ok' | 'unavailable';
+    points_available?: boolean;
     detail?: string;
     data_version?: string;
     start_date?: string;

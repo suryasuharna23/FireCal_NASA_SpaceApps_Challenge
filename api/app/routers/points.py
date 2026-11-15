@@ -96,6 +96,8 @@ def post_points(
         from app.global_view import validate_global_period
 
         ds = get_global_dataset()
+        if not ds.exists("points"):
+            raise DataUnavailableError("Global point detail is unavailable in this deployment")
         validate_global_period(ds.meta(con), req.year, req.month, req.period, req.day, req.hour)
     meta = ds.meta(con)
     aoi = Aoi.from_geojson(req.aoi, settings.max_aoi_km2)

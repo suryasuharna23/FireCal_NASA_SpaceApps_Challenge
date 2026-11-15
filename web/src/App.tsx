@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useMeta } from './api/client';
 import { AnnualTotals } from './components/AnnualTotals';
 import { ExportPanel } from './components/ExportPanel';
 import { Calendar } from './components/Calendar';
@@ -24,6 +25,7 @@ export default function App() {
   const [page, setPage] = useState<Page>('app');
   const aoi = useAppStore((s) => s.aoi);
   const scope = useAppStore((s) => s.scope);
+  const globalPointsAvailable = useMeta().data?.global?.points_available !== false;
   useUrlSync();
   useDataVersionRefresh();
 
@@ -71,9 +73,13 @@ export default function App() {
               <div className="results__summary">
                 <h2>Worldwide observations · last three months</h2>
                 <p>
-                  Explore monthly, daily, or hourly detections on the globe. Select an area to
-                  inspect its points.
+                  Explore monthly, daily, or hourly detections on the globe.
+                  {aoi && ` Selected area: ${aoi.label}.`}
+                  {globalPointsAvailable && ' Select an area to inspect its points.'}
                 </p>
+                {!globalPointsAvailable && (
+                  <p>Detailed detection points are unavailable in this deployment.</p>
+                )}
                 <p>
                   The historical calendar and comparisons with earlier years are available in the
                   Indonesia view. No global historical comparison or sensor correction is available.

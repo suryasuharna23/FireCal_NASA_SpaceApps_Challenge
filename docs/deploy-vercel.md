@@ -17,10 +17,11 @@ Without `GEMINI_API_KEY`, the API falls back to Vercel's `x-vercel-oidc-token` r
 The source observations in `data/interim/` are deliberately ignored by Git. To publish a newer local snapshot, update `data/live/current.json` through the pipeline, then stage a copy:
 
 ```sh
-.venv/bin/python scripts/stage_vercel_api.py
+.venv/bin/firecal bootstrap --processed-only
+.venv/bin/python scripts/stage_vercel_api.py --global-globe
 ```
 
-The command prints a new `data/interim/vercel-api-stage-*` directory. It copies the API and processed dataset, then recompresses point partitions without dropping records so the CLI upload stays under the Vercel Hobby 100 MB source limit. From that directory, link to the existing `firecal-nasa-api` project and deploy:
+The command prints a new `data/interim/vercel-api-stage-*` directory and its source size. It copies the Indonesia API data plus the pinned worldwide globe grid and country boundaries, then compacts the Parquet files to stay under the Vercel Hobby 100 MB source limit. Worldwide monthly, daily, and hourly globe points and heatmap are available in this package. Worldwide raw detection detail is too large for the API function; `/meta.global.points_available` reports `false`, and the interface says so. A full local bootstrap includes the raw detail. From the staged directory, link to the existing `firecal-nasa-api` project and deploy:
 
 ```sh
 cd data/interim/vercel-api-stage-YYYYMMDD-HHMMSS

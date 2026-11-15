@@ -26,7 +26,12 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
     """
     settings = get_settings()
     try:
-        global_meta = {**get_global_dataset().meta(con), "status": "ok"}
+        global_ds = get_global_dataset()
+        global_meta = {
+            **global_ds.meta(con),
+            "status": "ok",
+            "points_available": global_ds.exists("points"),
+        }
         global_status = Path(settings.live_repo_root) / "data/global/status.json"
         if settings.live_auto_refresh and global_status.is_file():
             import json

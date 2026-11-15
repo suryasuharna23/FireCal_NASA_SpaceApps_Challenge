@@ -84,7 +84,8 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const playbackHour = useAppStore((s) => s.playbackHour);
   const frame = month ? frameFor(month, playbackPeriod, playbackDay, playbackHour) : null;
   const globe = useGlobe(meta?.status === 'ok' ? frame : null, mode);
-  const points = usePoints(aoi ? frame : null);
+  const pointsAvailable = scope !== 'global' || meta?.global?.points_available !== false;
+  const points = usePoints(aoi && pointsAvailable ? frame : null);
   const pointsColor = useAppStore((s) => s.pointsColor);
   const setPointsColor = useAppStore((s) => s.setPointsColor);
   const mapDisplay = useAppStore((s) => s.mapDisplay);
@@ -595,7 +596,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       )}
       <p id="globe-help" className="hint">
         {scope === 'global'
-          ? 'Drag to rotate and scroll to zoom. Use Area to inspect detections anywhere in the world.'
+          ? pointsAvailable
+            ? 'Drag to rotate and scroll to zoom. Use Area to inspect detections anywhere in the world.'
+            : 'Drag to rotate and scroll to zoom. Select a country to focus the globe; detailed detections are unavailable in this deployment.'
           : t('globe.help')}
       </p>
       {globe.error && (

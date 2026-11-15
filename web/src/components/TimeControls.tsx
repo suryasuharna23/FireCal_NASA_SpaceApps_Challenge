@@ -84,7 +84,12 @@ export function TimeControls() {
           queryFn: () => apiGet('/globe', { ...warm, mode: state.mode, scope: state.scope }),
           staleTime: 30 * 60 * 1000,
         });
-        if (k === 1 && state.aoi && warm.period !== 'year') {
+        if (
+          k === 1 &&
+          state.aoi &&
+          warm.period !== 'year' &&
+          (state.scope !== 'global' || allMeta?.global?.points_available !== false)
+        ) {
           const body = {
             aoi: state.aoi.geometry,
             ...warm,
@@ -99,7 +104,7 @@ export function TimeControls() {
       }
     }, STEP_MS);
     return () => window.clearInterval(id);
-  }, [playing, first, last, lastAcq, queryClient, scope]);
+  }, [playing, first, last, lastAcq, queryClient, scope, allMeta?.global?.points_available]);
 
   useEffect(() => {
     setPlaying(false);

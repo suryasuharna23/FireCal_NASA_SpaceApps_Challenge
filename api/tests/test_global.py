@@ -1,4 +1,5 @@
 import json
+import shutil
 
 import duckdb
 import pytest
@@ -90,6 +91,28 @@ def test_missing_global_data_fails_instead_of_showing_indonesia(client, tmp_path
         ).status_code
         == 503
     )
+    get_settings.cache_clear()
+
+
+def test_globe_only_deployment_exposes_coverage_without_point_detail(
+    client, global_data, tmp_path, monkeypatch, box
+):
+    from app.settings import get_settings
+
+    thin = tmp_path / "globe-only"
+    thin.mkdir()
+    for name in ("meta.json", "globe.parquet"):
+        shutil.copy2(global_data / name, thin / name)
+    monkeypatch.setenv("GLOBAL_DATA_URI", str(thin))
+    get_settings.cache_clear()
+    meta = client.get("/meta").json()["global"]
+    assert meta["status"] == "ok"
+    assert meta["points_available"] is False
+    params = {"scope": "global", "mode": "raw", "year": 2026, "month": 11}
+    assert client.get("/globe", params=params).json()["total"] == 1
+    detail = client.post("/points", json={**params, "aoi": box(-9, 39, -7, 41)})
+    assert detail.status_code == 503
+    assert "unavailable" in detail.json()["detail"]
     get_settings.cache_clear()
 
 
