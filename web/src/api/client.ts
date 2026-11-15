@@ -52,6 +52,13 @@ export interface Meta {
   max_aoi_km2: number;
   default_reference_years: [number, number];
   data_version: string | null;
+  live?: {
+    status: 'waiting' | 'updating' | 'updated' | 'up_to_date' | 'failed' | 'missing_key';
+    checked_at?: string;
+    requested_through?: string;
+    lagging_sources?: { source: string; available_through: string }[];
+    detail?: string;
+  } | null;
   last_updated?: string;
   last_acq_date?: string | null;
   start_month?: string;
@@ -90,5 +97,6 @@ export function useMeta() {
     queryKey: ['meta'],
     queryFn: () => apiGet<Meta>('/meta'),
     staleTime: 5 * 60 * 1000,
+    refetchInterval: 60 * 1000,
   });
 }

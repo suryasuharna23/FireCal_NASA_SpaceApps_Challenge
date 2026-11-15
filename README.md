@@ -6,7 +6,48 @@ FireCal is a web app that shows a monthly calendar of fire hotspot activity from
 
 The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireCal.pdf`](docs/FRD-Tickets-FireCal.pdf) (in Indonesian, the original project brief).
 
-## Architecture
+## Start with the real Indonesia data
+
+The app uses the real Indonesia snapshot and can fetch newer NASA observations.
+The verified snapshot ZIPs must be in `Downloads` or `data/interim/share`; bootstrap
+installs them automatically. Dataset hashes are tracked in `datasets/indonesia/593ae2d95fdf/`.
+The bulk archives are local: GitHub uploads were unsuccessful, not completed.
+
+From the repository root:
+
+```powershell
+uv sync --all-packages --locked --python 3.12
+uv run firecal bootstrap
+uv run firecal serve
+```
+
+`serve` starts the API on `http://localhost:8000`, checks NASA immediately, and
+checks again hourly while the server runs. To enable new downloads, set
+`FIRMS_MAP_KEY` in the root `.env` file. Without a key, the saved snapshot still
+works. Keep that key out of Git and out of `web/.env`.
+
+In another terminal, start the browser interface:
+
+```powershell
+npm.cmd exec --yes --package=pnpm@10.33.2 -- pnpm --dir web install --frozen-lockfile
+npm.cmd exec --yes --package=pnpm@10.33.2 -- pnpm --dir web dev
+```
+
+Open `http://localhost:5173`. The status bar shows the latest detection date,
+NASA check time, provisional status, and lagging platforms. Observations follow
+NASA's UTC product availability; this is near-real-time, not instantaneous data.
+
+For a single catch-up without starting the API:
+
+```powershell
+uv run firecal live-update --plan-only
+uv run firecal live-update
+```
+
+The frozen audit snapshot stays unchanged. New observations are published in
+separate complete versions under `data/live/`. See [the live-data guide](docs/LIVE-DATA.md).
+
+## System architecture
 
 ```
 NASA FIRMS ──► pipeline (ingest → clean → grid → harmonize → validate) ──► Parquet

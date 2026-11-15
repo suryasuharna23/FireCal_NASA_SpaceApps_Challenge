@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends
@@ -24,11 +25,22 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
     web app shows a warning. Without processed data ``status`` is ``no_data``.
     """
     settings = get_settings()
+    live_status = None
+    if settings.live_auto_refresh:
+        import json
+
+        try:
+            live_status = json.loads(
+                (Path(settings.live_repo_root) / "data/live/status.json").read_text()
+            )
+        except (OSError, ValueError):
+            live_status = {"status": "waiting"}
     base: dict[str, Any] = {
         "api_version": __version__,
         "attribution": ATTRIBUTION,
         "max_aoi_km2": settings.max_aoi_km2,
         "default_reference_years": list(settings.default_reference_years),
+        "live": live_status,
     }
     try:
         meta = ds.meta(con)

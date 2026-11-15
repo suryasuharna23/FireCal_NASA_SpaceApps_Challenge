@@ -2,7 +2,7 @@
 
 from functools import lru_cache
 
-from pydantic import SecretStr
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,6 +20,9 @@ class ApiSettings(BaseSettings):
     cache_ttl_seconds: int = 900
     max_points: int = 50_000
     log_level: str = "info"
+    live_auto_refresh: bool = False
+    live_refresh_seconds: int = Field(3600, ge=60)
+    live_repo_root: str = "."
 
     @property
     def cors_origin_list(self) -> list[str]:

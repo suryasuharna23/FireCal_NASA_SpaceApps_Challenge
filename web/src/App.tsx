@@ -15,6 +15,7 @@ import { Methodology } from './components/Methodology';
 import { ShareButton } from './components/ShareButton';
 import { useT } from './i18n';
 import { useUrlSync } from './state/useUrlSync';
+import { useDataVersionRefresh } from './state/useDataVersionRefresh';
 
 type Page = 'app' | 'methodology';
 
@@ -22,6 +23,7 @@ export default function App() {
   const { t } = useT();
   const [page, setPage] = useState<Page>('app');
   useUrlSync();
+  useDataVersionRefresh();
 
   return (
     <div className="app">

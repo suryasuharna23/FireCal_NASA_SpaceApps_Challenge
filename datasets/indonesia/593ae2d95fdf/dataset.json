@@ -1,0 +1,29 @@
+{
+  "data_version": "593ae2d95fdf",
+  "country": "Indonesia",
+  "snapshot_end": "2026-11-14",
+  "retained_points": 7716551,
+  "bbox": [
+    94,
+    -12,
+    142,
+    7
+  ],
+  "processed": "data/interim/indonesia-extended-20261114/processed",
+  "acquisition": "data/interim/api-acquisition",
+  "assets": [
+    {
+      "kind": "processed",
+      "file": "firecal-indonesia-593ae2d95fdf-processed.zip",
+      "bytes": 106674802,
+      "sha256": "3aa2f6678bf2413f48f75fd346eb7eadd5101fbd619afa6526bc4b9d0a835174"
+    },
+    {
+      "kind": "sources",
+      "file": "firecal-indonesia-593ae2d95fdf-sources.zip",
+      "bytes": 187265986,
+      "sha256": "0090148ad696dda124d20e5d7e09210abdc6d629e3eb259096148f97968f54ae"
+    }
+  ],
+  "storage": "verified-local-archives"
+}

@@ -306,5 +306,54 @@ def run() -> None:
     validate()
 
 
+@app.command()
+def bootstrap(
+    processed_only: bool = typer.Option(False, help="Install only processed data."),
+) -> None:
+    """Assemble and verify the Indonesia dataset included in the repository."""
+    import json
+
+    from firecal.bundles import install_snapshot
+
+    typer.echo(json.dumps(install_snapshot(Path.cwd(), processed_only=processed_only), indent=2))
+
+
+@app.command("live-update")
+def live_update(
+    plan_only: bool = typer.Option(False, help="Show available catch-up requests only."),
+) -> None:
+    """Catch up every missing date to NASA's latest UTC availability."""
+    import json
+
+    from firecal.live import refresh
+
+    settings = get_settings()
+    with FirmsClient(settings.firms_map_key, settings.firms_api_base, allow_mirror=False) as client:
+        result = refresh(Path.cwd(), client, plan_only=plan_only)
+    typer.echo(json.dumps(result, indent=2))
+
+
+@app.command()
+def serve(host: str = "127.0.0.1", port: int = 8000, refresh_seconds: int = 3600) -> None:
+    """Install repository data and serve it with hourly NASA catch-up in the background."""
+    import os
+
+    import uvicorn
+
+    from firecal.bundles import install_snapshot
+    from firecal.live import seed_pointer
+
+    if refresh_seconds < 60:
+        raise typer.BadParameter("Refresh interval must be at least 60 seconds")
+    root = Path.cwd().resolve()
+    install_snapshot(root)
+    seed_pointer(root, root / "data/live")
+    os.environ["DATA_URI"] = str(root / "data/live/current.json")
+    os.environ["LIVE_AUTO_REFRESH"] = "true"
+    os.environ["LIVE_REFRESH_SECONDS"] = str(refresh_seconds)
+    os.environ["LIVE_REPO_ROOT"] = str(root)
+    uvicorn.run("app.main:app", host=host, port=port)
+
+
 if __name__ == "__main__":
     app()

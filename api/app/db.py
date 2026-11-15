@@ -101,7 +101,18 @@ _datasets: dict[str, Dataset] = {}
 
 def get_dataset() -> Dataset:
     uri = get_settings().data_uri
+    if "://" not in uri and uri.endswith(".json"):
+        from firecal.live import resolve_pointer
+
+        try:
+            uri = resolve_pointer(Path(uri)).as_posix()
+        except (ValueError, OSError) as exc:
+            raise DataUnavailableError(
+                "Live dataset is unavailable; run 'firecal bootstrap'"
+            ) from exc
     if uri not in _datasets:
+        if len(_datasets) >= 8:
+            _datasets.pop(next(iter(_datasets)))
         _datasets[uri] = Dataset(uri)
     return _datasets[uri]
 

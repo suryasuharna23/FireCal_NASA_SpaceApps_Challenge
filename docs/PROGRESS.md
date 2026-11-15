@@ -1,5 +1,26 @@
 # FireCal progress - 14 November 2026
 
+## App integration and cleanup - 15 November 2026
+
+The local app uses the real snapshot and its separately updated live version.
+A verified NASA catch-up published version `66c6ba8829e1`, containing 7,717,322
+retained detections through November 15. The frozen audit input was unchanged.
+`firecal serve` selects the live pointer, performs startup/hourly catch-up,
+and the frontend displays freshness/source lag and refreshes changed results.
+
+The failed large-upload packaging and six temporary transfer branches have been
+removed. The large ZIPs are still local, not uploaded to GitHub. The app's
+bootstrap reads the verified supplied ZIPs from Downloads or data/interim/share.
+No LFS budget, release upload, or temporary transfer branches are required to run
+this local app. A new computer still needs the supplied archives.
+
+Validation: the complete Python run passed 172 tests; the subsequently added
+snapshot-overlap guard and current bootstrap/API checks also passed focused runs.
+All 90 frontend tests, lint/format/typecheck/build and six browser tests passed.
+The actual live-pointer API/calendar/CSV and unchanged-coefficient checks passed.
+A later NASA ConnectTimeout correctly retained the last complete real dataset.
+The API key is only in ignored local .env, never committed.
+
 ## Current status: real-data diagnostic audit completed
 
 The supplied processed and sources ZIPs are now on the faiz computer. Origin was

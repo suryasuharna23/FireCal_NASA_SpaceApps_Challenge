@@ -51,6 +51,24 @@ export function StatusBar() {
       {data.nrt && !data.nrt.ok && (
         <span className="badge badge--error">{t('status.firmsFailed')}</span>
       )}
+      {data.live?.checked_at && (
+        <span className="status__muted">
+          NASA checked {new Date(data.live.checked_at).toLocaleString(lang)}
+        </span>
+      )}
+      {data.live?.status === 'updating' && <span>Checking newer NASA observations…</span>}
+      {data.live?.status === 'missing_key' && (
+        <span>Showing saved snapshot · live updates unavailable</span>
+      )}
+      {data.live?.status === 'failed' && (
+        <span className="badge badge--error">Update failed · showing last complete dataset</span>
+      )}
+      {data.live?.lagging_sources?.map((source) => (
+        <span className="badge badge--warn" key={source.source}>
+          {source.source.replace('VIIRS_', '').replace('_NRT', '')} available through{' '}
+          {source.available_through}
+        </span>
+      ))}
     </div>
   );
 }
