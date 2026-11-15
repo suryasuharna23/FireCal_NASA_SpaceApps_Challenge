@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { decodeState, encodeState } from '../lib/urlState';
+import { loadRegionAoi } from '../lib/regions';
 import { useAppStore } from './useAppStore';
 
 /** Current shareable URL for the app state. */
@@ -25,9 +26,26 @@ export function useUrlSync() {
         if (next !== window.location.href) window.history.replaceState(null, '', next);
       }, 150);
     };
-    write();
-    const unsubscribe = useAppStore.subscribe(write);
+    const regionId = new URLSearchParams(window.location.search).get('region');
+    let cancelled = false;
+    let unsubscribe = () => {};
+    const startSync = () => {
+      if (cancelled) return;
+      write();
+      unsubscribe = useAppStore.subscribe(write);
+    };
+    if (regionId) {
+      void loadRegionAoi(regionId)
+        .then((aoi) => {
+          if (!cancelled) useAppStore.setState({ aoi });
+        })
+        .catch(() => {})
+        .finally(startSync);
+    } else {
+      startSync();
+    }
     return () => {
+      cancelled = true;
       unsubscribe();
       window.clearTimeout(timer);
     };

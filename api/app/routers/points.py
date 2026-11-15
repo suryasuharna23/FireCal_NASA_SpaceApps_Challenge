@@ -1,4 +1,6 @@
 from typing import Any
+from datetime import date
+from typing import Literal
 
 import numpy as np
 import pandas as pd
@@ -23,21 +25,32 @@ POINT_COLUMNS = (
 class PointsRequest(AoiRequest):
     year: int
     month: int = Field(..., ge=1, le=12)
+    period: Literal["month", "day", "hour"] = "month"
+    day: int | None = Field(None, ge=1, le=31)
+    hour: int | None = Field(None, ge=0, le=23)
     limit: int | None = Field(
         None, ge=1, description="Max points before switching to a grid (default MAX_POINTS)"
     )
 
 
 def aoi_points(
-    con, ds: Dataset, aoi: Aoi, year: int, month: int, columns: str = POINT_COLUMNS
+    con, ds: Dataset, aoi: Aoi, year: int, month: int, columns: str = POINT_COLUMNS,
+    day: int | None = None, hour: int | None = None,
 ) -> pd.DataFrame:
     """Raw points of one month inside the AOI polygon."""
     minx, miny, maxx, maxy = aoi.geometry.bounds
+    filters = " AND day(acq_datetime) = ?" if day is not None else ""
+    filters += " AND hour(acq_datetime) = ?" if hour is not None else ""
+    args = [month, minx, maxx, miny, maxy]
+    if day is not None:
+        args.append(day)
+    if hour is not None:
+        args.append(hour)
     try:
         df = con.execute(
             f"""SELECT {columns} FROM {ds.points_year(year)}
-                WHERE month = ? AND longitude BETWEEN ? AND ? AND latitude BETWEEN ? AND ?""",
-            [month, minx, maxx, miny, maxy],
+                WHERE month = ? AND longitude BETWEEN ? AND ? AND latitude BETWEEN ? AND ? {filters}""",
+            args,
         ).df()
     except Exception as exc:  # missing partition -> no detections that year
         if "No files found" in str(exc):
@@ -74,12 +87,28 @@ def post_points(
         raise RangeError(
             f"Month is outside the available data ({meta['start_month']} – {meta['end_month']})"
         )
+    if req.period in ("day", "hour"):
+        if req.day is None:
+            raise RangeError("Day is required for daily and hourly views")
+        try:
+            chosen_date = date(req.year, req.month, req.day)
+        except ValueError as exc:
+            raise RangeError("Invalid date") from exc
+        if meta.get("last_acq_date") and chosen_date > date.fromisoformat(meta["last_acq_date"]):
+            raise RangeError("Date is after the latest acquisition")
+        if req.period == "hour" and req.hour is None:
+            raise RangeError("Hour is required for hourly view")
     limit = min(req.limit or settings.max_points, settings.max_points)
-    df = aoi_points(con, ds, aoi, req.year, req.month)
+    df = aoi_points(con, ds, aoi, req.year, req.month,
+                    day=req.day if req.period != "month" else None,
+                    hour=req.hour if req.period == "hour" else None)
     base = {
         "type": "FeatureCollection",
         "year": req.year,
         "month": req.month,
+        "period": req.period,
+        "day": req.day if req.period != "month" else None,
+        "hour": req.hour if req.period == "hour" else None,
         "count": len(df),
         "attribution": "NASA FIRMS",
     }

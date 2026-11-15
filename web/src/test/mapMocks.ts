@@ -8,13 +8,17 @@ export const mapCalls: {
   fitBounds: unknown[];
   setData: unknown[];
   paint: [string, string, unknown][];
+  layout: [string, string, unknown][];
+  layers: unknown[];
   popups: string[];
   /** Features returned by queryRenderedFeatures (simulates clicking a rendered point). */
-  hits: { geometry: unknown; properties: Record<string, unknown> }[];
+  hits: { geometry: unknown; properties: Record<string, unknown>; layer?: { id: string } }[];
 } = {
   fitBounds: [],
   setData: [],
   paint: [],
+  layout: [],
+  layers: [],
   popups: [],
   hits: [],
 };
@@ -67,17 +71,21 @@ export class FakeMap {
   getSource(id: string) {
     return this.sources[id];
   }
-  addLayer() {}
+  addLayer(layer: unknown) {
+    mapCalls.layers.push(layer);
+  }
   getLayer() {
     return undefined;
   }
   removeLayer() {}
-  setLayoutProperty() {}
+  setLayoutProperty(layer: string, prop: string, value: unknown) {
+    mapCalls.layout.push([layer, prop, value]);
+  }
   setPaintProperty(layer: string, prop: string, value: unknown) {
     mapCalls.paint.push([layer, prop, value]);
   }
-  queryRenderedFeatures() {
-    return mapCalls.hits;
+  queryRenderedFeatures(_point?: unknown, options?: { layers?: string[] }) {
+    return mapCalls.hits.filter((hit) => !hit.layer || options?.layers?.includes(hit.layer.id));
   }
   fitBounds(b: unknown) {
     mapCalls.fitBounds.push(b);
@@ -96,6 +104,9 @@ export class FakeMap {
   }
   getCenter() {
     return { lng: 0, lat: 0 };
+  }
+  project() {
+    return { x: 0, y: 0 };
   }
   setCenter() {}
   isMoving() {

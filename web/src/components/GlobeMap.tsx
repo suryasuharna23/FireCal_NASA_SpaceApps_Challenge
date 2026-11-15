@@ -2,14 +2,6 @@ import type { GeoJSONSource, Map as MapLibreMap, StyleSpecification } from 'mapl
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef, useState } from 'react';
-import {
-  TerraDraw,
-  TerraDrawPolygonMode,
-  TerraDrawRectangleMode,
-  TerraDrawSelectMode,
-  type GeoJSONStoreFeatures,
-} from 'terra-draw';
-import { TerraDrawMapLibreGLAdapter } from 'terra-draw-maplibre-gl-adapter';
 import { useMeta } from '../api/client';
 import { useGlobe, usePoints } from '../api/queries';
 import {
@@ -20,14 +12,7 @@ import {
   SENSOR_COLORS,
 } from '../lib/points';
 import { useT } from '../i18n';
-import {
-  aoiBbox,
-  checkAoi,
-  DEFAULT_MAX_AOI_KM2,
-  formatKm2,
-  toFeature,
-  type AoiGeometry,
-} from '../lib/aoi';
+import { aoiBbox, outsideAoiMask, toFeature } from '../lib/aoi';
 import { countColor, formatCount, gradient } from '../lib/colors';
 import {
   cellsToGeoJSON,
@@ -37,9 +22,10 @@ import {
   spinSpeed,
 } from '../lib/globe';
 import { monthNames } from '../lib/months';
+import { frameFor } from '../lib/playback';
 import { useAppStore } from '../state/useAppStore';
 import { useGlobeMonth } from '../state/useGlobeMonth';
-import { aoiForClick } from '../lib/regions';
+import { loadIndonesiaBoundaries, regionFeatureAoi } from '../lib/regions';
 import { TimeControls } from './TimeControls';
 import { Panel } from './Panel';
 
@@ -66,24 +52,20 @@ const EARTH_STYLE: StyleSpecification = {
 };
 const STYLE = import.meta.env.VITE_BASEMAP_STYLE || EARTH_STYLE;
 const EMPTY = { type: 'FeatureCollection' as const, features: [] };
-const DRAW_COLOR = '#ff7a3d';
-type Tool = 'polygon' | 'rectangle' | 'select' | 'static';
+const SHADOW_COLOR = '#020611';
 
 /**
  * Interactive 3D globe (MapLibre globe projection) that is also the AOI map
- * (FR-W-01, FR-W-23): world hotspots for one month, drag to rotate, scroll/pinch to
- * zoom from orbit down to province level, and polygon/rectangle drawing.
+ * (FR-W-23): monthly hotspot cells, province boundaries, drag to rotate and zoom.
  */
 export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const { t, lang } = useT();
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const drawRef = useRef<TerraDraw | null>(null);
-  const drawnId = useRef<string | number | null>(null);
-  const toolRef = useRef<Tool>('static');
+  const regionAoisRef = useRef(new Map<string, ReturnType<typeof regionFeatureAoi>>());
+  const hasGlobeDataRef = useRef(false);
+  const detailedRef = useRef(false);
   const [ready, setReady] = useState(false);
-  const [tool, setTool] = useState<Tool>('static');
-  const [error, setError] = useState<string | null>(null);
   const [spinning, setSpinning] = useState(() => !prefersReducedMotion());
   // The legend starts folded on phones so it does not cover the globe.
   const [legendOpen, setLegendOpen] = useState(
@@ -94,15 +76,18 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const setAoi = useAppStore((s) => s.setAoi);
   const mode = useAppStore((s) => s.mode);
   const meta = useMeta().data;
-  const maxKm2 = meta?.max_aoi_km2 ?? DEFAULT_MAX_AOI_KM2;
   const month = useGlobeMonth();
-  const globe = useGlobe(meta?.status === 'ok' ? month : null, mode);
-  const points = usePoints(aoi ? month : null);
+  const playbackPeriod = useAppStore((s) => s.playbackPeriod);
+  const playbackDay = useAppStore((s) => s.playbackDay);
+  const playbackHour = useAppStore((s) => s.playbackHour);
+  const frame = month ? frameFor(month, playbackPeriod, playbackDay, playbackHour) : null;
+  const globe = useGlobe(meta?.status === 'ok' ? frame : null, mode);
+  const points = usePoints(aoi ? frame : null);
   const pointsColor = useAppStore((s) => s.pointsColor);
   const setPointsColor = useAppStore((s) => s.setPointsColor);
-  const maxRef = useRef(maxKm2);
+  const mapDisplay = useAppStore((s) => s.mapDisplay);
+  const setMapDisplay = useAppStore((s) => s.setMapDisplay);
   const tRef = useRef(t);
-  maxRef.current = maxKm2;
   tRef.current = t;
 
   // --- map + draw setup -------------------------------------------------------------
@@ -145,6 +130,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           'circle-color': intensityColorExpression() as never,
           'circle-blur': 1,
           'circle-opacity': 0.35,
+          'circle-opacity-transition': { duration: 250 },
         },
       });
       map.addLayer({
@@ -156,21 +142,40 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           'circle-color': intensityColorExpression() as never,
           'circle-blur': 0.25,
           'circle-opacity': 0.95,
+          'circle-opacity-transition': { duration: 250 },
         },
       });
-      map.addSource('aoi', { type: 'geojson', data: EMPTY });
       map.addLayer({
-        id: 'aoi-fill',
-        type: 'fill',
-        source: 'aoi',
-        paint: { 'fill-color': DRAW_COLOR, 'fill-opacity': 0.1 },
+        id: 'hotspots-heatmap',
+        type: 'heatmap',
+        source: 'hotspots',
+        layout: { visibility: 'none' },
+        paint: {
+          'heatmap-weight': ['max', 0.05, ['get', 't']],
+          'heatmap-intensity': 1,
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 9, 3, 20, 7, 36],
+          'heatmap-opacity': 0.8,
+          'heatmap-opacity-transition': { duration: 250 },
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0,
+            'rgba(0, 0, 0, 0)',
+            0.1,
+            '#37236b',
+            0.35,
+            '#a12b83',
+            0.65,
+            '#ed6925',
+            1,
+            '#f7e225',
+          ],
+        },
       });
-      map.addLayer({
-        id: 'aoi-line',
-        type: 'line',
-        source: 'aoi',
-        paint: { 'line-color': DRAW_COLOR, 'line-width': 2 },
-      });
+      map.addSource('aoi-shadow', { type: 'geojson', data: EMPTY });
+      map.addSource('aoi-outline', { type: 'geojson', data: EMPTY });
+      map.addSource('region-targets', { type: 'geojson', data: EMPTY });
       // Raw detections of the selected month inside the AOI (FR-W-15).
       map.addSource('points', { type: 'geojson', data: EMPTY });
       map.addLayer({
@@ -185,75 +190,54 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           'circle-stroke-width': 0.5,
         },
       });
-
-      const draw = new TerraDraw({
-        adapter: new TerraDrawMapLibreGLAdapter({ map }),
-        modes: [
-          new TerraDrawPolygonMode({
-            styles: { fillColor: DRAW_COLOR, outlineColor: DRAW_COLOR, fillOpacity: 0.15 },
-          }),
-          new TerraDrawRectangleMode({
-            styles: { fillColor: DRAW_COLOR, outlineColor: DRAW_COLOR, fillOpacity: 0.15 },
-          }),
-          new TerraDrawSelectMode({
-            flags: {
-              polygon: {
-                feature: {
-                  draggable: true,
-                  coordinates: { midpoints: true, draggable: true, deletable: true },
-                },
-              },
-              rectangle: {
-                feature: {
-                  draggable: true,
-                  coordinates: { draggable: true, resizable: 'opposite' },
-                },
-              },
-            },
-          }),
-        ],
+      map.addLayer({
+        id: 'points-heatmap',
+        type: 'heatmap',
+        source: 'points',
+        layout: { visibility: 'none' },
+        paint: {
+          'heatmap-weight': ['case', ['has', 'count'], ['min', 5, ['sqrt', ['get', 'count']]], 1],
+          'heatmap-intensity': 1,
+          'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 3, 11, 7, 25, 11, 40],
+          'heatmap-opacity': 0.85,
+          'heatmap-color': [
+            'interpolate',
+            ['linear'],
+            ['heatmap-density'],
+            0,
+            'rgba(0, 0, 0, 0)',
+            0.1,
+            '#37236b',
+            0.35,
+            '#a12b83',
+            0.65,
+            '#ed6925',
+            1,
+            '#f7e225',
+          ],
+        },
       });
-      draw.start();
-      draw.setMode('static');
-      drawRef.current = draw;
-
-      draw.on('finish', (id) => {
-        const feature = draw.getSnapshotFeature(id) as GeoJSONStoreFeatures | undefined;
-        if (!feature || feature.geometry.type !== 'Polygon') return;
-        const stale = draw
-          .getSnapshot()
-          .filter((f) => f.id !== id && f.geometry.type === 'Polygon')
-          .map((f) => f.id as string);
-        if (stale.length) draw.removeFeatures(stale);
-
-        const geometry = feature.geometry as AoiGeometry;
-        const check = checkAoi(geometry, maxRef.current);
-        if (!check.ok) {
-          setError(
-            check.reason === 'too_large'
-              ? tRef.current('map.tooLarge', {
-                  area: formatKm2(check.areaKm2),
-                  max: formatKm2(maxRef.current),
-                })
-              : tRef.current('map.invalid'),
-          );
-          draw.removeFeatures([id as string]);
-          drawnId.current = null;
-          return;
-        }
-        setError(null);
-        drawnId.current = id as string;
-        useAppStore.getState().setAoi({
-          kind: 'draw',
-          geometry,
-          areaKm2: check.areaKm2,
-          label: tRef.current('aoi.drawn'),
-        });
+      map.addLayer({
+        id: 'region-targets',
+        type: 'fill',
+        source: 'region-targets',
+        paint: { 'fill-color': SHADOW_COLOR, 'fill-opacity': 0.01 },
       });
-      // Clicking the globe (outside drawing) selects the fire region there, or a
-      // circle around the point, and flies to it (FR-W-24).
+      map.addLayer({
+        id: 'aoi-shadow',
+        type: 'fill',
+        source: 'aoi-shadow',
+        paint: { 'fill-color': SHADOW_COLOR, 'fill-opacity': 0.55 },
+      });
+      map.addLayer({
+        id: 'aoi-outline',
+        type: 'line',
+        source: 'aoi-outline',
+        paint: { 'line-color': '#ffffff', 'line-width': 0.75, 'line-opacity': 0.8 },
+      });
+
+      // A click selects a province only when it falls within its saved boundary.
       map.on('click', (e) => {
-        if (toolRef.current !== 'static') return;
         const hit = map.queryRenderedFeatures(e.point, { layers: ['points'] })[0];
         if (hit) {
           const tr = tRef.current;
@@ -271,9 +255,10 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
             .addTo(map);
           return;
         }
-        const { lng, lat } = e.lngLat;
-        const label = tRef.current('regions.clicked', { lat: lat.toFixed(2), lon: lng.toFixed(2) });
-        useAppStore.getState().setAoi(aoiForClick(lng, lat, label));
+        const regions = map.queryRenderedFeatures(e.point, { layers: ['region-targets'] });
+        const region = regions.find((feature) => feature.properties?.level === 1) ?? regions[0];
+        const aoi = regionAoisRef.current.get(String(region?.properties?.id ?? ''));
+        if (aoi) useAppStore.getState().setAoi(aoi);
       });
       setReady(true);
     });
@@ -285,12 +270,31 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     }
 
     return () => {
-      drawRef.current?.stop();
-      drawRef.current = null;
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    let cancelled = false;
+    void loadIndonesiaBoundaries()
+      .then((features) => {
+        if (cancelled) return;
+        for (const feature of features) {
+          regionAoisRef.current.set(feature.id, regionFeatureAoi(feature));
+        }
+        (map.getSource('region-targets') as GeoJSONSource | undefined)?.setData({
+          type: 'FeatureCollection',
+          features,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [ready]);
 
   // --- idle auto-rotation ----------------------------------------------------------------
   useEffect(() => {
@@ -317,7 +321,28 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     const map = mapRef.current;
     if (!map || !ready || !globe.data) return;
     const source = map.getSource('hotspots') as GeoJSONSource | undefined;
-    source?.setData(cellsToGeoJSON(globe.data.cells, globe.data.max));
+    const data = cellsToGeoJSON(globe.data.cells, globe.data.max);
+    if (!hasGlobeDataRef.current) {
+      hasGlobeDataRef.current = true;
+      source?.setData(data);
+      return;
+    }
+    map.setPaintProperty('hotspots', 'circle-opacity', 0);
+    map.setPaintProperty('hotspots-glow', 'circle-opacity', 0);
+    map.setPaintProperty('hotspots-heatmap', 'heatmap-opacity', 0);
+    let restore: number | undefined;
+    const swap = window.setTimeout(() => {
+      source?.setData(data);
+      restore = window.setTimeout(() => {
+        map.setPaintProperty('hotspots', 'circle-opacity', detailedRef.current ? 0.25 : 0.95);
+        map.setPaintProperty('hotspots-glow', 'circle-opacity', detailedRef.current ? 0.1 : 0.35);
+        map.setPaintProperty('hotspots-heatmap', 'heatmap-opacity', 0.8);
+      }, 70);
+    }, 210);
+    return () => {
+      window.clearTimeout(swap);
+      window.clearTimeout(restore);
+    };
   }, [globe.data, ready]);
 
   // --- raw points of the selected month (FR-W-15) ------------------------------------------
@@ -326,6 +351,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     if (!map || !ready) return;
     const source = map.getSource('points') as GeoJSONSource | undefined;
     const shown = Boolean(aoi && points.data);
+    detailedRef.current = shown;
     source?.setData(shown ? (points.data as never) : EMPTY);
     // Dim the coarse world cells while the detailed points are visible.
     map.setPaintProperty('hotspots', 'circle-opacity', shown ? 0.25 : 0.95);
@@ -338,16 +364,31 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     map.setPaintProperty('points', 'circle-color', pointColorExpression(pointsColor) as never);
   }, [pointsColor, ready]);
 
-  // --- AOI from other sources (circle, region, upload) + framing ----------------------------
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
-    const source = map.getSource('aoi') as GeoJSONSource | undefined;
-    source?.setData(aoi && aoi.kind !== 'draw' ? toFeature(aoi) : EMPTY);
-    if (aoi && aoi.kind !== 'draw') {
-      drawRef.current?.clear();
-      drawnId.current = null;
-    }
+    const heatmap = mapDisplay === 'heatmap';
+    const detail = Boolean(aoi && points.data);
+    map.setLayoutProperty('hotspots-glow', 'visibility', heatmap ? 'none' : 'visible');
+    map.setLayoutProperty('hotspots', 'visibility', heatmap ? 'none' : 'visible');
+    map.setLayoutProperty(
+      'hotspots-heatmap',
+      'visibility',
+      heatmap && !detail ? 'visible' : 'none',
+    );
+    map.setLayoutProperty('points', 'visibility', heatmap ? 'none' : 'visible');
+    map.setLayoutProperty('points-heatmap', 'visibility', heatmap && detail ? 'visible' : 'none');
+  }, [mapDisplay, aoi, points.data, ready]);
+
+  // --- Selected administrative boundary and framing ---------------------------------------
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready) return;
+    const source = map.getSource('aoi-shadow') as GeoJSONSource | undefined;
+    source?.setData(aoi ? outsideAoiMask(aoi.geometry) : EMPTY);
+    (map.getSource('aoi-outline') as GeoJSONSource | undefined)?.setData(
+      aoi ? toFeature(aoi) : EMPTY,
+    );
     if (aoi) {
       setSpinning(false);
       const [w, s, e, n] = aoiBbox(aoi.geometry);
@@ -361,66 +402,15 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
     }
   }, [aoi, ready]);
 
-  const choose = (next: Tool) => {
-    const draw = drawRef.current;
-    if (!draw) return;
-    setSpinning(false);
-    setTool(next);
-    toolRef.current = next;
-    draw.setMode(next);
-    if (next === 'select' && drawnId.current != null) draw.selectFeature(drawnId.current);
-  };
-
-  const remove = () => {
-    drawRef.current?.clear();
-    drawRef.current?.setMode('static');
-    drawnId.current = null;
-    setTool('static');
-    toolRef.current = 'static';
-    setError(null);
-    setAoi(null);
-  };
-
   const backToOrbit = () => {
     mapRef.current?.flyTo({ zoom: 1.9, duration: 1400 });
   };
 
-  const tools: { id: Tool; label: string }[] = [
-    { id: 'polygon', label: t('map.polygon') },
-    { id: 'rectangle', label: t('map.rectangle') },
-    { id: 'select', label: t('map.edit') },
-  ];
-  const monthLabel = month ? `${monthNames(lang, 'long')[month.month - 1]} ${month.year}` : '';
+  const monthLabel = month ? playbackPeriod === 'year' ? `${month.year}`
+    : `${playbackPeriod === 'day' || playbackPeriod === 'hour' ? `${frame?.day} ` : ''}${monthNames(lang, 'long')[month.month - 1]} ${month.year}${playbackPeriod === 'hour' ? `, ${String(frame?.hour).padStart(2, '0')}:00 UTC` : ''}` : '';
 
   return (
-    <Panel
-      title={t('panel.globe')}
-      className="panel--globe"
-      actions={
-        <div className="toolbar" role="toolbar" aria-label={t('map.tools')}>
-          {tools.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="btn btn--small"
-              aria-pressed={tool === item.id}
-              disabled={!ready || (item.id === 'select' && aoi?.kind !== 'draw')}
-              onClick={() => choose(tool === item.id ? 'static' : item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-          <button
-            type="button"
-            className="btn btn--small btn--danger"
-            disabled={!aoi}
-            onClick={remove}
-          >
-            {t('map.delete')}
-          </button>
-        </div>
-      }
-    >
+    <Panel title={t('panel.globe')} className="panel--globe">
       <div className="globe">
         <div
           ref={container}
@@ -433,13 +423,16 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
             region: aoi?.label ? t('globe.regionLabel', { name: aoi.label }) : t('globe.noRegion'),
           })}
           onKeyDown={(e) => {
-            // Keyboard equivalent of clicking the globe (FR-W-27): select the area at
-            // the centre of the view. MapLibre already handles arrows and +/-.
-            if (e.key !== 'Enter' || toolRef.current !== 'static' || !mapRef.current) return;
+            // Enter selects a region when the centre of the globe is inside its boundary.
+            if (e.key !== 'Enter' || !mapRef.current) return;
             e.preventDefault();
-            const { lng, lat } = mapRef.current.getCenter();
-            const label = t('regions.clicked', { lat: lat.toFixed(2), lon: lng.toFixed(2) });
-            setAoi(aoiForClick(lng, lat, label));
+            const map = mapRef.current;
+            const hits = map.queryRenderedFeatures(map.project(map.getCenter()), {
+              layers: ['region-targets'],
+            });
+            const hit = hits.find((feature) => feature.properties?.level === 1) ?? hits[0];
+            const region = regionAoisRef.current.get(String(hit?.properties?.id ?? ''));
+            if (region) setAoi(region);
           }}
           aria-describedby="globe-help"
           data-testid="globe-map"
@@ -455,6 +448,19 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
           )}
         </div>
         <div className="globe__hud globe__hud--bottom">
+          <div className="segmented" role="group" aria-label={t('map.display')}>
+            {(['points', 'heatmap'] as const).map((display) => (
+              <button
+                key={display}
+                type="button"
+                className="btn btn--small"
+                aria-pressed={mapDisplay === display}
+                onClick={() => setMapDisplay(display)}
+              >
+                {t(display === 'points' ? 'map.displayPoints' : 'map.displayHeatmap')}
+              </button>
+            ))}
+          </div>
           <details
             className="globe__legend"
             aria-label={t('calendar.legend')}
@@ -465,13 +471,26 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
               {t('globe.legend')}
               {aoi && points.data ? ` · ${formatCount(points.data.count, lang)}` : ''}
             </summary>
-            <div className="legend__bar" style={{ background: gradient(countColor) }} />
+            <div
+              className="legend__bar"
+              style={{
+                background:
+                  mapDisplay === 'heatmap'
+                    ? 'linear-gradient(90deg, #37236b, #a12b83, #ed6925, #f7e225)'
+                    : gradient(countColor),
+              }}
+            />
             <div className="legend__ticks">
               <span>0</span>
-              <span>{formatCount(globe.data?.max ?? 0, lang)}</span>
+              <span>
+                {mapDisplay === 'heatmap'
+                  ? t('map.highDensity')
+                  : formatCount(globe.data?.max ?? 0, lang)}
+              </span>
             </div>
-            <small>{t('globe.unit')}</small>
-            {aoi && points.data && (
+            <small>{t(mapDisplay === 'heatmap' ? 'map.relativeDensity' : 'globe.unit')}</small>
+            {mapDisplay === 'heatmap' && <small>{t('map.heatmapHint')}</small>}
+            {aoi && points.data && mapDisplay === 'points' && (
               <div className="points-legend">
                 <div className="points-legend__head">
                   <span>
@@ -536,13 +555,8 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       </div>
       <TimeControls />
       <p id="globe-help" className="hint">
-        {tool !== 'static' ? t(`map.hint.${tool}` as const) : t('globe.help')}
+        {t('globe.help')}
       </p>
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
-        </p>
-      )}
       {globe.error && (
         <p className="form-error" role="alert">
           {(globe.error as Error).message}

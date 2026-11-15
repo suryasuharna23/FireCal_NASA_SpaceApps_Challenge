@@ -1,128 +1,74 @@
-import { distance } from '@turf/distance';
+import type { Feature, MultiPolygon, Polygon } from 'geojson';
+import { apiGet } from '../api/client';
 import type { Aoi } from './aoi';
-import { circleAoi } from './circle';
 
-/** A named fire-prone region used for quick selection on the globe (FR-W-24). */
+/** Provinces available in the current Indonesia snapshot. */
 export interface FireRegion {
   id: string;
   name: string;
   country: string;
-  lat: number;
-  lon: number;
-  radiusKm: number;
+  level: number;
 }
 
-/**
- * Well-known fire regions. Every circle stays below the 1,000,000 km² AOI limit
- * (radius ≤ 560 km) so a region opens its calendar immediately.
- */
-export const FIRE_REGIONS: FireRegion[] = [
-  {
-    id: 'id-sumsel',
-    name: 'South Sumatra',
-    country: 'Indonesia',
-    lat: -3.3,
-    lon: 104.5,
-    radiusKm: 300,
-  },
-  { id: 'id-riau', name: 'Riau', country: 'Indonesia', lat: 0.5, lon: 101.8, radiusKm: 250 },
-  {
-    id: 'id-kalteng',
-    name: 'Central Kalimantan',
-    country: 'Indonesia',
-    lat: -2.2,
-    lon: 113.9,
-    radiusKm: 300,
-  },
-  { id: 'au-topend', name: 'Top End', country: 'Australia', lat: -14.5, lon: 132.5, radiusKm: 450 },
-  {
-    id: 'th-north',
-    name: 'Northern Thailand & Myanmar',
-    country: 'Thailand',
-    lat: 19.0,
-    lon: 99.0,
-    radiusKm: 400,
-  },
-  {
-    id: 'br-rondonia',
-    name: 'Rondônia & Acre',
-    country: 'Brazil',
-    lat: -10.0,
-    lon: -63.0,
-    radiusKm: 450,
-  },
-  { id: 'br-cerrado', name: 'Cerrado', country: 'Brazil', lat: -12.5, lon: -47.0, radiusKm: 450 },
-  {
-    id: 'cf-north',
-    name: 'Central African savanna',
-    country: 'Central African Republic',
-    lat: 6.5,
-    lon: 21.0,
-    radiusKm: 500,
-  },
-  {
-    id: 'ao-miombo',
-    name: 'Miombo woodlands',
-    country: 'Angola & Zambia',
-    lat: -12.0,
-    lon: 20.0,
-    radiusKm: 500,
-  },
-  { id: 'ru-yakutia', name: 'Yakutia', country: 'Russia', lat: 62.0, lon: 129.0, radiusKm: 500 },
-  {
-    id: 'ca-west',
-    name: 'Western Canada',
-    country: 'Canada',
-    lat: 55.0,
-    lon: -118.0,
-    radiusKm: 450,
-  },
-  {
-    id: 'us-california',
-    name: 'Northern California',
-    country: 'United States',
-    lat: 38.5,
-    lon: -121.5,
-    radiusKm: 350,
-  },
-  {
-    id: 'pt-iberia',
-    name: 'Western Iberia',
-    country: 'Portugal & Spain',
-    lat: 40.5,
-    lon: -7.5,
-    radiusKm: 350,
-  },
-];
+export const FEATURED_REGION_IDS = ['NE1-IDN-1230', 'NE1-IDN-492', 'NE1-IDN-1931'];
 
-/** Default radius of the circle created by clicking an arbitrary point on the globe. */
-export const CLICK_RADIUS_KM = 250;
+const LEGACY_IDS: Record<string, string> = {
+  'id-sumsel': 'NE1-IDN-1230',
+  'id-riau': 'NE1-IDN-492',
+  'id-kalteng': 'NE1-IDN-1931',
+};
 
-/** The curated region whose circle contains the point, nearest first. */
-export function regionAt(lon: number, lat: number): FireRegion | null {
-  let best: { region: FireRegion; d: number } | null = null;
-  for (const region of FIRE_REGIONS) {
-    const d = distance([lon, lat], [region.lon, region.lat], { units: 'kilometers' });
-    if (d <= region.radiusKm && (!best || d < best.d)) best = { region, d };
-  }
-  return best?.region ?? null;
+export interface RegionFeature extends Feature<Polygon | MultiPolygon> {
+  id: string;
+  properties: {
+    id: string;
+    name: string;
+    country: string;
+    level: number;
+    area_km2: number;
+    too_large: boolean;
+  };
 }
 
-export function regionAoi(region: FireRegion): Aoi {
-  return circleAoi(
-    region.lat,
-    region.lon,
-    region.radiusKm,
-    `${region.name}, ${region.country}`,
-    'globe',
-    region.id,
-  );
+/** The API lists Indonesia and every province present in regions.parquet. */
+export async function listFireRegions(): Promise<FireRegion[]> {
+  const response = await apiGet<{ results: RegionFeature['properties'][] }>('/regions', {
+    q: 'Indonesia',
+    limit: 100,
+  });
+  return response.results
+    .filter((region) => !region.too_large)
+    .map(({ id, name, country, level }) => ({
+      id,
+      name,
+      country,
+      level,
+    }))
+    .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name, 'id'));
 }
 
-/** AOI for a click on the globe: the curated region there, or a circle around the point. */
-export function aoiForClick(lon: number, lat: number, label: string): Aoi {
-  const region = regionAt(lon, lat);
-  if (region) return regionAoi(region);
-  const round = (v: number) => Math.round(v * 100) / 100;
-  return circleAoi(round(lat), round(lon), CLICK_RADIUS_KM, label, 'globe');
+export function regionFeatureAoi(feature: RegionFeature): Aoi {
+  return {
+    kind: 'region',
+    geometry: feature.geometry,
+    areaKm2: feature.properties.area_km2,
+    label:
+      feature.properties.level === 0
+        ? feature.properties.name
+        : `${feature.properties.name}, ${feature.properties.country}`,
+    regionId: feature.id,
+  };
+}
+
+export async function loadIndonesiaBoundaries(): Promise<RegionFeature[]> {
+  const response = await apiGet<{ features: RegionFeature[] }>('/regions/boundaries');
+  return response.features;
+}
+
+/** Use the saved administrative boundary, never an approximate selection circle. */
+export async function loadRegionAoi(region: FireRegion | string): Promise<Aoi> {
+  const requestedId = typeof region === 'string' ? region : region.id;
+  const id = LEGACY_IDS[requestedId] ?? requestedId;
+  const feature = await apiGet<RegionFeature>(`/regions/${encodeURIComponent(id)}`);
+  return regionFeatureAoi(feature);
 }

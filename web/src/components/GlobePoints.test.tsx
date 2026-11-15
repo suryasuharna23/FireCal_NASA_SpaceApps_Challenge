@@ -28,8 +28,13 @@ const POINTS = {
 };
 
 beforeEach(() => {
-  useAppStore.setState({ aoi: AOI, selected: { year: 2019, month: 9 }, pointsColor: 'sensor' });
-  for (const k of ['setData', 'paint', 'popups', 'hits', 'fitBounds'] as const)
+  useAppStore.setState({
+    aoi: AOI,
+    selected: { year: 2019, month: 9 },
+    pointsColor: 'sensor',
+    mapDisplay: 'points',
+  });
+  for (const k of ['setData', 'paint', 'layout', 'popups', 'hits', 'fitBounds'] as const)
     mapCalls[k].length = 0;
   mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0 }, '/points': POINTS });
 });
@@ -74,6 +79,15 @@ describe('point helpers', () => {
 });
 
 describe('GlobeMap points', () => {
+  it('shows AOI detection density when heatmap is selected', async () => {
+    renderWithQuery(<GlobeMap />);
+    await screen.findByText('2 detections in this area');
+    fireEvent.click(screen.getByRole('button', { name: 'Heatmap' }));
+    expect(mapCalls.layout).toContainEqual(['points-heatmap', 'visibility', 'visible']);
+    expect(mapCalls.layout).toContainEqual(['points', 'visibility', 'none']);
+    expect(screen.queryByRole('group', { name: 'Colour points by' })).not.toBeInTheDocument();
+  });
+
   it('loads the selected month inside the AOI and dims the world cells', async () => {
     const fetch = mockFetch({
       '/meta': META_OK,

@@ -1,9 +1,13 @@
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useT } from '../i18n';
-import { FIRE_REGIONS, regionAoi } from '../lib/regions';
+import {
+  FEATURED_REGION_IDS,
+  listFireRegions,
+  loadRegionAoi,
+  type FireRegion,
+} from '../lib/regions';
 import { useAppStore } from '../state/useAppStore';
-
-/** Regions offered as one-click starting points. */
-const QUICK_START = ['id-sumsel', 'br-cerrado', 'us-california', 'au-topend'];
 
 /**
  * Single onboarding card shown in the results area until an area is chosen, instead
@@ -12,7 +16,26 @@ const QUICK_START = ['id-sumsel', 'br-cerrado', 'us-california', 'au-topend'];
 export function EmptyState() {
   const { t } = useT();
   const setAoi = useAppStore((s) => s.setAoi);
-  const picks = FIRE_REGIONS.filter((r) => QUICK_START.includes(r.id));
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const regions = useQuery({
+    queryKey: ['fire-regions'],
+    queryFn: listFireRegions,
+    staleTime: 60 * 60 * 1000,
+  });
+  const featured = (regions.data ?? []).filter((region) => FEATURED_REGION_IDS.includes(region.id));
+
+  const choose = async (region: FireRegion) => {
+    setLoadingId(region.id);
+    setError(null);
+    try {
+      setAoi(await loadRegionAoi(region));
+    } catch (cause) {
+      setError((cause as Error).message);
+    } finally {
+      setLoadingId(null);
+    }
+  };
 
   return (
     <section className="empty" aria-labelledby="empty-title">
@@ -35,18 +58,24 @@ export function EmptyState() {
       </ol>
       <div className="empty__picks">
         <span className="muted">{t('empty.try')}</span>
-        {picks.map((region) => (
+        {featured.map((region) => (
           <button
             key={region.id}
             type="button"
             className="chip"
-            onClick={() => setAoi(regionAoi(region))}
+            disabled={loadingId !== null}
+            onClick={() => void choose(region)}
           >
             {region.name}
             <span className="chip__meta">{region.country}</span>
           </button>
         ))}
       </div>
+      {error && (
+        <p className="form-error" role="alert">
+          {error}
+        </p>
+      )}
     </section>
   );
 }

@@ -1,8 +1,10 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
 import { useUrlSync } from '../state/useUrlSync';
 import { circleAoi } from './circle';
-import { FIRE_REGIONS, regionAoi } from './regions';
+import { FEATURED_REGION_IDS, loadRegionAoi } from './regions';
+import { REGION_ROUTES } from '../test/regions';
+import { mockFetch } from '../test/render';
 import {
   decodeGeometry,
   decodeState,
@@ -20,6 +22,7 @@ const BASE: ShareState = {
   mode: 'harmonized',
   scale: 'linear',
   calendarView: 'count',
+  mapDisplay: 'points',
 };
 
 const roundTrip = (s: ShareState) => decodeState(new URLSearchParams(encodeState(s).toString()));
@@ -39,6 +42,7 @@ describe('URL state', () => {
       mode: 'raw',
       scale: 'log',
       calendarView: 'anomaly',
+      mapDisplay: 'heatmap',
     };
     expect(roundTrip(s)).toEqual({
       start: '2010-01',
@@ -48,13 +52,14 @@ describe('URL state', () => {
       mode: 'raw',
       scale: 'log',
       calendarView: 'anomaly',
+      mapDisplay: 'heatmap',
     });
   });
 
-  it('restores fire regions, circles and drawn polygons', () => {
-    const region = regionAoi(FIRE_REGIONS[0]!);
-    expect(encodeState({ ...BASE, aoi: region }).get('region')).toBe(FIRE_REGIONS[0]!.id);
-    expect(roundTrip({ ...BASE, aoi: region }).aoi?.regionId).toBe(FIRE_REGIONS[0]!.id);
+  it('encodes administrative regions, circles and drawn polygons', async () => {
+    mockFetch(REGION_ROUTES);
+    const region = await loadRegionAoi(FEATURED_REGION_IDS[0]!);
+    expect(encodeState({ ...BASE, aoi: region }).get('region')).toBe(FEATURED_REGION_IDS[0]);
 
     const circle = circleAoi(-2, 113, 120, 'Circle');
     const c = roundTrip({ ...BASE, aoi: circle }).aoi!;
@@ -94,15 +99,16 @@ describe('URL state', () => {
 
 describe('useUrlSync', () => {
   it('restores the view from the URL and keeps the URL updated', async () => {
+    mockFetch(REGION_ROUTES);
     window.history.replaceState(
       null,
       '',
-      '/?region=id-riau&start=2015-01&view=anomaly&month=2015-09',
+      '/?region=NE1-IDN-492&start=2015-01&view=anomaly&month=2015-09',
     );
     useAppStore.setState({ ...BASE });
     renderHook(() => useUrlSync());
     const state = useAppStore.getState();
-    expect(state.aoi?.regionId).toBe('id-riau');
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
     expect(state.start).toBe('2015-01');
     expect(state.calendarView).toBe('anomaly');
     expect(state.selected).toEqual({ year: 2015, month: 9 });
@@ -110,6 +116,6 @@ describe('useUrlSync', () => {
     useAppStore.getState().setMode('raw');
     await new Promise((r) => setTimeout(r, 250));
     expect(window.location.search).toContain('mode=raw');
-    expect(window.location.search).toContain('region=id-riau');
+    expect(window.location.search).toContain('region=NE1-IDN-492');
   });
 });

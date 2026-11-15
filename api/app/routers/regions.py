@@ -63,6 +63,30 @@ def search_regions(
     return {"query": q, "results": [_row(r, max_km2) for r in rows]}
 
 
+@router.get("/regions/boundaries")
+def indonesia_boundaries(
+    con=Depends(get_connection), ds: Dataset = Depends(get_dataset)
+) -> dict[str, Any]:
+    """Saved Indonesian country and province boundaries for map selection."""
+    rows = con.execute(
+        f"SELECT {FIELDS}, geometry FROM {_table(ds)} "
+        "WHERE level IN (0, 1) AND country = 'Indonesia' ORDER BY level, name"
+    ).fetchall()
+    max_km2 = get_settings().max_aoi_km2
+    return {
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "id": row[0],
+                "properties": _row(row[:-1], max_km2),
+                "geometry": json.loads(shapely.to_geojson(shapely.from_wkb(row[-1]))),
+            }
+            for row in rows
+        ],
+    }
+
+
 @router.get("/regions/{region_id}")
 def get_region(
     region_id: str, con=Depends(get_connection), ds: Dataset = Depends(get_dataset)

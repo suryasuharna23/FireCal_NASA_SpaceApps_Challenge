@@ -1,24 +1,11 @@
 import '../test/mapMocks';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import { checkAoi } from '../lib/aoi';
 import { cellsToGeoJSON, spinSpeed } from '../lib/globe';
 import { useAppStore } from '../state/useAppStore';
-import { FakeDraw, FakeMap, mapCalls } from '../test/mapMocks';
+import { FakeMap, mapCalls } from '../test/mapMocks';
+import { REGION_ROUTES } from '../test/regions';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
-
-const square = (size: number) => ({
-  type: 'Polygon' as const,
-  coordinates: [
-    [
-      [110, 0],
-      [110 + size, 0],
-      [110 + size, size],
-      [110, size],
-      [110, 0],
-    ],
-  ],
-});
 
 const GLOBE = {
   year: 2026,
@@ -40,10 +27,12 @@ const GLOBE = {
 };
 
 beforeEach(() => {
-  useAppStore.setState({ aoi: null, selected: null, mode: 'harmonized' });
+  useAppStore.setState({ aoi: null, selected: null, mode: 'harmonized', mapDisplay: 'points' });
   mapCalls.fitBounds.length = 0;
   mapCalls.setData.length = 0;
-  mockFetch({ '/meta': META_OK, '/globe': GLOBE });
+  mapCalls.layout.length = 0;
+  mapCalls.layers.length = 0;
+  mockFetch({ '/meta': META_OK, '/globe': GLOBE, ...REGION_ROUTES });
 });
 afterEach(() => vi.unstubAllGlobals());
 
@@ -55,12 +44,6 @@ describe('globe helpers', () => {
     expect(fc.features[2]!.properties.t).toBeCloseTo(0.5);
     expect(spinSpeed(1)).toBeGreaterThan(spinSpeed(3));
     expect(spinSpeed(5)).toBe(0);
-  });
-
-  it('accepts areas under the limit and rejects larger or empty ones', () => {
-    expect(checkAoi(square(1), 1_000_000)).toMatchObject({ ok: true });
-    expect(checkAoi(square(12), 1_000_000)).toMatchObject({ ok: false, reason: 'too_large' });
-    expect(checkAoi(square(0), 1_000_000)).toMatchObject({ ok: false, reason: 'empty' });
   });
 });
 
@@ -102,6 +85,18 @@ describe('GlobeMap', () => {
     expect(screen.getByLabelText('Legend')).toHaveTextContent('40');
   });
 
+  it('switches between hotspot points and a heatmap', async () => {
+    renderWithQuery(<GlobeMap />);
+    const heatmap = await screen.findByRole('button', { name: 'Heatmap' });
+    fireEvent.click(heatmap);
+    expect(heatmap).toHaveAttribute('aria-pressed', 'true');
+    expect(mapCalls.layout).toContainEqual(['hotspots-heatmap', 'visibility', 'visible']);
+    expect(mapCalls.layout).toContainEqual(['hotspots', 'visibility', 'none']);
+    expect(screen.getByLabelText('Legend')).toHaveTextContent('Relative hotspot density');
+    fireEvent.click(screen.getByRole('button', { name: 'Points' }));
+    expect(mapCalls.layout.at(-3)).toEqual(['hotspots-heatmap', 'visibility', 'none']);
+  });
+
   it('follows the month selected in the calendar', async () => {
     const fetch = mockFetch({ '/meta': META_OK, '/globe': { ...GLOBE, year: 2019, month: 9 } });
     useAppStore.setState({ selected: { year: 2019, month: 9 } });
@@ -112,29 +107,55 @@ describe('GlobeMap', () => {
     );
   });
 
-  it('stores a drawn polygon as the AOI and can delete it', async () => {
+  it('fades hotspot cells between months during playback', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Polygon' })).toBeEnabled());
-    fireEvent.click(screen.getByRole('button', { name: 'Polygon' }));
-    expect(FakeDraw.last?.mode).toBe('polygon');
-
-    act(() => FakeDraw.last!.finish({ id: 'a', geometry: square(2), properties: {} }));
-    const aoi = useAppStore.getState().aoi;
-    expect(aoi?.kind).toBe('draw');
-    expect(aoi!.areaKm2).toBeGreaterThan(40_000);
-    expect(mapCalls.fitBounds.length).toBeGreaterThan(0);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
-    expect(useAppStore.getState().aoi).toBeNull();
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some(
+          (data) => (data as { features?: unknown[] }).features?.length === GLOBE.cells.length,
+        ),
+      ).toBe(true),
+    );
+    mapCalls.paint.length = 0;
+    act(() => useAppStore.getState().setSelected({ year: 2019, month: 9 }));
+    await waitFor(() => expect(mapCalls.paint).toContainEqual(['hotspots', 'circle-opacity', 0]));
+    await waitFor(() =>
+      expect(mapCalls.paint).toContainEqual(['hotspots', 'circle-opacity', 0.95]),
+    );
   });
 
-  it('rejects an AOI that is too large with a message', async () => {
+  it('shades outside the selected province while leaving its colours unchanged', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Rectangle' })).toBeEnabled());
-    act(() => FakeDraw.last!.finish({ id: 'big', geometry: square(15), properties: {} }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('too large');
-    expect(useAppStore.getState().aoi).toBeNull();
-    expect(FakeDraw.last!.features).toHaveLength(0);
+    expect(screen.queryByRole('button', { name: 'Polygon' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Rectangle' })).toBeNull();
+    act(() =>
+      useAppStore.setState({
+        aoi: {
+          kind: 'region',
+          regionId: 'NE1-IDN-492',
+          label: 'Riau, Indonesia',
+          areaKm2: 80_000,
+          geometry: (
+            REGION_ROUTES['/regions/NE1-IDN-492'] as {
+              geometry: { type: 'Polygon'; coordinates: number[][][] };
+            }
+          ).geometry,
+        },
+      }),
+    );
+    await waitFor(() => expect(mapCalls.fitBounds.length).toBeGreaterThan(0));
+    expect(
+      mapCalls.setData.some((data) => {
+        const mask = data as { geometry?: { type: string; coordinates: unknown[][][] } };
+        return mask.geometry?.type === 'MultiPolygon' && mask.geometry.coordinates[0]?.length === 2;
+      }),
+    ).toBe(true);
+    expect(mapCalls.layers).toContainEqual({
+      id: 'aoi-outline',
+      type: 'line',
+      source: 'aoi-outline',
+      paint: { 'line-color': '#ffffff', 'line-width': 0.75, 'line-opacity': 0.8 },
+    });
   });
 
   it('toggles the idle rotation', async () => {

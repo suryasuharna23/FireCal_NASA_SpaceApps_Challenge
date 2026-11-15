@@ -975,6 +975,16 @@ h3 {
   margin: 0;
   padding: 0;
   list-style: none;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.region-list__filter input {
+  width: 100%;
+}
+
+.region-list__country {
+  margin: 8px 0;
 }
 
 .chip {
@@ -1049,14 +1059,14 @@ h3 {
   color: var(--muted);
 }
 
-.time-controls__month select {
+.time-controls select {
   padding: 4px 8px;
   border: 1px solid var(--border-strong);
   border-radius: 9px;
   background: rgba(4, 6, 13, 0.6);
 }
 
-.time-controls__month option {
+.time-controls option {
   background: var(--panel-solid);
 }
 

@@ -1,56 +1,39 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
+import { REGION_ROUTES } from '../test/regions';
 import { AoiPanel } from './AoiPanel';
 import { EmptyState } from './EmptyState';
 
 beforeEach(() => {
   useAppStore.setState({ aoi: null });
-  mockFetch({ '/meta': META_OK });
+  mockFetch({ '/meta': META_OK, ...REGION_ROUTES });
 });
 afterEach(() => vi.unstubAllGlobals());
 
-describe('AoiPanel tabs', () => {
-  it('shows one way to choose an area at a time, fire regions first', () => {
+describe('AoiPanel', () => {
+  it('offers all saved provinces and highlights the chosen boundary', async () => {
     renderWithQuery(<AoiPanel />);
-    expect(screen.getByRole('tab', { name: 'Fire regions' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
-    expect(screen.getByRole('button', { name: /South Sumatra/ })).toBeVisible();
-    expect(screen.queryByLabelText('Latitude')).toBeNull();
-
-    fireEvent.click(screen.getByRole('tab', { name: 'Circle' }));
-    expect(screen.getByLabelText('Latitude')).toBeVisible();
-    expect(screen.queryByRole('button', { name: /South Sumatra/ })).toBeNull();
-  });
-
-  it('moves between tabs with the arrow keys (ARIA tabs pattern)', () => {
-    renderWithQuery(<AoiPanel />);
-    const first = screen.getByRole('tab', { name: 'Fire regions' });
-    first.focus();
-    fireEvent.keyDown(first, { key: 'ArrowRight' });
-    const search = screen.getByRole('tab', { name: 'Search' });
-    expect(search).toHaveAttribute('aria-selected', 'true');
-    expect(search).toHaveFocus();
-    fireEvent.keyDown(search, { key: 'End' });
-    expect(screen.getByRole('tab', { name: 'Upload' })).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(screen.getByRole('tab', { name: 'Upload' }), { key: 'ArrowRight' });
-    expect(screen.getByRole('tab', { name: 'Fire regions' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    await waitFor(() => expect(screen.getAllByRole('button')).toHaveLength(34));
+    expect(screen.getByText('33 provinces available')).toBeVisible();
+    expect(screen.queryByRole('tab')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Polygon' })).toBeNull();
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Riau' } });
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: /Riau/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
+    expect(screen.getByText('Riau, Indonesia')).toBeVisible();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear area' }));
+    expect(useAppStore.getState().aoi).toBeNull();
   });
 });
 
 describe('EmptyState', () => {
-  it('explains the three steps and starts with one click', () => {
+  it('starts with the same three province choices', async () => {
     renderWithQuery(<EmptyState />);
-    expect(
-      screen.getByRole('heading', { name: 'Pick an area to see its fire calendar' }),
-    ).toBeVisible();
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
-    fireEvent.click(screen.getByRole('button', { name: /Cerrado/ }));
-    expect(useAppStore.getState().aoi?.regionId).toBe('br-cerrado');
+    await waitFor(() => expect(screen.getAllByRole('button')).toHaveLength(3));
+    fireEvent.click(screen.getByRole('button', { name: /Riau/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
   });
 });

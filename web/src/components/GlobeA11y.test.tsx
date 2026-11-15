@@ -2,6 +2,8 @@ import '../test/mapMocks';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
 import { AOI } from '../test/fixtures';
+import { FakeMap, mapCalls } from '../test/mapMocks';
+import { REGION_ROUTES } from '../test/regions';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
 
@@ -13,10 +15,12 @@ const reducedMotion = (matches: boolean) =>
 
 beforeEach(() => {
   useAppStore.setState({ aoi: null, selected: { year: 2019, month: 9 }, mode: 'harmonized' });
+  mapCalls.hits.length = 0;
   mockFetch({
     '/meta': META_OK,
     '/globe': { cells: [], max: 0 },
     '/points': { type: 'FeatureCollection', features: [], count: 0, aggregated: false },
+    ...REGION_ROUTES,
   });
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -36,11 +40,21 @@ describe('Globe accessibility (T-45)', () => {
 
   it('selects the area at the centre with Enter', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Polygon' })).toBeEnabled());
+    await waitFor(() => expect(FakeMap.last?.sources['region-targets']).toBeDefined());
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some((data) => (data as { features?: unknown[] }).features?.length === 34),
+      ).toBe(true),
+    );
+    mapCalls.hits.push({
+      layer: { id: 'region-targets' },
+      geometry: {},
+      properties: { id: 'NE1-IDN-492' },
+    });
     fireEvent.keyDown(screen.getByRole('application'), { key: 'Enter' });
     expect(useAppStore.getState().aoi).toMatchObject({
-      kind: 'globe',
-      label: 'Area around 0.00, 0.00',
+      kind: 'region',
+      regionId: 'NE1-IDN-492',
     });
   });
 
