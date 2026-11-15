@@ -10,6 +10,7 @@ import {
 } from 'echarts/components';
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
+import { FONT_BODY } from '../lib/fonts';
 
 echarts.use([
   LineChart,
@@ -41,7 +42,7 @@ export const THEME = {
 
 export const baseOption = {
   backgroundColor: 'transparent',
-  textStyle: { color: THEME.text, fontFamily: 'Inter, system-ui, sans-serif' },
+  textStyle: { color: THEME.text, fontFamily: FONT_BODY },
   aria: { enabled: true },
   animationDuration: 400,
   tooltip: {

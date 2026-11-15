@@ -54,7 +54,7 @@ def test_search_ranks_name_matches_and_flags_large_regions(client, regions_built
 
     country = client.get("/regions", params={"q": "indonesia", "level": 0}).json()["results"]
     assert [r["id"] for r in country] == ["NE0-IDN"]
-    assert country[0]["too_large"] is True  # 1.9M km² > MAX_AOI_KM2
+    assert country[0]["too_large"] is True  # fixture is a 46° × 17° box
 
 
 def test_region_geometry_can_be_used_as_aoi(client, regions_built) -> None:
@@ -64,6 +64,19 @@ def test_region_geometry_can_be_used_as_aoi(client, regions_built) -> None:
     res = client.post("/calendar", json={"aoi": feature})
     assert res.status_code == 200
     assert res.json()["aoi"]["cells"] == 16 * 12
+
+
+def test_all_indonesia_boundaries(client, regions_built) -> None:
+    response = client.get("/regions/boundaries")
+    assert response.status_code == 200
+    features = response.json()["features"]
+    assert [feature["properties"]["name"] for feature in features] == [
+        "Indonesia",
+        "Kalimantan Barat",
+        "Kalimantan Tengah",
+        "Riau",
+    ]
+    assert all(feature["geometry"]["type"] == "Polygon" for feature in features)
 
 
 def test_unknown_region_is_404(client, regions_built) -> None:

@@ -95,6 +95,10 @@ def seed_pointer(repo: Path, live_root: Path) -> dict:
         target = resolve_pointer(pointer)
         if target != base and not target.is_relative_to(live_root / "runs"):
             raise ValueError("Live pointer is outside the configured data workspace")
+        meta = read_json(target / "meta.json")
+        origin = meta.get("live_update", {}).get("base_data_version", meta.get("data_version"))
+        if origin != catalog["data_version"]:
+            raise ValueError("Unverified dataset rejected; install the pinned real NASA snapshot")
         return read_json(pointer)
     if read_json(base / "meta.json").get("data_version") != catalog["data_version"]:
         raise ValueError("Install the pinned snapshot before enabling live data")

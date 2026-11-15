@@ -287,3 +287,15 @@ def test_pointer_resolution_and_lock_are_atomic_and_exclusive(tmp_path):
         pass
     with update_lock(tmp_path / "live"):
         pass
+
+
+def test_live_startup_rejects_unverified_or_synthetic_pointer_without_fallback(tmp_path):
+    write_json(tmp_path / CATALOG, {"data_version": "real-pinned", "processed": "frozen"})
+    fake = tmp_path / "data/live/runs/fake/processed"
+    write_json(fake / "meta.json", {"data_version": "synthetic"})
+    pointer = tmp_path / "data/live/current.json"
+    atomic_json(pointer, {"format": "firecal-live-v1", "processed": "runs/fake/processed"})
+    before = pointer.read_bytes()
+    with pytest.raises(ValueError, match="Unverified dataset rejected"):
+        seed_pointer(tmp_path, tmp_path / "data/live")
+    assert pointer.read_bytes() == before

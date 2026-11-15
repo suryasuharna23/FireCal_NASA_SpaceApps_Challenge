@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
 import { useT } from '../i18n';
 import { formatKm2 } from '../lib/aoi';
 import { useAppStore } from '../state/useAppStore';
 import { Panel } from './Panel';
+import { RegionList } from './RegionList';
 
-/** Current AOI summary plus the alternative ways to choose an area. */
-export function AoiPanel({ children }: { children?: ReactNode }) {
+/** Choose any province boundary present in the current Indonesia dataset. */
+export function AoiPanel() {
   const { t, lang } = useT();
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
@@ -22,17 +22,17 @@ export function AoiPanel({ children }: { children?: ReactNode }) {
         )
       }
     >
-      <p className="aoi-summary" aria-live="polite">
+      <p className={`aoi-summary ${aoi ? 'aoi-summary--set' : ''}`} aria-live="polite">
         {aoi ? (
           <>
-            <strong>{aoi.label ?? t('aoi.drawn')}</strong>
+            <strong>{aoi.label}</strong>
             <span className="muted"> · {formatKm2(aoi.areaKm2, lang)}</span>
           </>
         ) : (
-          <span className="muted">{t('common.selectAoi')}</span>
+          <span className="muted">{t('aoiTabs.none')}</span>
         )}
       </p>
-      {children}
+      <RegionList />
     </Panel>
   );
 }

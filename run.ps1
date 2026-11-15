@@ -58,7 +58,12 @@ try {
         throw 'The API is running without the expected real Indonesia data.'
     }
     Write-Host 'FireCal: http://localhost:5173'
-    Write-Host "Real observations through $($meta.last_acq_date). NASA catch-up runs in the backend."
+    $updateNote = switch ($meta.live.status) {
+        'missing_key' { 'Set FIRMS_MAP_KEY to enable NASA catch-up.' }
+        'failed' { 'NASA catch-up failed; the saved observations remain available.' }
+        default { 'NASA catch-up is managed by the backend.' }
+    }
+    Write-Host "Real observations through $($meta.last_acq_date). $updateNote"
     if (!$NoBrowser) { Start-Process 'http://localhost:5173' }
     if (!$owned.Count) { Write-Host 'Both services were already running.'; return }
     Write-Host 'Keep this terminal open. Press Ctrl+C to stop the services started here.'

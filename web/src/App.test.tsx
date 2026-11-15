@@ -32,7 +32,9 @@ describe('App shell', () => {
   it('shows an alert when the API is unreachable', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
     renderWithQuery(<App />);
-    expect(await screen.findByRole('alert')).toHaveTextContent('The data server cannot be reached');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Real NASA data could not be loaded',
+    );
   });
 
   it('switches to the methodology page', () => {

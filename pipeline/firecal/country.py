@@ -51,7 +51,9 @@ def clip_csv(source: Path, target: Path, boundary, boundary_sha: str) -> dict:
     first, last = None, None
     shapely.prepare(boundary)
     with temporary.open("w", newline="", encoding="utf-8") as out:
-        csv.writer(out).writerow(fields)
+        # pandas.to_csv writes LF below; keep the header's line ending consistent
+        # so DuckDB can reliably infer the dialect of small clipped files.
+        csv.writer(out, lineterminator="\n").writerow(fields)
         for frame in pd.read_csv(source, dtype=str, keep_default_na=False, chunksize=200_000):
             mask = shapely.intersects_xy(
                 boundary, frame.longitude.to_numpy(float), frame.latitude.to_numpy(float)

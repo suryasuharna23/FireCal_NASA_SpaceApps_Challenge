@@ -12,6 +12,7 @@ import {
 } from '../lib/colors';
 import { monthNames } from '../lib/months';
 import { calendarLayout, drawCalendar, exportFramedPng } from '../lib/png';
+import { FONT_BODY } from '../lib/fonts';
 import { usePngFrame } from '../lib/usePngFrame';
 import { PngButton } from './PngButton';
 import { useAppStore } from '../state/useAppStore';
@@ -93,7 +94,7 @@ export function Calendar() {
         draw: (ctx) => {
           drawCalendar(ctx, cells, months);
           ctx.fillStyle = '#9aa6c8';
-          ctx.font = '11px Inter, sans-serif';
+          ctx.font = `11px ${FONT_BODY}`;
           ctx.fillText(unit, 0, layout.height + 16);
         },
       },

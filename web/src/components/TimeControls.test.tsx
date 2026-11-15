@@ -4,7 +4,13 @@ import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { STEP_MS, TimeControls } from './TimeControls';
 
 beforeEach(() => {
-  useAppStore.setState({ selected: null, mode: 'harmonized' });
+  useAppStore.setState({
+    selected: null,
+    mode: 'harmonized',
+    playbackPeriod: 'month',
+    playbackDay: 1,
+    playbackHour: 0,
+  });
   mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0 } });
 });
 afterEach(() => {
@@ -53,5 +59,23 @@ describe('TimeControls', () => {
     expect(useAppStore.getState().mode).toBe('raw');
     fireEvent.click(screen.getByRole('button', { name: 'Harmonized' }));
     expect(useAppStore.getState().mode).toBe('harmonized');
+  });
+
+  it('plays yearly totals and daily acquisition dates', async () => {
+    useAppStore.setState({ selected: { year: 2025, month: 11 } });
+    renderWithQuery(<TimeControls />);
+    const interval = await screen.findByRole('combobox', { name: 'Playback interval' });
+    fireEvent.change(interval, { target: { value: 'year' } });
+    vi.useFakeTimers();
+    fireEvent.click(screen.getByRole('button', { name: 'Play' }));
+    act(() => vi.advanceTimersByTime(STEP_MS));
+    expect(useAppStore.getState().selected?.year).toBe(2026);
+    fireEvent.click(screen.getByRole('button', { name: 'Pause' }));
+    fireEvent.change(interval, { target: { value: 'day' } });
+    expect(useAppStore.getState().playbackDay).toBe(12);
+    fireEvent.change(screen.getByRole('combobox', { name: 'Day' }), { target: { value: '10' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Play' }));
+    act(() => vi.advanceTimersByTime(STEP_MS));
+    expect(useAppStore.getState().playbackDay).toBe(11);
   });
 });

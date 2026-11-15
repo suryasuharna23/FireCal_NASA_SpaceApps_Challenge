@@ -163,7 +163,7 @@ Run `make test` before opening a pull request.
 
 ## Deployment
 
-The web app is a static site (Cloudflare Pages), the API is a container (Fly.io or Cloud Run) and the processed data live in an S3-compatible bucket (Cloudflare R2). `.github/workflows/deploy.yml` pushes the API image to GHCR on every push to `main` and deploys each target once its credentials are configured. See [`docs/deployment.md`](docs/deployment.md) for the step-by-step setup and a local production check.
+The web app can run on Cloudflare Pages or Vercel. The API can run as a container (Fly.io or Cloud Run) against S3/R2 data, or as a read-only Vercel snapshot for the demo. `.github/workflows/deploy.yml` handles the container and Cloudflare path when credentials are configured. See [`docs/deployment.md`](docs/deployment.md) for that stack and [`docs/deploy-vercel.md`](docs/deploy-vercel.md) for the Vercel frontend and snapshot API.
 
 ## Environment variables
 

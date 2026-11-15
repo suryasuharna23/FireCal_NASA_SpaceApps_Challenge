@@ -1,8 +1,9 @@
 import '../test/mapMocks';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import { aoiForClick, CLICK_RADIUS_KM, FIRE_REGIONS, regionAt } from '../lib/regions';
+import { listFireRegions, loadRegionAoi } from '../lib/regions';
 import { useAppStore } from '../state/useAppStore';
 import { FakeMap, mapCalls } from '../test/mapMocks';
+import { REGION_ROUTES } from '../test/regions';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { GlobeMap } from './GlobeMap';
 import { RegionList } from './RegionList';
@@ -10,53 +11,94 @@ import { RegionList } from './RegionList';
 beforeEach(() => {
   useAppStore.setState({ aoi: null, selected: null });
   mapCalls.fitBounds.length = 0;
-  mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0, source: 'VIIRS' } });
+  mapCalls.hits.length = 0;
+  mockFetch({ '/meta': META_OK, '/globe': { cells: [], max: 0 }, ...REGION_ROUTES });
 });
 afterEach(() => vi.unstubAllGlobals());
 
 describe('fire regions', () => {
-  it('stay under the AOI limit', () => {
-    for (const region of FIRE_REGIONS) {
-      expect(Math.PI * region.radiusKm ** 2).toBeLessThan(1_000_000);
-    }
+  it('lists all 33 provinces returned by the API', async () => {
+    const regions = await listFireRegions();
+    expect(regions).toHaveLength(34);
+    expect(regions[0]).toMatchObject({ name: 'Indonesia', level: 0 });
+    expect(regions.some((region) => region.name === 'Riau')).toBe(true);
   });
 
-  it('finds the region under a point and falls back to a circle elsewhere', () => {
-    expect(regionAt(104.4, -3.2)?.id).toBe('id-sumsel');
-    expect(regionAt(0, -60)).toBeNull();
-    const inRegion = aoiForClick(113.9, -2.2, 'x');
-    expect(inRegion).toMatchObject({ kind: 'globe', regionId: 'id-kalteng' });
-    const open = aoiForClick(10.123, 50.456, 'Area around 50.46, 10.12');
-    expect(open.regionId).toBeUndefined();
-    expect(open.circle).toEqual({ lat: 50.46, lon: 10.12, radiusKm: CLICK_RADIUS_KM });
+  it('loads the actual boundary as the area', async () => {
+    const aoi = await loadRegionAoi('NE1-IDN-492');
+    expect(aoi).toMatchObject({ kind: 'region', regionId: 'NE1-IDN-492', areaKm2: 80_000 });
+    expect(aoi.geometry.type).toBe('Polygon');
+    expect(aoi.circle).toBeUndefined();
+    expect((await loadRegionAoi('id-riau')).regionId).toBe('NE1-IDN-492');
   });
 });
 
 describe('RegionList', () => {
-  it('selects a region as the AOI and marks it pressed', () => {
+  it('selects a province boundary and marks it pressed', async () => {
     renderWithQuery(<RegionList />);
-    fireEvent.click(screen.getByRole('button', { name: /Cerrado/ }));
-    expect(useAppStore.getState().aoi).toMatchObject({ kind: 'globe', regionId: 'br-cerrado' });
-    expect(screen.getByRole('button', { name: /Cerrado/ })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(await screen.findByRole('button', { name: /Riau/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
+    expect(useAppStore.getState().aoi?.kind).toBe('region');
+    expect(screen.getByRole('button', { name: /Riau/ })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('selects Indonesia as a country AOI', async () => {
+    renderWithQuery(<RegionList />);
+    fireEvent.click(await screen.findByRole('button', { name: /IndonesiaCountry/ }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE0-IDN'));
+    expect(useAppStore.getState().aoi?.label).toBe('Indonesia');
+  });
+
+  it('finds the province containing entered coordinates', async () => {
+    renderWithQuery(<RegionList />);
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Latitude' }), {
+      target: { value: '1' },
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Longitude' }), {
+      target: { value: '102' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Find region' }));
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492'));
+  });
+
+  it('does not invent a region outside the saved boundaries', async () => {
+    renderWithQuery(<RegionList />);
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Latitude' }), {
+      target: { value: '40' },
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: 'Longitude' }), {
+      target: { value: '10' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Find region' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('No Indonesian region');
+    expect(useAppStore.getState().aoi).toBeNull();
   });
 });
 
 describe('GlobeMap click', () => {
-  it('selects the clicked region and flies to it, but not while drawing', async () => {
+  it('selects only a mapped province and frames its boundary', async () => {
     renderWithQuery(<GlobeMap />);
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Polygon' })).toBeEnabled());
-
-    act(() =>
-      FakeMap.last!.handlers.click!.forEach((h) => h({ lngLat: { lng: 101.8, lat: 0.5 } })),
+    await waitFor(() => expect(FakeMap.last?.sources['region-targets']).toBeDefined());
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some((data) => (data as { features?: unknown[] }).features?.length === 34),
+      ).toBe(true),
     );
-    expect(useAppStore.getState().aoi?.regionId).toBe('id-riau');
-    expect(mapCalls.fitBounds.length).toBeGreaterThan(0);
 
-    useAppStore.setState({ aoi: null });
-    fireEvent.click(screen.getByRole('button', { name: 'Polygon' }));
     act(() =>
-      FakeMap.last!.handlers.click!.forEach((h) => h({ lngLat: { lng: 101.8, lat: 0.5 } })),
+      FakeMap.last!.handlers.click!.forEach((h) => h({ point: {}, lngLat: { lng: 10, lat: 10 } })),
     );
     expect(useAppStore.getState().aoi).toBeNull();
+
+    mapCalls.hits.push({
+      layer: { id: 'region-targets' },
+      geometry: REGION_ROUTES['/regions/NE1-IDN-492'] as unknown,
+      properties: { id: 'NE1-IDN-492' },
+    });
+    act(() =>
+      FakeMap.last!.handlers.click!.forEach((h) => h({ point: {}, lngLat: { lng: 102, lat: 1 } })),
+    );
+    expect(useAppStore.getState().aoi?.regionId).toBe('NE1-IDN-492');
+    expect(mapCalls.fitBounds.length).toBeGreaterThan(0);
   });
 });

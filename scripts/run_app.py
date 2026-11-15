@@ -119,10 +119,14 @@ def main():
         if meta.get("status") != "ok" or (meta.get("coverage") or {}).get("country") != "Indonesia":
             raise RuntimeError("The API is not serving the expected real Indonesia data")
         print("FireCal: http://localhost:5173", flush=True)
-        print(
-            f"Real observations through {meta.get('last_acq_date')}. "
-            "NASA catch-up runs in the backend."
-        )
+        live_status = (meta.get("live") or {}).get("status")
+        if live_status == "missing_key":
+            update_note = "Set FIRMS_MAP_KEY to enable NASA catch-up."
+        elif live_status == "failed":
+            update_note = "NASA catch-up failed; the saved observations remain available."
+        else:
+            update_note = "NASA catch-up is managed by the backend."
+        print(f"Real observations through {meta.get('last_acq_date')}. {update_note}")
         if not args.no_browser:
             webbrowser.open("http://localhost:5173", new=2)
         if not children:

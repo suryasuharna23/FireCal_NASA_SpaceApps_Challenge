@@ -180,8 +180,9 @@ export async function mockApi(page: Page) {
     }
     return route.fulfill({ status: 404, body: '{"detail":"not mocked"}' });
   });
-  // Keep tests offline and deterministic: a minimal local basemap style instead of
-  // OpenFreeMap (so the globe still loads and its tools enable), and no web fonts.
+  // The globe uses NASA imagery by default; E2E tests exercise the controls
+  // without downloading map tiles. Keep the optional style override offline too.
+  await page.route(/gibs\.earthdata\.nasa\.gov/, (route) => route.abort());
   await page.route(/tiles\.openfreemap\.org/, (route) =>
     route.request().url().includes('/styles/')
       ? route.fulfill({

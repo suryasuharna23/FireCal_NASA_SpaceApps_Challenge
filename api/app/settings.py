@@ -11,9 +11,9 @@ class ApiSettings(BaseSettings):
 
     firms_map_key: SecretStr = SecretStr("")
     data_uri: str = "./data/processed"
-    max_aoi_km2: float = 1_000_000
+    max_aoi_km2: float = 2_000_000
     reference_years: str = "2003:2022"
-    cors_origins: str = "http://localhost:5173"
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     s3_endpoint: str = ""
     s3_access_key_id: str = ""
     s3_secret_access_key: SecretStr = SecretStr("")

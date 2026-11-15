@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useAppStore } from '../state/useAppStore';
+import type { PlaybackFrame } from '../lib/playback';
 import { apiGet, apiPost } from './client';
 
 export interface MonthValue {
@@ -98,6 +99,9 @@ export interface PointsResponse {
   type: 'FeatureCollection';
   year: number;
   month: number;
+  period?: string;
+  day?: number | null;
+  hour?: number | null;
   count: number;
   aggregated: boolean;
   cell_size_deg?: number;
@@ -109,9 +113,9 @@ export interface PointsResponse {
 }
 
 /** Raw detections of one month inside the AOI, or grid cells above 50,000 (FR-W-15). */
-export function usePoints(ym: { year: number; month: number } | null) {
+export function usePoints(ym: PlaybackFrame | null) {
   const aoi = useAppStore((s) => s.aoi);
-  const body = aoi && ym ? { aoi: aoi.geometry, year: ym.year, month: ym.month } : null;
+  const body = aoi && ym && ym.period !== 'year' ? { aoi: aoi.geometry, ...ym } : null;
   return useQuery({
     queryKey: ['/points', body],
     queryFn: ({ signal }) => apiPost<PointsResponse>('/points', body, signal),
@@ -123,6 +127,7 @@ export function usePoints(ym: { year: number; month: number } | null) {
 export interface GlobeResponse {
   year: number;
   month: number;
+  period?: string;
   mode: 'harmonized' | 'raw';
   res: number;
   source: 'MODIS' | 'VIIRS';
@@ -137,10 +142,10 @@ export interface GlobeResponse {
 }
 
 /** World hotspot cells for one month (FR-W-23). */
-export function useGlobe(ym: { year: number; month: number } | null, mode: 'harmonized' | 'raw') {
+export function useGlobe(ym: PlaybackFrame | null, mode: 'harmonized' | 'raw') {
   return useQuery({
-    queryKey: ['/globe', ym?.year, ym?.month, mode],
-    queryFn: () => apiGet<GlobeResponse>('/globe', { year: ym!.year, month: ym!.month, mode }),
+    queryKey: ['/globe', ym, mode],
+    queryFn: () => apiGet<GlobeResponse>('/globe', { ...ym!, mode }),
     enabled: ym !== null,
     placeholderData: keepPreviousData,
     staleTime: 30 * 60 * 1000,

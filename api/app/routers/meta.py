@@ -4,7 +4,7 @@ from typing import Any
 from fastapi import APIRouter, Depends
 
 from app import __version__
-from app.db import Dataset, DataUnavailableError, get_connection, get_dataset
+from app.db import Dataset, get_connection, get_dataset
 from app.settings import get_settings
 
 router = APIRouter(tags=["meta"])
@@ -41,11 +41,19 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
         "max_aoi_km2": settings.max_aoi_km2,
         "default_reference_years": list(settings.default_reference_years),
         "live": live_status,
+        "freshness_status": (
+            "error"
+            if live_status and live_status.get("status") in {"failed", "missing_key"}
+            else "checking"
+            if live_status and live_status.get("status") == "updating"
+            else "checked"
+            if live_status and live_status.get("status") in {"updated", "up_to_date"}
+            else "unknown"
+            if live_status
+            else "snapshot_only"
+        ),
     }
-    try:
-        meta = ds.meta(con)
-    except DataUnavailableError as exc:
-        return {**base, "status": "no_data", "detail": str(exc), "data_version": None}
+    meta = ds.meta(con)
 
     provisional_months = (
         con.execute(
@@ -55,6 +63,15 @@ def get_meta(con=Depends(get_connection), ds: Dataset = Depends(get_dataset)) ->
         else []
     )
     nrt_report = ds.report("nrt.json", con) or {}
+    if live_status and live_status.get("status") in {"failed", "missing_key"}:
+        nrt_report = {
+            **nrt_report,
+            "ok": False,
+            "errors": {
+                **nrt_report.get("errors", {}),
+                "live_update": live_status.get("detail", "NASA update failed"),
+            },
+        }
     validation = ds.report("validation.json", con) or {}
     glob = (validation.get("global") or {}).get("after") or {}
     return {

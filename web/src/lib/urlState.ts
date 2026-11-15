@@ -1,8 +1,13 @@
 import type { Polygon, MultiPolygon } from 'geojson';
-import type { CalendarView, ColorScale, ViewMode, YearMonth } from '../state/useAppStore';
+import type {
+  CalendarView,
+  ColorScale,
+  MapDisplay,
+  ViewMode,
+  YearMonth,
+} from '../state/useAppStore';
 import { areaKm2, type Aoi, type AoiKind } from './aoi';
 import { circleAoi } from './circle';
-import { FIRE_REGIONS, regionAoi } from './regions';
 
 /** The part of the app state that is shareable through the URL (FR-W-19, US-08). */
 export interface ShareState {
@@ -14,6 +19,7 @@ export interface ShareState {
   mode: ViewMode;
   scale: ColorScale;
   calendarView: CalendarView;
+  mapDisplay: MapDisplay;
 }
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
@@ -56,7 +62,7 @@ export function encodeState(s: ShareState): URLSearchParams {
   const p = new URLSearchParams();
   const a = s.aoi;
   if (a) {
-    if (a.regionId && FIRE_REGIONS.some((r) => r.id === a.regionId)) {
+    if (a.kind === 'region' && a.regionId) {
       p.set('region', a.regionId);
     } else if (a.circle && (a.kind === 'circle' || a.kind === 'globe')) {
       p.set('circle', `${a.circle.lat},${a.circle.lon},${a.circle.radiusKm}`);
@@ -75,6 +81,7 @@ export function encodeState(s: ShareState): URLSearchParams {
   if (s.mode !== 'harmonized') p.set('mode', s.mode);
   if (s.scale !== 'linear') p.set('scale', s.scale);
   if (s.calendarView !== 'count') p.set('view', s.calendarView);
+  if (s.mapDisplay !== 'points') p.set('map', s.mapDisplay);
   return p;
 }
 
@@ -82,10 +89,7 @@ export function encodeState(s: ShareState): URLSearchParams {
 export function decodeState(p: URLSearchParams): Partial<ShareState> {
   const out: Partial<ShareState> = {};
   const label = p.get('label') ?? undefined;
-  const region = FIRE_REGIONS.find((r) => r.id === p.get('region'));
-  if (region) {
-    out.aoi = regionAoi(region);
-  } else if (p.get('circle')) {
+  if (p.get('circle')) {
     const [lat, lon, r] = p.get('circle')!.split(',').map(Number);
     if (
       [lat, lon, r].every(Number.isFinite) &&
@@ -125,5 +129,6 @@ export function decodeState(p: URLSearchParams): Partial<ShareState> {
   if (p.get('mode') === 'raw') out.mode = 'raw';
   if (p.get('scale') === 'log') out.scale = 'log';
   if (p.get('view') === 'anomaly') out.calendarView = 'anomaly';
+  if (p.get('map') === 'heatmap') out.mapDisplay = 'heatmap';
   return out;
 }
