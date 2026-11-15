@@ -1,4 +1,5 @@
 import type { StatsResponse } from '../api/queries';
+import { FONT_BODY, FONT_MONO } from '../lib/fonts';
 import { baseOption, THEME, type EChartsOption } from './echarts';
 
 /** Contiguous runs of critical months, e.g. [8, 9, 10] -> [[8, 10]]. */
@@ -63,13 +64,13 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
       data: labels.months,
       boundaryGap: false,
       axisLine: { lineStyle: { color: THEME.grid } },
-      axisLabel: { color: THEME.text },
+      axisLabel: { color: THEME.text, fontFamily: FONT_MONO },
     },
     yAxis: {
       type: 'value',
       min: 0,
       splitLine: { lineStyle: { color: THEME.grid } },
-      axisLabel: { color: THEME.text },
+      axisLabel: { color: THEME.text, fontFamily: FONT_MONO },
     },
     series: [
       {
@@ -97,13 +98,19 @@ export function climatologyOption(stats: StatsResponse, labels: ClimatologyLabel
         type: 'line',
         data: c.map((m) => m.median),
         smooth: true,
-        symbolSize: 5,
-        lineStyle: { width: 2.5, color: THEME.amber },
-        itemStyle: { color: THEME.amber },
+        symbolSize: 6,
+        lineStyle: { width: 3, color: THEME.fire },
+        itemStyle: { color: THEME.fire },
         markArea: {
           silent: true,
           itemStyle: { color: THEME.critical },
-          label: { color: THEME.amber, fontSize: 11, position: 'insideTop' },
+          label: {
+            color: THEME.amber,
+            fontSize: 11,
+            fontWeight: 600,
+            fontFamily: FONT_BODY,
+            position: 'insideTop',
+          },
           data: areas,
         },
       },

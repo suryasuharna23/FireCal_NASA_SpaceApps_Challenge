@@ -1,5 +1,6 @@
 import type { StatsResponse } from '../api/queries';
 import { countColor } from '../lib/colors';
+import { FONT_DISPLAY, FONT_MONO } from '../lib/fonts';
 import { baseOption, THEME, type EChartsOption } from './echarts';
 
 export interface AnnualLabels {
@@ -10,7 +11,7 @@ export interface AnnualLabels {
 }
 
 /**
- * Annual totals with rank (FR-W-13). Bars use the calendar's inferno ramp by rank so the
+ * Annual totals with rank (FR-W-13). Bars use the calendar's solar flare ramp by rank so the
  * worst years glow; the highest year is labelled, incomplete years are hatched lighter.
  */
 export function annualOption(annual: StatsResponse['annual'], labels: AnnualLabels): EChartsOption {
@@ -19,7 +20,7 @@ export function annualOption(annual: StatsResponse['annual'], labels: AnnualLabe
   return {
     ...baseOption,
     legend: { show: false },
-    grid: { ...baseOption.grid, top: 24, bottom: 36 },
+    grid: { ...baseOption.grid, top: 28, bottom: 36 },
     tooltip: {
       ...baseOption.tooltip,
       formatter: (params: unknown) => {
@@ -39,13 +40,18 @@ export function annualOption(annual: StatsResponse['annual'], labels: AnnualLabe
       type: 'category',
       data: annual.map((a) => String(a.year)),
       axisLine: { lineStyle: { color: THEME.grid } },
-      axisLabel: { color: THEME.text, interval: n > 16 ? 'auto' : 0, rotate: n > 16 ? 45 : 0 },
+      axisLabel: {
+        color: THEME.text,
+        fontFamily: FONT_MONO,
+        interval: n > 16 ? 'auto' : 0,
+        rotate: n > 16 ? 45 : 0,
+      },
     },
     yAxis: {
       type: 'value',
       min: 0,
       splitLine: { lineStyle: { color: THEME.grid } },
-      axisLabel: { color: THEME.text },
+      axisLabel: { color: THEME.text, fontFamily: FONT_MONO },
     },
     series: [
       {
@@ -57,14 +63,18 @@ export function annualOption(annual: StatsResponse['annual'], labels: AnnualLabe
           itemStyle: {
             color: countColor(n > 1 ? 1 - (a.rank - 1) / (n - 1) : 1),
             opacity: a.complete ? 1 : 0.45,
-            borderRadius: [3, 3, 0, 0],
+            borderRadius: [4, 4, 0, 0],
           },
           label:
             a.year === top?.year
               ? {
                   show: true,
                   position: 'top',
-                  color: THEME.strong,
+                  color: '#FFD23F',
+                  fontFamily: FONT_DISPLAY,
+                  fontWeight: 600,
+                  fontSize: 12,
+                  distance: 6,
                   formatter: `#1 ${labels.format(a.total)}`,
                 }
               : undefined,

@@ -69,7 +69,7 @@ export function Climatology() {
             ariaLabel={t('clim.aria', { months: season })}
             onReady={png.onReady}
           />
-          <p className="muted small">
+          <p className="clim-note">
             {t('clim.note', { threshold: formatCount(data.critical_threshold ?? 0, lang) })}
           </p>
           <details className="table-alt">
