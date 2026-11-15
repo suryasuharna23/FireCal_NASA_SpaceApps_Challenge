@@ -1,16 +1,16 @@
 # Included dataset and automatic NASA catch-up
 
-## Real-data installation
+## Included real data
 
-The app uses snapshot 593ae2d95fdf and separately published live observations.
-The original processed and sources ZIPs are verified by their pinned SHA-256
-hashes in `datasets/indonesia/593ae2d95fdf/dataset.json`. Bootstrap finds the
-supplied archives in Downloads or `data/interim/share`, verifies every file,
-and installs them without overwriting differing existing work.
+Both complete original archives are included in normal Git as 281 binary pieces
+under datasets/indonesia/593ae2d95fdf. The catalog pins every piece and complete
+archive by SHA-256. Bootstrap assembles them automatically, verifies all file
+manifests, and never overwrites differing existing work. A normal clone contains
+the data; no LFS budget or separate ZIP transfer is needed.
 
-The attempted bulk GitHub upload did not complete. The temporary transfer
-branches and chunk packaging were removed. A fresh clone still needs the two
-supplied archives; the current computer already has the verified real dataset.
+The frozen snapshot remains separate from live versions and retains the audit's
+known scientific limitations. Original supplied ZIPs remain a supported local
+fallback. The failed temporary transport branches from earlier attempts were removed.
 
 ## Run it
 

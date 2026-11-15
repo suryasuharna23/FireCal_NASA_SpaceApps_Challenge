@@ -82,6 +82,23 @@ def download_asset(asset: dict, cache: Path, repo: Path | None = None) -> Path:
         if target.stat().st_size != asset["bytes"] or digest(target) != asset["sha256"]:
             raise ValueError("Cached data archive differs from its pinned checksum")
         return target
+    if asset.get("pieces"):
+        if repo is None:
+            raise ValueError("Repository path required to assemble included data")
+        temporary = target.with_suffix(".zip.part")
+        with temporary.open("wb") as output:
+            for piece in asset["pieces"]:
+                source = (repo / piece["path"]).resolve()
+                if not source.is_relative_to(repo.resolve()):
+                    raise ValueError("Data piece escapes repository")
+                if source.stat().st_size != piece["bytes"] or digest(source) != piece["sha256"]:
+                    raise ValueError("Repository data piece checksum/size mismatch")
+                with source.open("rb") as stream:
+                    shutil.copyfileobj(stream, output)
+        if temporary.stat().st_size != asset["bytes"] or digest(temporary) != asset["sha256"]:
+            raise ValueError("Assembled archive checksum/size mismatch")
+        temporary.replace(target)
+        return target
     supplied = Path.home() / "Downloads" / asset["file"]
     if supplied.is_file():
         if supplied.stat().st_size != asset["bytes"] or digest(supplied) != asset["sha256"]:

@@ -80,3 +80,20 @@ def test_supplied_downloads_archive_is_verified_and_cached(tmp_path, monkeypatch
     asset = {"file": supplied.name, "bytes": supplied.stat().st_size, "sha256": digest(supplied)}
     result = download_asset(asset, tmp_path / "cache")
     assert result.read_bytes() == supplied.read_bytes()
+
+
+def test_included_pieces_assemble_and_reject_tampering(tmp_path):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    source = repo / "one.chunk"
+    source.write_bytes(b"included data")
+    asset = {
+        "file": "data.zip",
+        "bytes": source.stat().st_size,
+        "sha256": digest(source),
+        "pieces": [{"path": source.name, "bytes": source.stat().st_size, "sha256": digest(source)}],
+    }
+    assert download_asset(asset, tmp_path / "cache", repo).read_bytes() == source.read_bytes()
+    source.write_bytes(b"changed")
+    with pytest.raises(ValueError, match="piece checksum"):
+        download_asset(asset, tmp_path / "another-cache", repo)

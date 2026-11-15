@@ -1,25 +1,24 @@
 # Melanjutkan FireCal dengan snapshot bersama
 
-**Pembaruan 15 November 2026:** aplikasi memakai snapshot asli dan dapat
-mengambil observasi NASA terbaru. `uv run firecal bootstrap` membaca ZIP yang
-sudah diverifikasi dari Downloads atau `data/interim/share`; `uv run firecal serve`
-menjalankan API dengan catch-up otomatis. Upload data besar ke GitHub belum
-berhasil. Baca [panduan live data](LIVE-DATA.md).
+**Pembaruan 15 November 2026:** data asli sekarang disertakan di Git sebagai
+potongan biner terverifikasi. Setelah clone, jalankan `uv run firecal bootstrap`
+lalu `uv run firecal serve`. Tidak perlu ZIP terpisah atau Git LFS. Panduan
+pengiriman ZIP di bawah merupakan riwayat paket awal. Baca [panduan live data](LIVE-DATA.md).
 
 Snapshot Indonesia `593ae2d95fdf` berisi **7.716.551 deteksi setelah filtering**,
-November 2000â€“14 November 2026. Data berstatus eksperimental; bias nasional
-Januariâ€“Oktober 2026 âˆ’12,20%. Batasan dan tugas berikutnya tersedia di
+November 2000Ã¢â‚¬â€œ14 November 2026. Data berstatus eksperimental; bias nasional
+JanuariÃ¢â‚¬â€œOktober 2026 Ã¢Ë†â€™12,20%. Batasan dan tugas berikutnya tersedia di
 [handover audit](handover-bias-audit.md) dan [tracker progres](PROGRESS.md).
 
 ## Stack yang digunakan
 
 | Bagian | Stack repository |
 | --- | --- |
-| Pipeline | Python â‰¥3.12, uv workspace, pandas, DuckDB, PyArrow, GeoPandas/Shapely, statsmodels, scikit-learn; Typer CLI |
+| Pipeline | Python Ã¢â€°Â¥3.12, uv workspace, pandas, DuckDB, PyArrow, GeoPandas/Shapely, statsmodels, scikit-learn; Typer CLI |
 | Penyimpanan analitis | Berkas Parquet, point partitions per tahun, metadata/laporan JSON; tidak membutuhkan server database lokal |
 | API | FastAPI, Uvicorn, Pydantic; DuckDB membaca Parquet dari `DATA_URI` |
 | Frontend | React 19, TypeScript 5.8, Vite 6, MapLibre, Terra Draw, ECharts/D3, TanStack Query, Zustand |
-| Tooling frontend | Node â‰¥22.19.0, pnpm 10.33.2 sesuai `web/package.json`; Vitest, ESLint, Prettier, Playwright |
+| Tooling frontend | Node Ã¢â€°Â¥22.19.0, pnpm 10.33.2 sesuai `web/package.json`; Vitest, ESLint, Prettier, Playwright |
 | Deployment yang dikonfigurasi | Docker Compose; frontend Cloudflare Pages, API Fly.io/Cloud Run, data S3/R2; status deployment tidak diverifikasi pada penyiapan paket ini |
 
 Gunakan `uv.lock` dan `web/pnpm-lock.yaml` untuk versi dependency yang sama.

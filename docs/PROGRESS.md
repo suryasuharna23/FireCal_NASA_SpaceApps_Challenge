@@ -1,5 +1,13 @@
 # FireCal progress - 14 November 2026
 
+## Dataset upload requested again - 15 November 2026
+
+The complete archives are included as ordinary Git binary pieces, with pinned
+checksums and automatic assembly by bootstrap. Git data objects were uploaded
+individually to avoid restarting a single large transfer. No temporary transfer
+branches or LFS are used by this installation. Earlier upload-failure notes
+below are historical; this update supersedes the local-only data limitation.
+
 ## App integration and cleanup - 15 November 2026
 
 The local app uses the real snapshot and its separately updated live version.

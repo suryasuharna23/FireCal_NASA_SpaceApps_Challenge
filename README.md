@@ -1,6 +1,6 @@
 # FireCal
 
-**Harmonized MODIS–VIIRS Fire Activity Calendar** — NASA Space Apps Challenge.
+**Harmonized MODISâ€“VIIRS Fire Activity Calendar** â€” NASA Space Apps Challenge.
 
 FireCal is a web app that shows a monthly calendar of fire hotspot activity from November 2000 to the latest processed month for a selected area. It estimates a common MODIS-equivalent scale from MODIS and VIIRS data supplied by [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov). The Indonesia pilot is experimental: regional bias and source-version limitations are documented in the [regional audit](docs/regional-audit-findings.md).
 
@@ -8,10 +8,11 @@ The full specification, user stories and tickets are in [`docs/FRD-Tickets-FireC
 
 ## Start with the real Indonesia data
 
-The app uses the real Indonesia snapshot and can fetch newer NASA observations.
-The verified snapshot ZIPs must be in `Downloads` or `data/interim/share`; bootstrap
-installs them automatically. Dataset hashes are tracked in `datasets/indonesia/593ae2d95fdf/`.
-The bulk archives are local: GitHub uploads were unsuccessful, not completed.
+The complete real Indonesia snapshot is included under
+`datasets/indonesia/593ae2d95fdf/` as checksum-verified binary pieces.
+A normal clone contains the data; `firecal bootstrap` assembles and installs it
+automatically. No LFS or separate ZIP handoff is needed. The live updater fetches
+newer observations into a separate local workspace.
 
 From the repository root:
 
@@ -50,9 +51,9 @@ separate complete versions under `data/live/`. See [the live-data guide](docs/LI
 ## System architecture
 
 ```
-NASA FIRMS ──► pipeline (ingest → clean → grid → harmonize → validate) ──► Parquet
-                                                                              │ DuckDB
-                         web (React + MapLibre) ◄── JSON ── api (FastAPI)
+NASA FIRMS â”€â”€â–º pipeline (ingest â†’ clean â†’ grid â†’ harmonize â†’ validate) â”€â”€â–º Parquet
+                                                                              â”‚ DuckDB
+                         web (React + MapLibre) â—„â”€â”€ JSON â”€â”€ api (FastAPI)
 ```
 
 The pipeline runs daily and writes Parquet files. The API and the web app only read those results, so queries stay fast and keep working when FIRMS is unavailable.
@@ -61,7 +62,7 @@ The pipeline runs daily and writes Parquet files. The API and the web app only r
 
 | Path                 | Contents                                                              |
 | -------------------- | --------------------------------------------------------------------- |
-| `data/`              | `raw/`, `interim/`, `processed/` — not committed                      |
+| `data/`              | `raw/`, `interim/`, `processed/` â€” not committed                      |
 | `pipeline/firecal/`  | Python package and `firecal` Typer CLI (ingest, clean, grid, harmonize, validate) |
 | `pipeline/notebooks` | Analysis notebooks (T-10, T-13)                                       |
 | `api/app/`           | FastAPI service: `/calendar`, `/stats`, `/points`, `/export`, `/globe`, `/regions`, `/meta` |
