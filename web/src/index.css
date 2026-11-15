@@ -5,7 +5,7 @@
 :root {
   color-scheme: dark;
   --space: #05050c;
-  --bg: #090a15;
+  --bg: #05050c;
   --fg: #ffffff;
   --muted: #9aa6c8;
   --panel: rgba(14, 16, 34, 0.85);
@@ -102,17 +102,14 @@
 }
 
 html {
-  background: var(--space);
+  background: var(--fc-space-void);
 }
 
 body {
   margin: 0;
   min-width: 360px;
   color: var(--fg);
-  background:
-    radial-gradient(ellipse 80% 60% at 85% -10%, rgba(94, 76, 255, 0.18), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 0% 100%, rgba(255, 122, 61, 0.1), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 40% 40%, rgba(40, 90, 200, 0.08), transparent 70%), var(--bg);
+  background: var(--fc-space-void);
   background-attachment: fixed;
 }
 
@@ -457,7 +454,7 @@ h3 {
   border: 1px solid var(--fc-border-subtle);
   border-radius: 28px;
   overflow: hidden;
-  background: var(--fc-space-base);
+  background: var(--fc-space-void);
   box-shadow: 0 8px 32px rgba(5, 5, 12, 0.5);
   min-width: 0;
 }
