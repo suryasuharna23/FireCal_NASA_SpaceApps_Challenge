@@ -12,6 +12,12 @@ export function AoiPanel() {
   const aoi = useAppStore((s) => s.aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const scope = useAppStore((s) => s.scope);
+  const setScope = useAppStore((s) => s.setScope);
+
+  const clearArea = () => {
+    setAoi(null);
+    setScope('global');
+  };
 
   return (
     <Panel
@@ -19,7 +25,7 @@ export function AoiPanel() {
       id="aoi-panel"
       actions={
         aoi && (
-          <button type="button" className="btn btn--small" onClick={() => setAoi(null)}>
+          <button type="button" className="btn btn--small" onClick={clearArea}>
             {t('aoi.clear')}
           </button>
         )
@@ -39,14 +45,12 @@ export function AoiPanel() {
           </span>
         )}
       </p>
-      {scope === 'global' ? (
+      <RegionList key={scope} />
+      {scope === 'global' && (
         <>
-          <RegionList />
           <CircleForm />
           <GeoJsonUpload />
         </>
-      ) : (
-        <RegionList />
       )}
     </Panel>
   );

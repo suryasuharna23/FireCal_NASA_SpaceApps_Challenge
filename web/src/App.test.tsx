@@ -17,10 +17,10 @@ describe('App shell', () => {
     expect(screen.getByText(/NASA FIRMS/)).toBeInTheDocument();
   });
 
-  it('shows data freshness and the provisional NRT badge', async () => {
+  it('shows data freshness and the provisional badge', async () => {
     mockFetch({ '/meta': META_OK });
     renderWithQuery(<App />);
-    expect(await screen.findByText('NRT data not final')).toBeInTheDocument();
+    expect(await screen.findByText('Provisional')).toBeInTheDocument();
     expect(screen.getByText(/abc123/)).toBeInTheDocument();
   });
 
@@ -63,9 +63,9 @@ describe('App shell', () => {
       '/globe': { cells: [[0, 0, 1]], max: 1 },
     });
     renderWithQuery(<App />);
-    expect(
-      await screen.findByText(/Worldwide observations · last three months/),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Worldwide NASA detections/)).toBeInTheDocument();
+    expect(screen.queryByText(/Worldwide observations · last three months/)).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Calendar and analytics' })).toBeNull();
     expect(useAppStore.getState().scope).toBe('global');
     expect(useAppStore.getState().aoi).toBeNull();
   });
