@@ -49,13 +49,14 @@ interface AppState {
 export const useAppStore = create<AppState>()((set) => ({
   scope: 'indonesia',
   setScope: (scope) =>
-    set({
+    set((state) => ({
       scope,
+      aoi: state.scope === scope ? state.aoi : null,
       selected: null,
       playbackDay: 1,
       playbackHour: 0,
       mode: scope === 'global' ? 'raw' : 'harmonized',
-    }),
+    })),
   aoi: null,
   start: null,
   end: null,

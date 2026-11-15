@@ -64,7 +64,6 @@ export function RegionList() {
   const select = async (region: FireRegion) => {
     if (scope === 'global' && region.level === 0 && region.too_large) {
       setExpanded((current) => (current === region.country ? null : region.country));
-      return;
     }
     await choose(region);
   };

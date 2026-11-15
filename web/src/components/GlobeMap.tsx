@@ -73,6 +73,7 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
       typeof window.matchMedia !== 'function' || !window.matchMedia('(max-width: 600px)').matches,
   );
   const aoi = useAppStore((s) => s.aoi);
+  const previousAoi = useRef(aoi);
   const setAoi = useAppStore((s) => s.setAoi);
   const mode = useAppStore((s) => s.mode);
   const scope = useAppStore((s) => s.scope);
@@ -85,7 +86,8 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   const frame = month ? frameFor(month, playbackPeriod, playbackDay, playbackHour) : null;
   const globe = useGlobe(meta?.status === 'ok' ? frame : null, mode);
   const pointsAvailable = scope !== 'global' || meta?.global?.points_available !== false;
-  const points = usePoints(aoi && pointsAvailable ? frame : null);
+  const canInspectAoi = aoi && aoi.areaKm2 <= (meta?.max_aoi_km2 ?? Infinity);
+  const points = usePoints(canInspectAoi && pointsAvailable ? frame : null);
   const pointsColor = useAppStore((s) => s.pointsColor);
   const setPointsColor = useAppStore((s) => s.setPointsColor);
   const mapDisplay = useAppStore((s) => s.mapDisplay);
@@ -399,6 +401,8 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !ready) return;
+    const cleared = previousAoi.current !== null && aoi === null;
+    previousAoi.current = aoi;
     const source = map.getSource('aoi-shadow') as GeoJSONSource | undefined;
     source?.setData(aoi ? outsideAoiMask(aoi.geometry) : EMPTY);
     (map.getSource('aoi-outline') as GeoJSONSource | undefined)?.setData(
@@ -414,6 +418,9 @@ export function GlobeMap({ children }: { children?: React.ReactNode }) {
         ],
         { padding: 40, maxZoom: 8, duration: 1200 },
       );
+    } else if (cleared) {
+      map.flyTo({ zoom: 1.9, duration: 1400 });
+      setSpinning(!prefersReducedMotion());
     }
   }, [aoi, ready]);
 

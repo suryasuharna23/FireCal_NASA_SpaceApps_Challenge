@@ -116,6 +116,28 @@ def test_globe_only_deployment_exposes_coverage_without_point_detail(
     get_settings.cache_clear()
 
 
+def test_staged_pointer_resolves_without_pipeline_package(
+    client, global_data, tmp_path, monkeypatch
+):
+    from app.settings import get_settings
+
+    catalog = tmp_path / "datasets/global/recent/dataset.json"
+    catalog.parent.mkdir(parents=True)
+    catalog.write_text(json.dumps({"data_version": "global-fixture"}))
+    pointer = tmp_path / "data/global/current.json"
+    pointer.parent.mkdir(parents=True)
+    pointer.write_text(
+        json.dumps({"base_data_version": "global-fixture", "processed": str(global_data)})
+    )
+    monkeypatch.setenv("GLOBAL_DATA_URI", str(pointer))
+    monkeypatch.setenv("LIVE_REPO_ROOT", str(tmp_path))
+    get_settings.cache_clear()
+    response = client.get("/meta")
+    assert response.status_code == 200
+    assert response.json()["global"]["status"] == "ok"
+    get_settings.cache_clear()
+
+
 def test_adaptive_globe_keeps_all_regions_and_all_counts(global_data):
     with duckdb.connect() as con:
         p = global_data / "globe.parquet"

@@ -131,6 +131,51 @@ describe('GlobeMap', () => {
     expect(fetch.mock.calls.some((call) => String(call[0]).includes('/points'))).toBe(false);
   });
 
+  it('shows all global cells in both display modes and resumes spin after clearing an area', async () => {
+    useAppStore.setState({ scope: 'global', aoi: null, mode: 'raw' });
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { ...GLOBE, mode: 'raw', source: 'MODIS+VIIRS' },
+      ...GLOBAL_REGION_ROUTES,
+    });
+    renderWithQuery(<GlobeMap />);
+    await waitFor(() =>
+      expect(
+        mapCalls.setData.some(
+          (data) => (data as { features?: unknown[] }).features?.length === GLOBE.cells.length,
+        ),
+      ).toBe(true),
+    );
+    expect(screen.getByRole('button', { name: 'Stop rotation' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Heatmap' }));
+    expect(mapCalls.layout).toContainEqual(['hotspots-heatmap', 'visibility', 'visible']);
+    fireEvent.click(screen.getByRole('button', { name: 'Points' }));
+    expect(mapCalls.layout).toContainEqual(['hotspots', 'visibility', 'visible']);
+    act(() => useAppStore.getState().setAoi(AOI));
+    expect(screen.getByRole('button', { name: 'Auto-rotate' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+    act(() => useAppStore.getState().setAoi(null));
+    expect(screen.getByRole('button', { name: 'Stop rotation' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
   it('follows the month selected in the calendar', async () => {
     const fetch = mockFetch({ '/meta': META_OK, '/globe': { ...GLOBE, year: 2019, month: 9 } });
     useAppStore.setState({ selected: { year: 2019, month: 9 } });

@@ -1,6 +1,7 @@
 import './test/mapMocks';
 import { fireEvent, screen } from '@testing-library/react';
 import App from './App';
+import { useAppStore } from './state/useAppStore';
 import { META_OK, mockFetch, renderWithQuery } from './test/render';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -42,5 +43,30 @@ describe('App shell', () => {
     renderWithQuery(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Methodology' }));
     expect(screen.getByRole('heading', { level: 2, name: 'Methodology' })).toBeInTheDocument();
+  });
+
+  it('opens worldwide coverage by default when no area or shared view is selected', async () => {
+    window.history.replaceState(null, '', '/');
+    useAppStore.setState({ scope: 'indonesia', aoi: null });
+    mockFetch({
+      '/meta': {
+        ...META_OK,
+        global: {
+          status: 'ok',
+          start_month: '2026-08',
+          end_month: '2026-11',
+          start_date: '2026-08-15',
+          last_acq_date: '2026-11-15',
+          points_available: false,
+        },
+      },
+      '/globe': { cells: [[0, 0, 1]], max: 1 },
+    });
+    renderWithQuery(<App />);
+    expect(
+      await screen.findByText(/Worldwide observations · last three months/),
+    ).toBeInTheDocument();
+    expect(useAppStore.getState().scope).toBe('global');
+    expect(useAppStore.getState().aoi).toBeNull();
   });
 });

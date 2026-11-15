@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMeta } from './api/client';
 import { AnnualTotals } from './components/AnnualTotals';
 import { ExportPanel } from './components/ExportPanel';
@@ -25,9 +25,20 @@ export default function App() {
   const [page, setPage] = useState<Page>('app');
   const aoi = useAppStore((s) => s.aoi);
   const scope = useAppStore((s) => s.scope);
-  const globalPointsAvailable = useMeta().data?.global?.points_available !== false;
+  const setScope = useAppStore((s) => s.setScope);
+  const meta = useMeta().data;
+  const globalPointsAvailable = meta?.global?.points_available !== false;
+  const initialScopeChecked = useRef(false);
   useUrlSync();
   useDataVersionRefresh();
+
+  useEffect(() => {
+    if (!meta || initialScopeChecked.current) return;
+    initialScopeChecked.current = true;
+    if (meta.global?.status === 'ok' && scope === 'indonesia' && !aoi && !window.location.search) {
+      setScope('global');
+    }
+  }, [meta, scope, aoi, setScope]);
 
   return (
     <div className="app">

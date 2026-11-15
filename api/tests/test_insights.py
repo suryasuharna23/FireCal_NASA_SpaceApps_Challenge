@@ -71,3 +71,32 @@ def test_insight_prefers_gemini_free_tier(client, box, monkeypatch) -> None:
     assert response.status_code == 200
     assert response.json()["model"] == "gemini-3.5-flash-lite"
     assert "summary" in captured["contents"][0]["parts"][0]["text"]
+
+
+def test_insight_passes_a_bounded_question_as_data(client, box, monkeypatch) -> None:
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    captured = {}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return None
+
+        def read(self, *_):
+            return b'{"choices":[{"message":{"content":"Data belum cukup."}}]}'
+
+    def fake_urlopen(request, timeout):
+        captured.update(json.loads(request.data))
+        return FakeResponse()
+
+    monkeypatch.setattr("app.routers.insights.urlopen", fake_urlopen)
+    body = {"aoi": box(104, -2, 108, 2), "question": "  Apa penyebab kebakaran?  "}
+    response = client.post("/insights", json=body, headers={"x-vercel-oidc-token": "test-key"})
+    assert response.status_code == 200
+    facts = json.loads(captured["messages"][1]["content"])
+    assert facts["question"] == "Apa penyebab kebakaran?"
+    assert facts["summary"]["total"] is not None
+    body["question"] = "x" * 501
+    assert client.post("/insights", json=body).status_code == 422

@@ -1,5 +1,6 @@
 import { act, fireEvent, screen } from '@testing-library/react';
 import { useAppStore } from '../state/useAppStore';
+import { AOI } from '../test/fixtures';
 import { META_OK, mockFetch, renderWithQuery } from '../test/render';
 import { STEP_MS, TimeControls } from './TimeControls';
 
@@ -36,8 +37,10 @@ describe('TimeControls', () => {
     });
     renderWithQuery(<TimeControls />);
     const coverage = await screen.findByRole('combobox', { name: 'Data coverage' });
+    act(() => useAppStore.getState().setAoi(AOI));
     fireEvent.change(coverage, { target: { value: 'global' } });
     expect(useAppStore.getState().scope).toBe('global');
+    expect(useAppStore.getState().aoi).toBeNull();
     expect(useAppStore.getState().mode).toBe('raw');
     expect(screen.getByRole('button', { name: 'Harmonized' })).toBeDisabled();
     expect(screen.getByRole('slider', { name: 'Year' })).toHaveAttribute('min', '2026');

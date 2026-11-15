@@ -95,6 +95,7 @@ describe('RegionList worldwide coverage', () => {
       else if (url.searchParams.get('country') === 'Brazil') body = { results: BRAZIL_PROVINCES };
       else if (url.pathname === '/regions') body = { results: GLOBAL_COUNTRIES };
       else if (url.pathname === '/regions/NE0-PRT') body = GLOBAL_REGION_FEATURES[1];
+      else if (url.pathname === '/regions/NE0-BRA') body = GLOBAL_REGION_FEATURES[0];
       else if (url.pathname === '/regions/boundaries')
         body = { type: 'FeatureCollection', features: GLOBAL_REGION_FEATURES };
       else if (url.pathname === '/regions/NE1-BRA-592') body = BRAZIL_PROVINCE_FEATURES[0];
@@ -114,6 +115,7 @@ describe('RegionList worldwide coverage', () => {
     const brazil = await screen.findByRole('button', { name: /BrazilToo large to analyse/ });
     expect(screen.queryByRole('button', { name: /Amazonas/ })).toBeNull();
     fireEvent.click(brazil);
+    await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE0-BRA'));
     fireEvent.click(await screen.findByRole('button', { name: /AmazonasProvince \/ state/ }));
     await waitFor(() => expect(useAppStore.getState().aoi?.regionId).toBe('NE1-BRA-592'));
     expect(useAppStore.getState().aoi?.label).toBe('Amazonas, Brazil');

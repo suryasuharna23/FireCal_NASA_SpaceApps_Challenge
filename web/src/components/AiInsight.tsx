@@ -18,7 +18,8 @@ export function AiInsight() {
   const [requestKey, setRequestKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const key = JSON.stringify([body, aoi?.label, stats?.data_version]);
+  const [question, setQuestion] = useState('');
+  const key = JSON.stringify([body, aoi?.label, stats?.data_version, question.trim()]);
   const current = requestKey === key ? result : null;
 
   async function generate() {
@@ -31,6 +32,7 @@ export function AiInsight() {
       const insight = await apiPost<InsightResponse>('/insights', {
         ...body,
         region_name: aoi?.label ?? 'Selected area',
+        question: question.trim(),
       });
       setResult(insight);
     } catch (cause) {
@@ -45,8 +47,20 @@ export function AiInsight() {
       <div className="ai-insight__content">
         <div>
           <p className="muted">
-            A short interpretation of the selected area’s satellite hotspot statistics.
+            Ask about the selected area’s satellite hotspot statistics, or leave this blank for a
+            short summary.
           </p>
+          <label className="ai-insight__question">
+            Your question
+            <textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              maxLength={500}
+              rows={2}
+              disabled={loading}
+              placeholder="How does the latest month compare with the historical median?"
+            />
+          </label>
           {current && (
             <p className="ai-insight__text" aria-live="polite">
               {current.text}
@@ -64,7 +78,13 @@ export function AiInsight() {
           onClick={generate}
           disabled={!stats || statsLoading || loading}
         >
-          {loading ? 'Analysing…' : current ? 'Regenerate insight' : 'Generate insight'}
+          {loading
+            ? 'Analysing…'
+            : current
+              ? 'Regenerate answer'
+              : question.trim()
+                ? 'Ask FireCal'
+                : 'Generate insight'}
         </button>
       </div>
       <p className="ai-insight__note">

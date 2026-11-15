@@ -152,19 +152,17 @@ def connect(settings: ApiSettings | None = None) -> duckdb.DuckDBPyConnection:
 
 
 def get_global_dataset() -> Dataset:
-    from firecal.live import resolve_pointer
-
-    uri = get_settings().global_data_uri
+    settings = get_settings()
+    uri = settings.global_data_uri
     try:
         if uri.endswith(".json"):
-            from firecal.global_data import CATALOG
-
-            record = json.loads(Path(uri).read_text())
-            catalog_path = Path(get_settings().live_repo_root) / CATALOG
+            pointer = Path(uri)
+            record = json.loads(pointer.read_text())
+            catalog_path = Path(settings.live_repo_root) / "datasets/global/recent/dataset.json"
             catalog = json.loads(catalog_path.read_text())
             if record.get("base_data_version") != catalog["data_version"]:
                 raise ValueError("Global dataset is not the pinned real NASA snapshot")
-            uri = resolve_pointer(Path(uri)).as_posix()
+            uri = (pointer.parent / record["processed"]).resolve().as_posix()
         ds = _datasets.setdefault(uri, Dataset(uri))
         if ds.meta().get("format") != "firecal-global-v1":
             raise ValueError("Unverified global data format")

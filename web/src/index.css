@@ -374,6 +374,30 @@ h3 {
 
 .ai-insight__content > div {
   min-width: 0;
+  flex: 1;
+}
+.ai-insight__question {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.ai-insight__question textarea {
+  width: 100%;
+  min-height: 68px;
+  resize: vertical;
+  padding: 9px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: rgba(4, 6, 13, 0.6);
+  color: var(--fg);
+  font: inherit;
+}
+.ai-insight__question textarea:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 .ai-insight__content button {
   flex: 0 0 auto;
