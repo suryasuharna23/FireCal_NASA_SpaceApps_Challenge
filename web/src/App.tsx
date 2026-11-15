@@ -69,6 +69,7 @@ export default function App() {
               <div className="layout__view">
                 <GlobeMap />
               </div>
+              <ExportPanel />
             </section>
             <section className="layout__side" aria-label={t('region.controls')}>
               <AoiPanel />
@@ -80,7 +81,6 @@ export default function App() {
             <Calendar />
             <Climatology />
             <AnnualTotals />
-            <ExportPanel />
           </section>
         </main>
       ) : (

@@ -21,7 +21,7 @@ export function ShareButton() {
 
   return (
     <>
-      <button type="button" className="btn btn--small share-btn" onClick={copy}>
+      <button type="button" className="share-btn" onClick={copy}>
         {copied === 'ok' ? t('share.copied') : t('share.button')}
       </button>
       <span className="sr-only" aria-live="polite">

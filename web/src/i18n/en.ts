@@ -179,7 +179,7 @@ export const messages = {
   'png.calendar': 'Download the calendar as PNG',
   'png.climatology': 'Download the climatology chart as PNG',
   'png.annual': 'Download the annual totals chart as PNG',
-  'share.button': 'Share view',
+  'share.button': 'Share View',
   'share.copied': 'Link copied',
   'share.manual': 'Copy this link to share the current view:',
   'search.label': 'Find a country or province',
